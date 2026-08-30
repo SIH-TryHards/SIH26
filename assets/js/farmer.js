@@ -12,8 +12,8 @@
    names translate live via Sarvam when a key is configured.
    ============================================================ */
 
-import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260831-1';
-import * as storage from './storage.js?v=20260831-1';
+import { LANGUAGES, t, getLang, setLang } from './i18n.js';
+import * as storage from './storage.js';
 import { repository, getAuth } from './repository/index.js';
 import * as router from './router.js';
 import { createSelect } from './components/select.js';
@@ -30,7 +30,7 @@ import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
 import * as voice from './voice.js';
 import * as icons from './icons.js';
-import { generateSchedule } from './loan.js?v=20260831-1';
+import { generateSchedule } from './loan.js';
 
 const _el = (id) => document.getElementById(id);
 const $ = (id) => {
@@ -199,9 +199,24 @@ function selectLanguage(language, { advance }) {
   languageGate.hidden = true;
   openPickerBtn.hidden = false;
   openPickerBtn.focus();
-  /* First-ever choice flows straight into S2; a later change of
-     language stays on the screen it was opened from. */
-  if (advance) router.go('location');
+  if (advance) {
+    router.go('location');
+  } else {
+    // Re-render current view so advisory cards, mandi, etc. switch language
+    const hash = (location.hash || '#/home').replace('#/', '');
+    const currentView = hash.split('?')[0] || 'home';
+    if (['home', 'mandi', 'help', 'profile', 'loan', 'officer'].includes(currentView)) {
+      // Re-apply copy already done; now re-render dynamic content
+      if (currentView === 'home' && storage.getSession()) renderHome().catch(()=>{});
+      if (currentView === 'mandi') renderMandi().catch(()=>{});
+      if (currentView === 'help') renderHelp();
+      if (currentView === 'profile') renderProfile();
+      if (currentView === 'loan') renderLoan();
+      if (currentView === 'officer') renderOfficer();
+    }
+    // Ensure geo names re-translate
+    translateGeo();
+  }
 }
 
 /* ---------- shared rendering ---------- */
