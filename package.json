@@ -1,0 +1,9 @@
+{
+  "name": "kisan-saathi-precision-agronomy",
+  "version": "1.0.0",
+  "description": "Precision Agronomy module for Kisan Saathi",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/test_runner.js"
+  }
+}

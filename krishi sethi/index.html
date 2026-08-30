@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Saathi - Smart Agricultural Advisory, Mandi Intelligence & Distress Prevention</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js CDN for Mandi & Risk Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Google Fonts & Custom Styles -->
+  <link rel="stylesheet" href="styles.css?v=20260829_v20">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen antialiased selection:bg-emerald-200">
+
+  <!-- TOP HEADER -->
+  <header class="bg-[#bd9458] text-white shadow-md border-b border-[#a8824a] sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Left: Branding -->
+      <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-slate-900/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-xl shadow-inner border border-white/20">
+            🌾
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl font-bold font-desi-heading tracking-tight text-white drop-shadow-sm" data-i18n="appTitle">Krishi Saathi</h1>
+              <span class="bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-md font-semibold border border-white/30 backdrop-blur-sm">AI Agri-Platform</span>
+            </div>
+            <p class="text-xs text-white/90 font-medium hidden sm:block drop-shadow-sm" data-i18n="appTagline">Hyperlocal Advisory, Mandi Intelligence & Farmer Distress Early Warning</p>
+          </div>
+        </div>
+
+        <!-- Mobile Emergency Dial (visible on small screens) -->
+        <a href="tel:18001801551" class="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-slate-900 text-amber-400 font-bold shadow">
+          <i class="fa-solid fa-phone text-xs"></i>
+        </a>
+      </div>
+
+      <!-- Right: Utility Cluster (Low Bandwidth, Language, Auth, Helpline) -->
+      <div class="flex items-center gap-2.5 w-full md:w-auto justify-end flex-wrap">
+        <!-- Multilingual Language Selector -->
+        <div class="flex items-center bg-black/15 hover:bg-black/25 rounded-xl px-3 py-1 border border-white/20 min-h-[44px] backdrop-blur-sm">
+          <span class="text-white text-sm mr-2">🌐</span>
+          <select id="langSelector" class="bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer pr-1">
+            <option value="en" class="text-slate-900" selected>English</option>
+            <option value="hi" class="text-slate-900">हिंदी (Hindi)</option>
+            <option value="pa" class="text-slate-900">ਪੰਜਾਬੀ (Punjabi)</option>
+            <option value="mr" class="text-slate-900">मराठी (Marathi)</option>
+            <option value="te" class="text-slate-900">తెలుగు (Telugu)</option>
+            <option value="ta" class="text-slate-900">தமிழ் (Tamil)</option>
+            <option value="bn" class="text-slate-900">বাংলা (Bengali)</option>
+            <option value="kn" class="text-slate-900">ಕನ್ನಡ (Kannada)</option>
+            <option value="gu" class="text-slate-900">ગુજરાતી (Gujarati)</option>
+          </select>
+        </div>
+
+        <!-- Phone Auth Button (when logged out) -->
+        <button id="btnOpenLoginModal" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow transition min-h-[44px] border border-white/20">
+          <span>👤</span>
+          <span data-i18n="btnLogin">Login / Register</span>
+        </button>
+
+        <!-- Logged-in Farmer Profile Chip (when logged in) -->
+        <div id="userProfileChip" class="hidden items-center gap-2 bg-slate-900/90 text-white px-3 py-1.5 rounded-xl border border-amber-400/40 text-xs shadow min-h-[44px]">
+          <div class="flex items-center gap-1.5">
+            <span class="text-base">🌾</span>
+            <div class="text-left">
+              <div id="userDisplayName" class="font-bold text-amber-300 leading-tight">Farmer</div>
+              <div id="userDisplayPhone" class="text-[10px] text-slate-300 leading-tight">+91 98XXX-XXXXX</div>
+            </div>
+          </div>
+          <button id="btnLogout" title="Logout" class="ml-1 text-slate-400 hover:text-rose-300 text-xs px-1.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 transition" data-i18n="btnLogout">
+            🚪 Logout
+          </button>
+        </div>
+
+        <!-- Helpline Toll-Free Button (Desktop) -->
+        <a href="tel:18001801551" class="hidden lg:flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 rounded-xl font-semibold text-xs shadow transition min-h-[44px] border border-white/20">
+          <i class="fa-solid fa-phone-volume text-amber-300"></i>
+          <span>1800-180-1551</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- DEDICATED HORIZONTAL NAVIGATION STRIP -->
+    <nav class="bg-[#a8824a] border-t border-[#96723b]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 flex overflow-x-auto no-scrollbar scroll-smooth gap-2 py-2 text-xs sm:text-sm no-print">
+        <button class="nav-tab-btn px-4 py-2 rounded-lg font-semibold bg-slate-900 text-white shadow-sm flex items-center gap-2 whitespace-nowrap transition min-h-[40px]" data-tab="tab-advisory" data-i18n="navAdvisory">
+          🌾 Crop Advisory
+        </button>
+        <button class="nav-tab-btn px-4 py-2 rounded-lg font-medium text-white/90 hover:text-white hover:bg-black/20 flex items-center gap-2 whitespace-nowrap transition min-h-[40px]" data-tab="tab-mandi" data-i18n="navMandi">
+          💰 Mandi Intelligence & Profit
+        </button>
+        <button class="nav-tab-btn px-4 py-2 rounded-lg font-medium text-white/90 hover:text-white hover:bg-black/20 flex items-center gap-2 whitespace-nowrap transition min-h-[40px]" data-tab="tab-distress" data-i18n="navLoanCalc">
+          💰 Loan Calculator
+        </button>
+        <button class="nav-tab-btn px-4 py-2 rounded-lg font-medium text-white/90 hover:text-white hover:bg-black/20 flex items-center gap-2 whitespace-nowrap transition min-h-[40px]" data-tab="tab-schemes" data-i18n="navSchemes">
+          📜 Govt Schemes & Relief
+        </button>
+        <button class="nav-tab-btn px-4 py-2 rounded-lg font-medium text-white/90 hover:text-white hover:bg-black/20 flex items-center gap-2 whitespace-nowrap transition min-h-[40px]" data-tab="tab-officer" data-i18n="navOfficer">
+          🏢 Agri-Officer Portal (DAO)
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow w-full">
+
+    <!-- HERO DASHBOARD BANNER -->
+    <section class="relative rounded-2xl overflow-hidden shadow-sm mb-6 border border-slate-200 bg-slate-900 no-print">
+      <div class="relative h-48 sm:h-60 md:h-72 w-full">
+        <!-- Hero Image -->
+        <img src="hero_field.jpg" alt="Golden Harvest Fields" class="w-full h-full object-cover object-center brightness-95">
+        
+        <!-- Gradient Overlay for readability -->
+        <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950/90 via-slate-900/60 to-transparent flex flex-col justify-end md:justify-center p-5 sm:p-8">
+          <div class="max-w-xl text-white">
+            <span class="inline-flex items-center gap-1.5 bg-emerald-600/90 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-2 backdrop-blur-sm border border-emerald-400/30">
+              🌾 Krishi Saathi Smart Agro-Advisory
+            </span>
+            <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold font-desi-heading tracking-tight text-white drop-shadow-sm leading-tight" data-i18n="heroTitle">Precision Crop Advisory & Distress Early Warning</h2>
+            <p class="text-xs sm:text-sm text-slate-200 mt-1.5 leading-relaxed hidden sm:block drop-shadow">
+              Combining hyperlocal weather telemetry, stage-based agronomy, real-time APMC Mandi price discovery, and multi-factor distress risk routing.
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Floating Badges -->
+        <div class="absolute top-4 right-4 hidden lg:flex flex-col gap-2">
+          <div class="bg-slate-900/80 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700/60 flex items-center gap-2 shadow">
+            <span class="text-emerald-400">●</span> <span>Live IMD Agromet Link</span>
+          </div>
+          <div class="bg-slate-900/80 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700/60 flex items-center gap-2 shadow">
+            <span class="text-amber-400">●</span> <span>1300+ APMC Mandis</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. FIELD PROFILE MODULE (CSS GRID: 1 col on mobile, 2-3 on tablet, 5 on desktop) -->
+    <section class="desi-card p-5 mb-5 no-print bg-white">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm">
+            📍
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 font-desi-heading" data-i18n="fieldProfileTitle">Field & Crop Profile</h2>
+            <p class="text-xs text-slate-500">Configure your location and crop parameters for precision localized advisory</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            🌱 Season: 2026-27
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- State -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="lblState">Select State</label>
+          <select id="inputState" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition min-h-[44px]">
+            <option value="Punjab" selected>Punjab</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="West Bengal">West Bengal</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Haryana">Haryana</option>
+          </select>
+        </div>
+
+        <!-- District -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="lblDistrict">Select District</label>
+          <select id="inputDistrict" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition min-h-[44px]">
+            <option value="Bathinda" selected>Bathinda</option>
+            <option value="Ludhiana">Ludhiana</option>
+            <option value="Amritsar">Amritsar</option>
+            <option value="Patiala">Patiala</option>
+            <option value="Jalandhar">Jalandhar</option>
+          </select>
+        </div>
+
+        <!-- Crop -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="lblCrop">Select Crop</label>
+          <select id="inputCrop" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition min-h-[44px]">
+            <option value="wheat" selected>Wheat (गेहूं / ਕਣਕ)</option>
+            <option value="paddy">Paddy / Rice (धान / ਝੋਨਾ)</option>
+            <option value="cotton">Cotton (कपास / ਨਰਮਾ)</option>
+            <option value="mustard">Mustard (सरसों / ਸਰ੍ਹੋਂ)</option>
+            <option value="sugarcane">Sugarcane (गन्ना / ਗੰਨਾ)</option>
+            <option value="soybean">Soybean (सोयाबीन)</option>
+            <option value="groundnut">Groundnut (मूंगफली / ਮੂੰਗਫਲੀ)</option>
+            <option value="maize">Maize (मक्का / ਮੱਕੀ)</option>
+            <option value="gram">Gram / Chickpea (चना / ਛੋਲੇ)</option>
+            <option value="onion">Onion (प्याज / ਗੰਢा)</option>
+          </select>
+        </div>
+
+        <!-- Soil Type (Auto-Detected by City & State) -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-bold text-slate-700" data-i18n="lblSoil">Soil Type</label>
+            <span class="inline-flex items-center gap-1 text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded border border-emerald-300">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              Auto-Detected
+            </span>
+          </div>
+          <div id="soilDisplayCard" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 flex items-center justify-between min-h-[44px] shadow-sm">
+            <div class="flex items-center gap-2">
+              <span id="soilIcon" class="text-lg">🌱</span>
+              <div>
+                <div id="soilDisplayName" class="font-bold text-slate-900 text-xs">Alluvial Loam (दोमट)</div>
+                <div id="soilSubInfo" class="text-[10px] text-emerald-700 font-medium">Auto-mapped for Bathinda</div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="inputSoil" value="alluvial">
+        </div>
+
+        <!-- Land Area (Acres) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="lblLandArea">Land Area (Acres)</label>
+          <input type="number" id="inputArea" value="4.0" step="0.5" min="0.5" max="100" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition min-h-[44px]">
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. STREAMLINED ACTION TOOLBAR -->
+    <section class="flex flex-wrap items-center justify-between gap-3 mb-5 p-3.5 bg-white border border-slate-200 rounded-2xl shadow-sm no-print">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Real-Time Auto-Sync Indicator -->
+        <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm min-h-[44px]">
+          <span class="w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
+          <span>⚡ Live Auto-Sync Active</span>
+        </div>
+
+        <!-- Real-Time Distress Risk Monitor Pill -->
+        <div id="toolbarDistressPill" class="inline-flex items-center gap-2 bg-slate-50 text-slate-800 border border-slate-300 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm min-h-[44px] cursor-pointer" onclick="document.querySelector('[data-tab=\'tab-distress\']')?.click()">
+          <span id="toolbarDistressIcon">⚠️</span>
+          <span>Distress Risk:</span>
+          <span id="toolbarDistressVal" class="font-extrabold text-emerald-700">42/100 (Safe)</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <!-- Gnani.ai Neural Voice Button -->
+        <button id="btnVoiceAdvisory" class="bg-gradient-to-r from-emerald-800 to-green-800 hover:from-emerald-900 hover:to-green-900 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm flex items-center transition min-h-[44px] border border-emerald-500/30">
+          <span class="mr-2 text-base">🔊</span>
+          <span id="voiceBtnLabel" data-i18n="btnVoiceRead">Listen Aloud (Voice)</span>
+        </button>
+
+        <!-- Voice Waves indicator (Active State) -->
+        <div id="voiceAudioVisualizer" class="hidden flex items-center gap-1.5 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200 min-h-[44px]">
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <span id="voiceStatusText" class="text-xs font-semibold text-emerald-800 ml-1">Playing...</span>
+        </div>
+
+        <button id="btnPrintSlip" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 border border-slate-300/80 transition min-h-[44px]">
+          <span data-i18n="printAdvisory">🖨️ Print Advisory Slip</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 1: HYPERLOCAL ADVISORY (CROP ADVISORY) -->
+    <!-- ============================================================= -->
+    <section id="tab-advisory" class="tab-pane">
+
+      <!-- DUAL AGROMET WEATHER DASHBOARD: PRESENT DAY (TODAY) & NEXT DAY (TOMORROW) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+        
+        <!-- 1. PRESENT DAY (TODAY) LIVE WEATHER CARD -->
+        <div id="todayWeatherCard" class="p-4 sm:p-5 rounded-2xl border border-emerald-200/90 bg-gradient-to-br from-emerald-50/90 via-green-50/50 to-teal-50/60 text-slate-900 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-emerald-200/70">
+              <div class="flex items-center gap-2.5">
+                <span class="p-2 rounded-xl bg-emerald-600 text-white text-lg shadow-sm">☀️</span>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-bold text-sm text-slate-900 font-desi-heading">Today's Live Weather (आज का मौसम)</h3>
+                    <span id="todayDateBadge" class="bg-emerald-100 text-emerald-800 font-bold text-[11px] px-2.5 py-0.5 rounded-full border border-emerald-300">Today • Live</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-0.5" id="todayLocationText">Live Satellite Telemetry for selected district</p>
+                </div>
+              </div>
+              <div id="todayConditionBadge" class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 text-xs font-bold text-emerald-950 shadow-sm">
+                <span id="todayWeatherIcon">🌤️</span>
+                <span id="todayConditionText">Clear / Sunny</span>
+              </div>
+            </div>
+
+            <!-- Today's 4 Key Metrics -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-emerald-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Current Temp (तापमान)</div>
+                <div class="text-base font-extrabold text-slate-900 mt-0.5" id="todayTemp">33°C</div>
+                <div class="text-[9px] text-slate-500 font-medium" id="todayFeelsLike">Feels 37°C</div>
+              </div>
+
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-emerald-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Precipitation (वर्षा)</div>
+                <div class="text-base font-extrabold text-blue-700 mt-0.5" id="todayRain">0.0 mm</div>
+                <div class="text-[9px] text-slate-500 font-medium" id="todayRainChance">10% Chance</div>
+              </div>
+
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-emerald-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Humidity (नमी)</div>
+                <div class="text-base font-extrabold text-emerald-700 mt-0.5" id="todayHumidity">52%</div>
+                <div class="text-[9px] text-slate-500 font-medium">Relative humidity</div>
+              </div>
+
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-emerald-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Wind (हवा)</div>
+                <div class="text-base font-extrabold text-slate-800 mt-0.5" id="todayWind">4 km/h</div>
+                <div class="text-[9px] text-slate-500 font-medium" id="todayWindDir">ESE breeze</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actionable Field Advisory for Today -->
+          <div class="flex items-start gap-2 bg-white/95 p-2.5 rounded-xl border border-emerald-200/80 text-xs text-slate-800 mt-1">
+            <span class="text-base">🌾</span>
+            <div>
+              <span class="font-bold text-emerald-900">Today's Field Advisory: </span>
+              <span id="todayFarmAdvice" class="text-slate-700">Optimal weather for standard crop monitoring and agricultural operations.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. NEXT-DAY (TOMORROW) WEATHER PREDICTION CARD -->
+        <div id="tomorrowWeatherCard" class="p-4 sm:p-5 rounded-2xl border border-sky-200/90 bg-gradient-to-br from-sky-50/90 via-blue-50/50 to-indigo-50/60 text-slate-900 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-sky-200/70">
+              <div class="flex items-center gap-2.5">
+                <span class="p-2 rounded-xl bg-sky-600 text-white text-lg shadow-sm">🔮</span>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-bold text-sm text-slate-900 font-desi-heading" data-i18n="tomorrowWeatherTitle">Next-Day Weather Prediction (कल का पूर्वानुमान)</h3>
+                    <span id="tomorrowDateBadge" class="bg-sky-100 text-sky-800 font-bold text-[11px] px-2.5 py-0.5 rounded-full border border-sky-300">Tomorrow • Forecast</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-0.5" id="tomorrowLocationText">Forecast for selected district via WeatherAPI Telemetry</p>
+                </div>
+              </div>
+              <div id="tomorrowConditionBadge" class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-sky-200 text-xs font-bold text-sky-950 shadow-sm">
+                <span id="tomorrowWeatherIcon">🌤️</span>
+                <span id="tomorrowConditionText">Sunny / Clear</span>
+              </div>
+            </div>
+
+            <!-- Tomorrow's 4 Key Metrics -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-sky-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Predicted Temp (तापमान)</div>
+                <div class="text-base font-extrabold text-slate-900 mt-0.5" id="tomorrowTempRange">42°C / 28°C</div>
+                <div class="text-[9px] text-slate-500 font-medium">Max / Min</div>
+              </div>
+
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-sky-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Rain Probability (संभावना)</div>
+                <div class="text-base font-extrabold text-blue-700 mt-0.5" id="tomorrowRainChance">5%</div>
+                <div class="text-[9px] text-slate-500 font-medium" id="tomorrowPrecipMm">0.0 mm expected</div>
+              </div>
+
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-sky-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Avg Humidity (नमी)</div>
+                <div class="text-base font-extrabold text-emerald-700 mt-0.5" id="tomorrowHumidity">44%</div>
+                <div class="text-[9px] text-slate-500 font-medium">Relative humidity</div>
+              </div>
+
+              <div class="bg-white/85 backdrop-blur-sm p-2.5 rounded-xl border border-sky-100 shadow-2xs">
+                <div class="text-[10px] font-semibold text-slate-500">Max Wind (हवा)</div>
+                <div class="text-base font-extrabold text-slate-800 mt-0.5" id="tomorrowWind">23 km/h</div>
+                <div class="text-[9px] text-slate-500 font-medium">Predicted wind</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actionable Agromet Farming Advice for Tomorrow -->
+          <div class="flex items-start gap-2 bg-white/95 p-2.5 rounded-xl border border-sky-200/80 text-xs text-slate-800 mt-1">
+            <span class="text-base">🚜</span>
+            <div>
+              <span class="font-bold text-sky-900">Tomorrow's Farming Recommendation: </span>
+              <span id="tomorrowFarmAdvice" class="text-slate-700">Checking agromet forecast...</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Clean 2-Card Advisory Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+        
+        <!-- 1. Fertilization & Nutrition Card (Static text as per user requirement) -->
+        <div class="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-amber-500 p-5 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 font-desi-heading mb-2 flex items-center gap-2">
+            <span data-i18n="cardFertTitle">Fertilization & Nutrition Dosage</span>
+          </h3>
+          <p id="advFertText" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+            Contact the local Krishi Vigyan Kendra or Kisan Call Centre (1800-180-1551) or visit the nearby center for fertilizer related information.
+          </p>
+        </div>
+
+        <!-- 2. Pest & Disease Alert Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-rose-500 p-5 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 font-desi-heading mb-2 flex items-center gap-2">
+            <span data-i18n="cardPestTitle">Pest & Disease Advisory</span>
+          </h3>
+          <p id="advPestText" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+            Regularly inspect your crop. If you notice yellowing leaves or pest damage, call the Kisan Helpline 1800-180-1551 for free guidance.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Quick Action Buttons Footer -->
+      <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-200/80">
+        <a href="tel:18001801551" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition">
+          <span>📞 Kisan Call Centre (1800-180-1551)</span>
+        </a>
+        <a href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-300/80 transition">
+          <span>🏛️ PM-Kisan Portal ↗</span>
+        </a>
+      </div>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 2: MANDI INTELLIGENCE (मंडी भाव व मूल्य जानकारी) -->
+    <!-- ============================================================= -->
+    <section id="tab-mandi" class="tab-pane hidden">
+      
+      <!-- Live Daily Feed Status & Location Header -->
+      <div class="desi-card p-4 mb-5 bg-white">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>Live Agmarknet Mandi API Feed</span>
+            </span>
+            <span id="mandiSyncStatus" class="text-xs text-slate-600 font-medium">Daily Sync: Synced Today</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="mandiStateTrendBadge" class="hidden items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-300">
+              <!-- Dynamic State Trend Badge -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nearby Mandi Spotlight Banner for Selected Crop -->
+      <div id="bestMandiBanner" class="mb-5">
+        <!-- Injected via JS -->
+      </div>
+
+      <!-- MULTI-MANDI PRICE BOARD FOR SELECTED CROP (विभिन्न मंडियों में चयनित फसल के भाव) -->
+      <div class="desi-card p-5 bg-white mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 font-desi-heading flex items-center gap-2">
+              <span id="selectedCropMandiTitle">🌾 Multi-Mandi Price Comparison</span>
+            </h3>
+            <p id="goodsBoardSubtitle" class="text-xs text-slate-500 mt-0.5">Live rates for selected crop across APMC mandis in the city and nearby cities</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="filterGoodsInput" placeholder="🔍 Search mandi yard / मंडी खोजें..." 
+                   class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-48 sm:w-64">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold">
+                <th class="p-3">APMC Mandi Yard & Location</th>
+                <th class="p-3">Today's Modal Rate</th>
+                <th class="p-3">Rate per Kg</th>
+                <th class="p-3">Daily Range (Min - Max)</th>
+                <th class="p-3">Day-over-Day Trend</th>
+                <th class="p-3">Govt MSP Status</th>
+                <th class="p-3 text-right">Arrival Date & Variety</th>
+              </tr>
+            </thead>
+            <tbody id="allGoodsTableBody">
+              <!-- Injected dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 3: DISTRESS RISK EARLY WARNING & LOAN CALCULATOR -->
+    <!-- ============================================================= -->
+    <section id="tab-distress" class="tab-pane hidden">
+      
+      <!-- 1. COMPOSITE DISTRESS RISK & EARLY WARNING MONITOR -->
+      <div class="desi-card p-5 mb-6 bg-white border border-slate-200 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold text-xl shadow-xs">
+              ⚠️
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-lg font-bold text-slate-900 font-desi-heading">Predictive Distress Risk & Early Warning Monitor</h2>
+                <span id="distressLiveBadge" class="bg-rose-50 text-rose-800 border border-rose-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                  3-Factor Algorithm: Rain + Price + Loan
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Real-time distress index calculated from 3-day rainfall forecast, crop mandi price vs MSP, and loan due date proximity</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="distressScorePill" class="text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs">
+              <!-- Score Badge -->
+            </span>
+          </div>
+        </div>
+
+        <!-- Dynamic High Distress (>80) Warning & Spike Reason Banner -->
+        <div id="distressWarningBanner" class="hidden p-4 sm:p-5 rounded-2xl border-2 border-rose-500 bg-rose-50/90 text-rose-950 mb-5 shadow-md">
+          <div class="flex items-start gap-3.5">
+            <span class="text-3xl animate-bounce mt-0.5">🚨</span>
+            <div class="flex-grow">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <h3 class="font-extrabold text-sm sm:text-base text-rose-900 uppercase tracking-wide flex items-center gap-2">
+                  <span>HIGH DISTRESS RISK WARNING (गंभीर कृषि-वित्तीय संकट चेतावनी)</span>
+                  <span class="bg-rose-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">Score &gt; 80</span>
+                </h3>
+                <span class="text-xs font-bold text-rose-800 bg-white/80 px-2.5 py-1 rounded-lg border border-rose-300">
+                  Critical Intervention Threshold Exceeded
+                </span>
+              </div>
+              <p class="text-xs sm:text-sm font-semibold text-rose-900 leading-relaxed mb-3">
+                The composite distress risk score has spiked past the critical danger threshold of 80. Immediate proactive assistance and debt relief measures are recommended.
+              </p>
+
+              <!-- Explicit Spike Root-Cause Breakdown -->
+              <div class="bg-white/95 rounded-xl p-3.5 border border-rose-300 shadow-2xs">
+                <div class="text-xs font-extrabold text-rose-900 mb-2 flex items-center gap-1.5">
+                  <span>🔍</span> <span>Root-Cause Analysis for Score Spike (स्कोर में वृद्धि के मुख्य कारण):</span>
+                </div>
+                <div id="spikeReasonsList" class="space-y-2 text-xs">
+                  <!-- Dynamically populated via JS -->
+                </div>
+              </div>
+
+              <!-- Emergency Action Support -->
+              <div class="mt-3.5 flex flex-wrap items-center gap-2.5 pt-2 border-t border-rose-200 text-xs">
+                <a href="tel:18001801551" class="inline-flex items-center gap-1.5 bg-rose-700 hover:bg-rose-800 text-white font-bold px-3.5 py-2 rounded-xl shadow-xs transition">
+                  <span>📞 Call Kisan Emergency Desk (1800-180-1551)</span>
+                </a>
+                <a href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-white hover:bg-rose-100 text-rose-900 border border-rose-300 font-bold px-3.5 py-2 rounded-xl shadow-xs transition">
+                  <span>🌾 PMFBY Crop Insurance Claim Portal ↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Distress Factor Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+          
+          <!-- Factor 1: 3-Day Rainfall Forecast -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span>🌧️</span> <span>Factor 1: 3-Day Rain Forecast</span>
+                </span>
+                <span id="factor1RiskBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                  Checking...
+                </span>
+              </div>
+              <div class="text-xl font-extrabold text-slate-900 mt-1" id="factor1RainVal">0.0 mm</div>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="factor1RainSummary">Predicted rainfall over next 3 days via WeatherAPI</p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200/80">
+              <div class="flex justify-between text-[11px] text-slate-600 mb-1">
+                <span>Simulate 3-Day Rain (mm):</span>
+                <span id="sliderRainValDisplay" class="font-bold text-slate-900">0 mm</span>
+              </div>
+              <input type="range" id="sliderRainSimMm" min="0" max="100" value="0" step="2" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                <span>0mm (Drought)</span>
+                <span>30mm (Normal)</span>
+                <span>100mm (Flood)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Factor 2: Crop Price vs MSP Realization -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span>📉</span> <span>Factor 2: Mandi Price vs MSP</span>
+                </span>
+                <span id="factor2RiskBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                  Checking...
+                </span>
+              </div>
+              <div class="text-xl font-extrabold text-slate-900 mt-1" id="factor2PriceVal">₹2,620 / Qtl</div>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="factor2MspComparison">Govt MSP: ₹2,425 / Qtl (+₹195 above MSP)</p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200/80">
+              <div class="flex justify-between text-[11px] text-slate-600 mb-1">
+                <span>Simulate Price Drop vs MSP:</span>
+                <span id="sliderPriceDropDisplay" class="font-bold text-slate-900">0%</span>
+              </div>
+              <input type="range" id="sliderPriceDropPct" min="0" max="50" value="0" step="2" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                <span>0% (Full Price)</span>
+                <span>25% (Drop)</span>
+                <span>50% (Crash)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Factor 3: Loan Due Date Proximity -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span>⏳</span> <span>Factor 3: Loan Due Date</span>
+                </span>
+                <span id="factor3RiskBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                  Checking...
+                </span>
+              </div>
+              <div class="text-xl font-extrabold text-slate-900 mt-1" id="factor3LoanDaysVal">15 Days Remaining</div>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="factor3LoanSummary">Proximity to next KCC / EMI payment due date</p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200/80">
+              <div class="flex justify-between text-[11px] text-slate-600 mb-1">
+                <span>Days Until Due Date:</span>
+                <span id="sliderLoanDaysDisplay" class="font-bold text-slate-900">15 Days</span>
+              </div>
+              <input type="range" id="sliderLoanDueDays" min="3" max="120" value="15" step="1" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                <span>3 Days (Urgent)</span>
+                <span>30 Days</span>
+                <span>120 Days (Safe)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Composite Score Visual Gauge Bar -->
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-800">Composite Distress Risk Meter:</span>
+              <span id="distressScoreNumDisplay" class="text-lg font-black text-slate-900">42 / 100</span>
+            </div>
+            <div id="distressScoreLevelText" class="text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-md">
+              🟢 Normal & Stable (Score &le; 50)
+            </div>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-3.5 overflow-hidden flex">
+            <div id="distressMeterBar" class="h-full transition-all duration-300 rounded-full bg-emerald-500" style="width: 42%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
+            <span>0 - 50: Safe (Normal)</span>
+            <span>51 - 80: Moderate Watch</span>
+            <span class="text-rose-600 font-bold">81 - 100: Critical Distress Alert (Warning Triggered)</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. FARMER AGRICULTURAL LOAN & EMI CALCULATOR -->
+      <div class="desi-card p-5 mb-6 bg-white border border-slate-200">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl shadow-xs">
+              💰
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 font-desi-heading" data-i18n="loanCalcTitle">Farmer Agricultural Loan & EMI Calculator</h2>
+              <p class="text-xs text-slate-500">Calculate Kisan Credit Card (KCC), tractor, crop, and equipment loan installments, total amount paid, and outstanding balance</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs">
+              🏛️ Central Govt KCC Subvention: 4% Effective Rate
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loan Calculator 2-Column Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        
+        <!-- Left Column: Inputs (5 Cols) -->
+        <div class="lg:col-span-5 desi-card p-5 bg-white space-y-4">
+          <h3 class="text-base font-bold text-slate-900 font-desi-heading flex items-center gap-2 pb-2 border-b border-slate-100">
+            <span>📝</span> <span>Loan Inputs (ऋण का विवरण)</span>
+          </h3>
+
+          <!-- 1. Principal Loan Amount -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between">
+              <span>Initial Loan Amount (प्रारंभिक ऋण राशि ₹)</span>
+              <span id="loanAmountFormatted" class="text-emerald-700 font-extrabold text-xs">₹1,00,000</span>
+            </label>
+            <input type="number" id="inputLoanPrincipal" value="100000" min="1000" step="5000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+            <!-- Quick Amount Chips -->
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button type="button" onclick="setLoanPresetAmount(50000)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-slate-200 px-2.5 py-1 rounded-lg transition">₹50K</button>
+              <button type="button" onclick="setLoanPresetAmount(100000)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-slate-200 px-2.5 py-1 rounded-lg transition">₹1 Lakh</button>
+              <button type="button" onclick="setLoanPresetAmount(200000)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-slate-200 px-2.5 py-1 rounded-lg transition">₹2 Lakh</button>
+              <button type="button" onclick="setLoanPresetAmount(300000)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-slate-200 px-2.5 py-1 rounded-lg transition">₹3 Lakh (KCC Limit)</button>
+              <button type="button" onclick="setLoanPresetAmount(500000)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-slate-200 px-2.5 py-1 rounded-lg transition">₹5 Lakh</button>
+            </div>
+          </div>
+
+          <!-- 2. Loan Tenure / Time Period -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-800">Time Period / Tenure (समय अवधि)</label>
+              <div class="inline-flex rounded-lg p-0.5 bg-slate-100 border border-slate-200 text-[11px]">
+                <button type="button" id="btnTenureYears" onclick="setTenureUnit('years')" class="px-2 py-0.5 rounded-md font-bold bg-white text-emerald-800 shadow-2xs">Years (वर्ष)</button>
+                <button type="button" id="btnTenureMonths" onclick="setTenureUnit('months')" class="px-2 py-0.5 rounded-md text-slate-600">Months (महीने)</button>
+              </div>
+            </div>
+            <input type="number" id="inputLoanTenure" value="2" min="1" max="360" step="1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+            <!-- Quick Tenure Chips -->
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button type="button" onclick="setLoanPresetTenure(1)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 px-2.5 py-1 rounded-lg transition">1 Year (12 Mon)</button>
+              <button type="button" onclick="setLoanPresetTenure(2)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 px-2.5 py-1 rounded-lg transition">2 Years (24 Mon)</button>
+              <button type="button" onclick="setLoanPresetTenure(3)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 px-2.5 py-1 rounded-lg transition">3 Years (36 Mon)</button>
+              <button type="button" onclick="setLoanPresetTenure(5)" class="text-[11px] font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 px-2.5 py-1 rounded-lg transition">5 Years (60 Mon)</button>
+            </div>
+          </div>
+
+          <!-- 3. Annual Rate of Interest -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Annual Rate of Interest (वार्षिक ब्याज दर %)</label>
+            <div class="relative">
+              <input type="number" id="inputLoanRate" value="4.0" min="0.1" max="50" step="0.1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px] pr-8">
+              <span class="absolute right-3 top-2.5 font-bold text-slate-400 text-sm">%</span>
+            </div>
+            <!-- Quick Rate Chips -->
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button type="button" onclick="setLoanPresetRate(4.0)" class="text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-1 rounded-lg transition">4% (KCC Subvention)</button>
+              <button type="button" onclick="setLoanPresetRate(7.0)" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-lg transition">7% (KCC Base)</button>
+              <button type="button" onclick="setLoanPresetRate(8.5)" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-lg transition">8.5% (Tractor Loan)</button>
+              <button type="button" onclick="setLoanPresetRate(11.0)" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-lg transition">11% (Commercial)</button>
+            </div>
+          </div>
+
+          <!-- 4. Date of First Installment (Live Calendar Picker) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between">
+              <span class="flex items-center gap-1.5">
+                <span>📅</span> <span>Date of First Installment (प्रथम किस्त की तिथि)</span>
+              </span>
+              <span id="firstInstallmentDateFormatted" class="text-emerald-700 font-extrabold text-xs">01 Sep 2026</span>
+            </label>
+            <input type="date" id="inputFirstInstallmentDate" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px] cursor-pointer shadow-2xs">
+            <!-- Quick Date Preset Chips -->
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button type="button" onclick="setFirstInstallmentPreset('next_month_1st')" class="text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-1 rounded-lg transition">📅 1st of Next Month</button>
+              <button type="button" onclick="setFirstInstallmentPreset('today')" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-lg transition">📅 Today</button>
+              <button type="button" onclick="setFirstInstallmentPreset('oct_1st')" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-lg transition">📅 1st Oct (Kharif)</button>
+              <button type="button" onclick="setFirstInstallmentPreset('jan_1st')" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-lg transition">📅 1st Jan (Rabi)</button>
+            </div>
+          </div>
+
+          <!-- 5. Installments Already Paid -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between">
+              <span>Installments Paid So Far (अब तक चुकाई गई किश्तें)</span>
+              <span id="paidMonthsCountLabel" class="text-blue-700 font-extrabold text-xs">0 / 24 Paid</span>
+            </label>
+            <input type="number" id="inputInstallmentsPaid" value="0" min="0" max="360" step="1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+            <input type="range" id="sliderInstallmentsPaid" min="0" max="24" value="0" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer mt-2">
+          </div>
+
+        </div>
+
+        <!-- Right Column: Outputs & Summary Cards (7 Cols) -->
+        <div class="lg:col-span-7 space-y-5">
+          
+          <!-- Primary Spotlight Card: Monthly Installment -->
+          <div class="bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-900 text-white p-6 rounded-2xl border border-emerald-500/40 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-1.5 bg-emerald-500 text-slate-950 text-[11px] font-bold uppercase px-3 py-0.5 rounded-full mb-2">
+                <span>💳 Monthly Repayment</span>
+              </div>
+              <div class="text-xs text-slate-300 font-medium">Installment Per Month (प्रति माह मासिक किस्त):</div>
+              <div class="text-3xl sm:text-4xl font-extrabold text-amber-300 font-desi-heading mt-1" id="outMonthlyEmi">
+                ₹4,342 <span class="text-sm font-normal text-slate-300">/ month</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-2">
+                Based on <span id="summaryTenureText" class="font-bold text-white">24 months</span> at <span id="summaryRateText" class="font-bold text-white">4% p.a.</span>
+              </p>
+            </div>
+            <div class="bg-slate-800/90 p-4 rounded-xl border border-slate-700 w-full sm:w-auto min-w-[200px] text-left sm:text-right">
+              <div class="text-xs text-slate-400 font-medium">Total Interest (कुल ब्याज):</div>
+              <div class="text-xl font-bold text-emerald-400" id="outTotalInterest">₹4,208</div>
+              <div class="text-xs text-slate-400 font-medium mt-2">Total Payable (कुल देय राशि):</div>
+              <div class="text-lg font-extrabold text-white" id="outTotalPayable">₹1,04,208</div>
+            </div>
+          </div>
+
+          <!-- 2 Key Metric Cards: Amount Paid & Amount Left -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Amount Paid Card -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-blue-600 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-slate-500 tracking-wider">Amount Paid (चुकाई गई राशि)</span>
+                <span class="p-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm">✅</span>
+              </div>
+              <div class="text-2xl font-extrabold text-blue-700 mt-2" id="outAmountPaid">₹0</div>
+              <div class="text-xs text-slate-500 mt-1" id="outInstallmentsPaidText">0 installments completed</div>
+            </div>
+
+            <!-- Amount Left Card -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-amber-500 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-slate-500 tracking-wider">Amount Left (बकाया शेष राशि)</span>
+                <span class="p-1.5 bg-amber-50 text-amber-700 rounded-lg text-sm">⏳</span>
+              </div>
+              <div class="text-2xl font-extrabold text-amber-700 mt-2" id="outAmountLeft">₹1,04,208</div>
+              <div class="text-xs text-slate-500 mt-1" id="outInstallmentsRemainingText">24 installments remaining</div>
+            </div>
+
+          </div>
+
+          <!-- Next Installment Due Date & Countdown Card -->
+          <div class="bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-lg">
+                📅
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-sky-900">Next Installment Due Date (आगामी किस्त की देय तिथि):</div>
+                <div class="text-base font-extrabold text-slate-900 mt-0.5" id="outNextDueDate">01 Sep 2026</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="outNextDueCountdown" class="bg-white text-sky-900 border border-sky-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs">
+                ⏳ 3 Days Remaining
+              </span>
+            </div>
+          </div>
+
+          <!-- Visual Progress Bar -->
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center text-xs font-bold mb-2">
+              <span class="text-slate-700">Loan Repayment Progress (ऋण भुगतान प्रगति):</span>
+              <span id="loanProgressPctText" class="text-emerald-700 font-extrabold">0% Paid</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden border border-slate-200 flex">
+              <div id="loanPaidProgressBar" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
+              <div id="loanLeftProgressBar" class="bg-amber-400 h-full transition-all duration-300" style="width: 100%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-500 mt-2">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Paid: <strong id="progPaidText">₹0</strong></span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Remaining: <strong id="progLeftText">₹1,04,208</strong></span>
+            </div>
+          </div>
+
+          <!-- Govt Interest Subvention Guidance Card -->
+          <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-950 flex items-start gap-3">
+            <span class="text-xl">🏛️</span>
+            <div>
+              <div class="font-bold text-emerald-900 mb-0.5">Central Government KCC 3% Prompt Repayment Benefit:</div>
+              <p class="text-emerald-800/90 leading-relaxed">
+                Under the Central Govt Interest Subvention Scheme (ISS), agriculture loans up to ₹3,00,000 carry a base rate of 7%. Farmers who repay their installments on time receive an extra <strong>3% prompt repayment subvention</strong>, making the net effective interest rate only <strong>4% per annum</strong>.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 1st of the Month Repayment Due Tracker Banner -->
+      <div class="desi-card p-4.5 mb-6 bg-amber-50/70 border border-amber-300 rounded-2xl">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">📅</span>
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 font-desi-heading">
+                1st of Month Payment Checklist & Overdue Rollover Engine
+              </h4>
+              <p class="text-xs text-slate-600">
+                Mark each installment as paid on the <strong>1st date of the month</strong>. If unpaid, that amount is automatically rolled over and added to the next month's installment.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="markAllMonthsPaid(true)" class="text-xs font-semibold bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-lg transition shadow-2xs">
+              ✅ Mark All Due Paid
+            </button>
+            <button type="button" onclick="markAllMonthsPaid(false)" class="text-xs font-semibold bg-white hover:bg-rose-50 text-rose-800 border border-rose-300 px-3 py-1.5 rounded-lg transition shadow-2xs">
+              🔄 Reset Checklist
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Repayment Schedule / Amortization Breakdown Table with 1st-of-Month Checkboxes -->
+      <div class="desi-card p-5 bg-white">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 font-desi-heading flex items-center gap-2">
+              <span>📅</span> <span>Monthly Installment Checklist & Schedule (1 तारीख भुगतान व रोलओवर तालिका)</span>
+            </h3>
+            <p class="text-xs text-slate-500">Check the box on the 1st of each month to record payment. Unchecked amounts roll over to the next month.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="rolloverSummaryBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              0 Unpaid Rollovers
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-96 overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="sticky top-0 bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3 text-center">Paid on 1st?</th>
+                <th class="p-3">Due Date (1st of Month)</th>
+                <th class="p-3">Base EMI</th>
+                <th class="p-3">Rollover Arrears (बकाया)</th>
+                <th class="p-3">Total Due this Month</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Remaining Principal</th>
+              </tr>
+            </thead>
+            <tbody id="loanScheduleTableBody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 5: GOVT SCHEMES & SUBSIDY DIRECTORY (योजनाएं) -->
+    <!-- ============================================================= -->
+    <section id="tab-schemes" class="tab-pane hidden">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold font-desi-heading text-slate-900" data-i18n="schemesTitle">🏛️ Central & State Government Relief Schemes</h2>
+        <p class="text-xs text-slate-600">Official portals, emergency contact desks, zero-interest credit, and crop insurance claim assistance</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="schemesGrid">
+        <!-- 1. PM-Kisan Samman Nidhi -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase inline-block mb-3 tracking-wide">Income Support</span>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 leading-snug">PM-Kisan Samman Nidhi</h4>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">Direct income support of ₹6,000 per year transferred in 3 installments of ₹2,000 directly to your bank account. Check your status or register on the official portal.</p>
+          </div>
+          <div class="flex flex-col gap-2 pt-3 border-t border-slate-100">
+            <a href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer"
+               class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition min-h-[44px] shadow-sm">
+              <span>Visit Official Portal</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+              <span>📞</span>
+              <span>Helpline: 155261 / 011-24300606</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 2. PM Fasal Bima Yojana (PMFBY) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase inline-block mb-3 tracking-wide">Crop Insurance</span>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 leading-snug">Pradhan Mantri Fasal Bima Yojana (PMFBY)</h4>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">Official crop insurance portal. Get coverage against crop loss from drought, flood, or pests. File a claim or check your insurance status here.</p>
+          </div>
+          <div class="flex flex-col gap-2 pt-3 border-t border-slate-100">
+            <a href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer"
+               class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition min-h-[44px] shadow-sm">
+              <span>Visit Official Portal</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+              <span>📞</span>
+              <span>Helpline: 14447 / 1800-180-1551</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 3. Direct Benefit Transfer in Agriculture Mechanization -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="bg-sky-50 text-sky-800 border border-sky-200 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase inline-block mb-3 tracking-wide">Equipment Subsidy</span>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 leading-snug">Direct Benefit Transfer in Agriculture Mechanization</h4>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">Government portal for farm machinery subsidies and mechanization schemes. Apply online for subsidies on tractors, tillers, and sprayers.</p>
+          </div>
+          <div class="flex flex-col gap-2 pt-3 border-t border-slate-100">
+            <a href="https://agrimachinery.nic.in/index/index" target="_blank" rel="noopener noreferrer"
+               class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition min-h-[44px] shadow-sm">
+              <span>Visit Official Portal</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+              <span>📞</span>
+              <span>Helpline: State Agriculture Department</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 4. Kisan Credit Card -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="bg-violet-50 text-violet-800 border border-violet-200 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase inline-block mb-3 tracking-wide">Credit & Loans</span>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 leading-snug">Kisan Credit Card (KCC) — Low Interest Loan</h4>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">Get crop loans at just 4% annual interest. In case of natural calamity, banks offer repayment moratorium. Apply at your nearest bank branch.</p>
+          </div>
+          <div class="flex flex-col gap-2 pt-3 border-t border-slate-100">
+            <a href="https://agricoop.nic.in" target="_blank" rel="noopener noreferrer"
+               class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition min-h-[44px] shadow-sm">
+              <span>Visit Official Portal</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+              <span>📞</span>
+              <span>Helpline: 1800-11-2211 (SBI Kisan)</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 5. PM Krishi Sinchayee Yojana -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="bg-teal-50 text-teal-800 border border-teal-200 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase inline-block mb-3 tracking-wide">Irrigation</span>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 leading-snug">PM Krishi Sinchayee Yojana — Irrigation Subsidy</h4>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">Up to 55% subsidy for small and marginal farmers to install drip or sprinkler irrigation systems and save water on every crop.</p>
+          </div>
+          <div class="flex flex-col gap-2 pt-3 border-t border-slate-100">
+            <a href="https://pmksy.gov.in" target="_blank" rel="noopener noreferrer"
+               class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition min-h-[44px] shadow-sm">
+              <span>Visit Official Portal</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+              <span>📞</span>
+              <span>Helpline: State Agriculture Department</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 6. National Agriculture Market (e-NAM) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="bg-orange-50 text-orange-800 border border-orange-200 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase inline-block mb-3 tracking-wide">Mandi Trading</span>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 leading-snug">National Agriculture Market (e-NAM)</h4>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">Electronic trading portal connecting 1300+ APMC mandis across India. Sell your produce at the best market price without middlemen.</p>
+          </div>
+          <div class="flex flex-col gap-2 pt-3 border-t border-slate-100">
+            <a href="https://enam.gov.in" target="_blank" rel="noopener noreferrer"
+               class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition min-h-[44px] shadow-sm">
+              <span>Visit Official Portal</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+              <span>📞</span>
+              <span>Helpline: 1800-270-0224</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================= -->
+    <!-- TAB 6: AGRI-OFFICER DASHBOARD (DISTRESS QUEUE) -->
+    <!-- ============================================================= -->
+    <section id="tab-officer" class="tab-pane hidden">
+      <div class="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold font-desi-heading text-slate-900 flex items-center gap-2">
+            <span class="text-2xl">🏢</span> <span data-i18n="navOfficer">District Agri-Officer Portal</span>
+          </h2>
+          <p class="text-xs text-slate-600 mt-1" data-i18n="officerBadge">Live Distress Cases Triage & Relief Dispatch Center</p>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-900 text-white px-3 py-1.5 rounded-xl shadow-sm text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Live Queue Monitor
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4" id="officerQueueCards">
+        <!-- Injected via renderOfficerQueue() in app.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 mt-12 no-print text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🌾</span>
+        <div>
+          <span class="font-bold text-white">Krishi Saathi</span> — 
+          <span class="text-slate-400">Jai Jawan, Jai Kisan, Jai Vigyan!</span>
+        </div>
+      </div>
+      <div class="text-center sm:text-right text-slate-500">
+        <div>Optimized for low-bandwidth 2G/3G rural networks</div>
+        <div class="text-[11px] text-slate-600 mt-0.5">Based on IMD Agromet & APMC Mandi Data Models</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PHONE NUMBER AUTHENTICATION MODAL -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm hidden no-print">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-200 relative overflow-hidden text-slate-900">
+      
+      <!-- Top Golden-Wheat Accent Bar -->
+      <div class="h-2 bg-[#bd9458] absolute top-0 left-0 right-0"></div>
+
+      <!-- Close Button -->
+      <button id="btnCloseAuthModal" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-sm font-bold transition">
+        ✕
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center gap-3 mb-5 mt-1">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-center text-2xl font-bold shadow-sm">
+          🌾
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-desi-heading text-slate-900 leading-snug" data-i18n="loginTitle">Farmer Phone Login</h3>
+          <p class="text-xs text-slate-500 font-normal" data-i18n="loginSub">Fast & secure OTP login for personalized farm advisories</p>
+        </div>
+      </div>
+
+      <!-- STEP 1: PHONE NUMBER & FARMER PROFILE -->
+      <div id="authStep1" class="space-y-4">
+        <!-- Farmer Full Name -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="lblFarmerName">Farmer Full Name</label>
+          <input type="text" id="authInputName" placeholder="e.g. Sardar Gurpreet Singh" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+        </div>
+
+        <!-- Mobile Number Input with +91 -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="lblMobileNumber">Mobile Number (मोबाइल नंबर)</label>
+          <div class="flex items-center rounded-xl border border-slate-300 bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 min-h-[44px]">
+            <span class="px-3 text-xs font-bold text-slate-600 bg-slate-200/70 border-r border-slate-300 select-none flex items-center gap-1">
+              🇮🇳 +91
+            </span>
+            <input type="tel" id="authInputPhone" maxlength="10" placeholder="9876543210" class="w-full bg-transparent px-3.5 py-2.5 text-sm font-bold text-slate-900 tracking-wider focus:outline-none placeholder:text-slate-400">
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">We will send a 4-digit verification code (OTP) to this number.</p>
+        </div>
+
+        <!-- Primary Send OTP Button -->
+        <button id="btnSendOtp" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition flex items-center justify-center gap-2 min-h-[44px]">
+          <span>📲</span>
+          <span data-i18n="btnSendOtp">Send OTP (ओटीपी भेजें)</span>
+        </button>
+
+        <!-- Quick Demo Profiles for 1-Click Judging -->
+        <div class="pt-3 border-t border-slate-100">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+            <span data-i18n="demoLoginTip">⚡ Quick Demo Farmer Logins:</span>
+          </div>
+          <div class="grid grid-cols-1 gap-1.5">
+            <button type="button" class="btn-quick-demo-login text-left p-2 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-300 text-xs text-slate-700 transition flex items-center justify-between" data-name="Rameshwar Tukaram Patil" data-phone="9422188402" data-state="Maharashtra" data-district="Yavatmal (Vidarbha)" data-crop="cotton" data-area="3.2">
+              <div>
+                <span class="font-bold text-slate-900">Rameshwar Patil</span>
+                <span class="text-[10px] text-slate-500 block">Yavatmal (Vidarbha, MH) • Cotton (3.2 Acres)</span>
+              </div>
+              <span class="text-xs font-semibold text-emerald-700">Fill & Login →</span>
+            </button>
+            <button type="button" class="btn-quick-demo-login text-left p-2 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-300 text-xs text-slate-700 transition flex items-center justify-between" data-name="Sardar Gurpreet Singh" data-phone="9876512340" data-state="Punjab" data-district="Bathinda" data-crop="wheat" data-area="4.5">
+              <div>
+                <span class="font-bold text-slate-900">Gurpreet Singh</span>
+                <span class="text-[10px] text-slate-500 block">Bathinda (Punjab) • Wheat (4.5 Acres)</span>
+              </div>
+              <span class="text-xs font-semibold text-emerald-700">Fill & Login →</span>
+            </button>
+            <button type="button" class="btn-quick-demo-login text-left p-2 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-300 text-xs text-slate-700 transition flex items-center justify-between" data-name="Ram Prasad Lodhi" data-phone="9936044192" data-state="Uttar Pradesh" data-district="Bundelkhand (Jhansi)" data-crop="mustard" data-area="2.8">
+              <div>
+                <span class="font-bold text-slate-900">Ram Prasad Lodhi</span>
+                <span class="text-[10px] text-slate-500 block">Bundelkhand (UP) • Mustard (2.8 Acres)</span>
+              </div>
+              <span class="text-xs font-semibold text-emerald-700">Fill & Login →</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: OTP VERIFICATION -->
+      <div id="authStep2" class="space-y-4 hidden">
+        <div class="text-center">
+          <div class="text-xs text-slate-500 mb-1" data-i18n="otpSentNotice">Enter the 4-digit code sent to:</div>
+          <div class="flex items-center justify-center gap-2">
+            <span id="authOtpTargetPhone" class="font-mono font-bold text-sm text-slate-900">+91 98765-XXXXX</span>
+            <button id="btnEditAuthPhone" class="text-xs font-semibold text-emerald-700 hover:underline">Change</button>
+          </div>
+        </div>
+
+        <!-- Simulated SMS Notification Box with 1-click Auto-fill -->
+        <div class="bg-amber-50/90 border border-amber-300 p-3 rounded-2xl text-xs text-amber-950 flex items-center justify-between gap-2 shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📩</span>
+            <div>
+              <div class="font-bold">Simulated OTP SMS received:</div>
+              <div class="font-mono text-sm font-extrabold text-amber-900">Code: <span id="authSimulatedOtp">5821</span></div>
+            </div>
+          </div>
+          <button id="btnAutofillOtp" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
+            Auto-fill
+          </button>
+        </div>
+
+        <!-- 4-Box OTP Input -->
+        <div class="flex justify-center gap-3 py-2">
+          <input type="text" maxlength="1" id="otpBox1" class="otp-digit-input w-12 h-14 text-center font-mono text-xl font-bold bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:bg-white focus:outline-none transition">
+          <input type="text" maxlength="1" id="otpBox2" class="otp-digit-input w-12 h-14 text-center font-mono text-xl font-bold bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:bg-white focus:outline-none transition">
+          <input type="text" maxlength="1" id="otpBox3" class="otp-digit-input w-12 h-14 text-center font-mono text-xl font-bold bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:bg-white focus:outline-none transition">
+          <input type="text" maxlength="1" id="otpBox4" class="otp-digit-input w-12 h-14 text-center font-mono text-xl font-bold bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:bg-white focus:outline-none transition">
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="text-center text-xs text-slate-400 flex items-center justify-center gap-1">
+          <span>Resend OTP in:</span>
+          <span id="authOtpTimer" class="font-mono font-bold text-slate-700">0:30</span>
+        </div>
+
+        <!-- Verify OTP Button -->
+        <button id="btnVerifyOtp" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition flex items-center justify-center gap-2 min-h-[44px]">
+          <span>✅</span>
+          <span data-i18n="btnVerifyOtp">Verify & Access Dashboard (सत्यापित करें)</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATION CONTAINER -->
+  <div id="authToast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 text-xs font-semibold">
+      <span id="authToastIcon" class="text-lg">✅</span>
+      <span id="authToastMsg">Welcome back!</span>
+    </div>
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js?v=20260829_v20"></script>
+</body>
+</html>

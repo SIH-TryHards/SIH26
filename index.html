@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#31572c">
+  <meta name="description" content="Kisan Saathi — Precision Crop Advisory &amp; Early Warning Platform.">
+  <title>Kisan Saathi — Precision Agronomy</title>
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <main class="app-shell" id="appShell">
+    <header class="topbar">
+      <a class="brand" href="#/welcome" aria-label="Kisan Saathi home">
+        <span class="brand__mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 21c-4-3.5-7-6.8-7-10.4C5 7 8 4.5 12 3c4 1.5 7 4 7 7.6 0 3.6-3 6.9-7 10.4z"/>
+            <path d="M12 21V9"/><path d="M12 13l3-2.6M12 15.5L9 13"/>
+          </svg>
+        </span>
+        <span>
+          <strong>Kisan Saathi</strong>
+          <small id="taglineText">Crop advisory &amp; early warning</small>
+        </span>
+      </a>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <button class="btn btn--outline btn--sm" id="headerOfficerBtn" type="button" style="padding: 4px 12px; min-height: 40px; border-radius: 20px;">
+          <span id="headerOfficerLabel">Officer Sign In</span>
+        </button>
+        <button class="language-button" id="openLanguagePicker" type="button" aria-label="Change language" hidden>
+          <span aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </span>
+          <span id="selectedLanguageLabel">English</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- S1 completion state / returning-visitor home of the wizard -->
+    <section class="starter-card" id="viewWelcome" aria-labelledby="starterTitle">
+      <span class="eyebrow" id="welcomeStep">Step 1 of 5</span>
+      <h1 id="starterTitle">Welcome to Kisan Saathi</h1>
+      <p id="welcomeText">Choose your language first. We will use it throughout your farm setup.</p>
+      <p class="starter-card__note" id="welcomeNext">Next, we will ask where your farm is located.</p>
+      <div class="btn-row">
+        <button class="btn btn--primary" id="startSetup" type="button" hidden>Set up my farm</button>
+      </div>
+    </section>
+
+    <!-- S2 · Where is your farm? -->
+    <section class="starter-card" id="viewLocation" aria-labelledby="locTitle" hidden>
+      <span class="eyebrow" id="locStepLabel">Step 2 of 5</span>
+      <h1 id="locTitle">Where is your farm?</h1>
+      <p id="locHelp">This helps us give you local weather and nearby market prices.</p>
+
+      <form id="locationForm" novalidate>
+        <div class="field">
+          <label id="lblState">State</label>
+          <div id="stateMount"></div>
+        </div>
+        <div class="field">
+          <label id="lblDistrict">District</label>
+          <div id="districtMount"></div>
+        </div>
+        <div class="field">
+          <label id="lblVillage">Village</label>
+          <div id="villageMount"></div>
+        </div>
+        <div class="field" id="villageFreeField" hidden>
+          <label for="villageFree" id="lblVillageFree">Village name</label>
+          <input class="input" id="villageFree" type="text" autocomplete="off">
+        </div>
+        <p class="form-error" id="locationError" role="alert" hidden></p>
+        <div class="btn-row">
+          <button class="btn btn--ghost" id="locBack" type="button">Back</button>
+          <button class="btn btn--primary" id="locContinue" type="submit">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- S3 · Your land -->
+    <section class="starter-card" id="viewLand" aria-labelledby="landTitle" hidden>
+      <span class="eyebrow" id="landStepLabel">Step 3 of 5</span>
+      <h1 id="landTitle">Your land</h1>
+      <p id="landHelp">This shapes every recommendation we give you.</p>
+
+      <form id="landForm" novalidate>
+        <div class="field">
+          <label for="landArea" id="lblArea">Land area (acres)</label>
+          <input class="input" id="landArea" type="text" inputmode="decimal" autocomplete="off">
+        </div>
+        <div class="field">
+          <label id="lblSoil">Soil type</label>
+          <div id="soilMount"></div>
+        </div>
+        <div class="field">
+          <label id="lblIrrigation">Irrigation</label>
+          <div id="irrigationMount"></div>
+        </div>
+        <p class="form-error" id="landError" role="alert" hidden></p>
+        <div class="btn-row">
+          <button class="btn btn--ghost" id="landBack" type="button">Back</button>
+          <button class="btn btn--primary" id="landContinue" type="submit">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- S4 · Your crop -->
+    <section class="starter-card" id="viewCrop" aria-labelledby="cropTitle" hidden>
+      <span class="eyebrow" id="cropStepLabel">Step 4 of 5</span>
+      <h1 id="cropTitle">Your crop</h1>
+      <p id="cropHelp">We will derive the growth stage from your sowing date.</p>
+
+      <form id="cropForm" novalidate>
+        <div class="field">
+          <label id="lblCrop">Crop</label>
+          <div id="cropMount"></div>
+        </div>
+        <div class="field">
+          <label id="lblVariety">Variety</label>
+          <div id="varietyMount"></div>
+        </div>
+        <div class="field" id="varietyFreeField" hidden>
+          <label for="varietyFree" id="lblVarietyFree">Variety name</label>
+          <input class="input" id="varietyFree" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="sownDate" id="lblSown">Sowing date</label>
+          <input class="input" id="sownDate" type="date">
+          <div class="stage-chip" id="stageChip" hidden>
+            <span class="stage-chip__label">Derived stage:</span>
+            <span class="stage-chip__value" id="stageChipValue"></span>
+          </div>
+        </div>
+        <p class="form-error" id="cropError" role="alert" hidden></p>
+        <div class="btn-row">
+          <button class="btn btn--ghost" id="cropBack" type="button">Back</button>
+          <button class="btn btn--primary" id="cropContinue" type="submit">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- S5 · Is this right? -->
+    <section class="starter-card" id="viewReview" aria-labelledby="s5Title" hidden>
+      <span class="eyebrow" id="s5StepLabel">Step 5 of 5</span>
+      <h1 id="s5Title">Is this right?</h1>
+      <p id="s5Help">Check everything before we save it.</p>
+      <div id="reviewRows"></div>
+      <p class="form-error" id="reviewError" role="alert" hidden></p>
+      <p class="notice-ok" id="reviewSaved" aria-live="polite" hidden></p>
+      <div class="btn-row">
+        <button class="btn btn--ghost" id="reviewBack" type="button">Back</button>
+        <button class="btn btn--primary" id="reviewSave" type="button">Save my details</button>
+      </div>
+    </section>
+
+    <!-- S6-F1 · Account intent -->
+    <section class="starter-card" id="viewIntent" aria-labelledby="intentTitle" hidden>
+      <button class="back-btn" id="intentBack" type="button"></button>
+      <span class="eyebrow" id="intentStepLabel"></span>
+      <h1 id="intentTitle"></h1>
+      <p id="intentWhy"></p>
+
+      <div class="section-head">
+        <span class="eyebrow" id="intentSummaryLabel"></span>
+        <span class="section-rule"></span>
+      </div>
+      <div id="intentSummary"></div>
+
+      <div class="section-head">
+        <span class="eyebrow" id="intentBenefitsTitle"></span>
+        <span class="section-rule"></span>
+      </div>
+      <ul class="benefit-list" id="intentBenefits"></ul>
+
+      <p class="field-note" id="intentPrivacy"></p>
+
+      <label class="consent-row">
+        <input type="checkbox" id="consentCheck">
+        <span id="consentText"></span>
+      </label>
+      <p class="form-error" id="intentError" role="alert" hidden></p>
+
+      <div class="btn-row">
+        <button class="btn btn--primary" id="intentContinue" type="button" disabled></button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn--outline" id="intentChange" type="button"></button>
+      </div>
+      <p class="guest-link-row">
+        <button class="link-btn" id="intentGuest" type="button"></button>
+      </p>
+    </section>
+
+    <!-- S6 · Auth gate -->
+    <section class="starter-card" id="viewAuth" aria-labelledby="s6Title" hidden>
+      <span class="eyebrow" id="s6StepLabel">Final step</span>
+      <h1 id="s6Title">Save your profile</h1>
+      <p id="s6Help">Create your account so your farm details stay safe.</p>
+
+      <div class="tabs" id="authTabs" role="tablist" aria-label="Account type">
+        <button class="tab-btn" id="tabFarmer" role="tab" type="button"
+                aria-selected="true" aria-controls="panelFarmer"></button>
+        <button class="tab-btn" id="tabOfficer" role="tab" type="button"
+                aria-selected="false" aria-controls="panelOfficer"></button>
+      </div>
+
+      <form id="panelFarmer" role="tabpanel" aria-labelledby="tabFarmer" novalidate>
+        <div class="field">
+          <label for="phoneInput" id="lblPhone">Mobile number</label>
+          <input class="input" id="phoneInput" type="tel" inputmode="numeric"
+                 autocomplete="tel-national" maxlength="10">
+        </div>
+        <div class="field" id="otpField" hidden>
+          <label for="otpInput" id="lblOtp">6-digit code</label>
+          <input class="input" id="otpInput" type="text" inputmode="numeric"
+                 autocomplete="one-time-code" maxlength="6">
+          <p class="field-note" id="demoOtpNote" hidden></p>
+        </div>
+        <p class="form-error" id="farmerError" role="alert" hidden></p>
+        <div class="btn-row">
+          <button class="btn btn--primary" id="sendOtpBtn" type="submit">Send code</button>
+          <button class="btn btn--ghost" id="resendBtn" type="button" hidden disabled></button>
+        </div>
+      </form>
+
+      <form id="panelOfficer" role="tabpanel" aria-labelledby="tabOfficer" hidden>
+        <div class="field">
+          <label for="staffInput" id="lblStaff">Staff ID</label>
+          <input class="input" id="staffInput" type="text" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="passwordInput" id="lblPassword">Password</label>
+          <input class="input" id="passwordInput" type="password" autocomplete="current-password">
+        </div>
+        <p class="form-error" id="officerError" role="alert" hidden></p>
+        <div class="btn-row">
+          <button class="btn btn--primary" id="officerLoginBtn" type="submit">Sign in to dashboard</button>
+        </div>
+        <p class="field-note" id="forgotNote"></p>
+      </form>
+
+      <p class="form-error" id="authError" role="alert" hidden></p>
+      <p class="notice-ok" id="authSuccess" aria-live="polite" hidden></p>
+      <div class="btn-row" id="authSuccessActions" hidden>
+        <button class="btn btn--primary" id="authContinueBtn" type="button"></button>
+      </div>
+
+      <p class="guest-link-row">
+        <button class="link-btn" id="guestBtn" type="button"></button>
+        <button class="link-btn" id="signoutBtn" type="button" hidden></button>
+      </p>
+    </section>
+
+    <!-- S7 · Farmer home — Precision Agronomy Dashboard -->
+    <section class="starter-card home-card" id="viewHome" aria-labelledby="homeTitle" hidden>
+      <div class="home-head">
+        <span class="home-avatar" id="homeAvatar" aria-hidden="true"></span>
+        <div>
+          <h1 id="homeTitle" class="home-hello"></h1>
+          <p class="home-farmline" id="homeFarmLine"></p>
+        </div>
+      </div>
+
+      <p class="notice" id="guestNote" hidden></p>
+
+    <!-- 1. Today's Crop Advisory -->
+    <section class="advisory-section" id="advisorySection">
+      <div class="section-head">
+        <span class="eyebrow" id="advisoryTitle"></span>
+        <span class="section-rule"></span>
+      </div>
+      <div id="advisoryList"></div>
+      <div class="btn-row">
+        <button class="btn btn--outline" id="listenBtn" type="button"></button>
+        <button class="btn btn--ghost" id="ackBtn" type="button"></button>
+      </div>
+      <p class="field-note" id="homeVoiceNote" aria-live="polite"></p>
+    </section>
+
+    <!-- 2. Tomorrow's Advisory & Action Plan -->
+    <section class="action-plan-section" id="tomorrowActionPlanSection">
+      <div id="tomorrowActionPlanMount"></div>
+    </section>
+
+    <!-- 3. Live Weather Details -->
+    <section class="agronomy-section" id="agronomyTelemetrySection">
+      <div id="agronomyTelemetryMount"></div>
+    </section>
+
+    <!-- 4. Growth Tracker -->
+    <section class="phenology-section" id="cropPhenologySection">
+      <div id="cropPhenologyMount"></div>
+    </section>
+
+    <!-- 5. Safe to Spray -->
+    <section class="spray-section" id="sprayWindowSection">
+      <div id="sprayWindowMount"></div>
+    </section>
+
+    <!-- 6. Next 7 Days Weather Forecast -->
+    <section class="weather-section" id="weatherStripSection">
+      <div class="section-head">
+        <span class="eyebrow" id="weatherTitle"></span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="weather" id="weatherStrip"></div>
+      <p class="deviation" id="weatherDeviation"></p>
+    </section>
+  </section>
+
+  <!-- S8 · Advisory detail -->
+    <section class="starter-card advisory-detail-card" id="viewAdvisory" aria-labelledby="advisoryDetailTitle" hidden>
+      <button class="back-btn" id="advisoryDetailBack" type="button"></button>
+      <div class="advisory-detail__head">
+        <span class="advisory-detail__severity" id="advisoryDetailSeverity" data-severity="info"></span>
+        <span class="advisory-detail__tag" id="advisoryDetailTag"></span>
+      </div>
+      <h1 id="advisoryDetailTitle"></h1>
+      <p class="advisory-detail__body" id="advisoryDetailBody"></p>
+
+      <div class="section-head">
+        <span class="eyebrow" id="advisoryDetailWhyLabel"></span>
+        <span class="section-rule"></span>
+      </div>
+      <p class="advisory-detail__why" id="advisoryDetailWhy"></p>
+
+      <div class="btn-row">
+        <button class="btn btn--primary" id="advisoryDetailAck" type="button"></button>
+        <button class="btn btn--outline" id="advisoryDetailListen" type="button"></button>
+      </div>
+      <p class="field-note" id="advisoryVoiceNote" aria-live="polite"></p>
+    </section>
+
+    <!-- S9 · Mandi price comparison -->
+    <section class="starter-card" id="viewMandi" aria-labelledby="mandiTitle" hidden>
+      <button class="back-btn" id="mandiBack" type="button"></button>
+      <span class="eyebrow" id="mandiStepLabel"></span>
+      <h1 id="mandiTitle"></h1>
+      <p id="mandiHelp"></p>
+
+      <form id="mandiQtyForm" class="mandi-qty-row" novalidate>
+        <div class="field">
+          <label id="lblMandiCrop"></label>
+          <span class="mandi-crop-pill" id="mandiCropDisplay"></span>
+        </div>
+        <div class="field">
+          <label for="mandiQtyInput" id="lblMandiQty"></label>
+          <input class="input" id="mandiQtyInput" type="number" min="1" max="500" step="1"
+                 inputmode="numeric" autocomplete="off">
+        </div>
+        <button class="btn btn--primary btn--sm" id="mandiRecalcBtn" type="submit"></button>
+      </form>
+
+      <div class="mandi-inversion" id="mandiInversion" hidden></div>
+      <div class="mandi-list" id="mandiList"></div>
+    </section>
+
+    <!-- S10 · Help & assigned officer -->
+    <section class="starter-card" id="viewHelp" aria-labelledby="helpTitle" hidden>
+      <button class="back-btn" id="helpBack" type="button"></button>
+      <span class="eyebrow" id="helpStepLabel"></span>
+      <h1 id="helpTitle"></h1>
+      <p id="helpHelp"></p>
+
+      <div class="section-head">
+        <span class="eyebrow" id="officerSectionTitle"></span>
+        <span class="section-rule"></span>
+      </div>
+
+      <div class="officer-contact-card" id="officerCard">
+        <div class="officer-avatar" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h1M9 13h1M9 17h1M15 13h1M15 17h1"/>
+          </svg>
+        </div>
+        <div class="officer-meta">
+          <div class="officer-name" id="officerName"></div>
+          <div class="officer-role" id="officerRole"></div>
+          <div class="officer-district" id="officerDistrict"></div>
+        </div>
+        <div class="officer-actions">
+          <a class="btn btn--primary" id="officerCallBtn" href="tel:"></a>
+          <button class="btn btn--outline" id="officerVisitToggleBtn" type="button"></button>
+        </div>
+      </div>
+
+      <form id="visitForm" class="visit-form" novalidate hidden>
+        <div class="section-head">
+          <span class="eyebrow" id="visitFormTitle"></span>
+          <span class="section-rule"></span>
+        </div>
+        <div class="field">
+          <label for="visitDateInput" id="lblVisitDate"></label>
+          <input class="input" id="visitDateInput" type="date">
+        </div>
+        <div class="field">
+          <label for="visitReasonInput" id="lblVisitReason"></label>
+          <input class="input" id="visitReasonInput" type="text" maxlength="200" autocomplete="off">
+        </div>
+        <p class="form-error" id="visitError" role="alert" hidden></p>
+        <p class="notice-ok" id="visitSuccess" aria-live="polite" hidden></p>
+        <div class="btn-row">
+          <button class="btn btn--primary" id="visitSubmitBtn" type="submit"></button>
+          <button class="btn btn--ghost" id="visitCancelBtn" type="button"></button>
+        </div>
+      </form>
+
+      <div class="section-head" style="margin-top:24px;">
+        <span class="eyebrow" id="helplinesSectionTitle"></span>
+        <span class="section-rule"></span>
+      </div>
+
+      <div class="helpline-list" id="helplinesList">
+        <div class="helpline-card">
+          <div class="helpline-meta">
+            <span class="helpline-name" id="kccName"></span>
+            <span class="helpline-desc" id="kccHours"></span>
+          </div>
+          <a class="btn btn--outline btn--sm" id="kccCallBtn" href="tel:18001801551"></a>
+        </div>
+        <div class="helpline-card">
+          <div class="helpline-meta">
+            <span class="helpline-name" id="disasterName"></span>
+            <span class="helpline-desc" id="disasterHours"></span>
+          </div>
+          <a class="btn btn--outline btn--sm" id="disasterCallBtn" href="tel:1077"></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- S6.5 Profile / S11 My Farm Overview -->
+    <section class="starter-card" id="viewProfile" aria-labelledby="profileTitle" hidden>
+      <div id="profileFormSection">
+        <span class="eyebrow" id="profileStepLabel">Account setup</span>
+        <h1 id="profileTitle">Tell us your name</h1>
+        <p id="profileHelp">This is how your local agriculture officer will address you.</p>
+
+        <form id="profileForm" novalidate>
+          <div class="field">
+            <label for="displayNameInput" id="lblName">Your name</label>
+            <input class="input" id="displayNameInput" type="text"
+                   autocomplete="name" maxlength="80">
+          </div>
+          <p class="form-error" id="profileError" role="alert" hidden></p>
+          <div class="btn-row">
+            <button class="btn btn--primary" id="profileSaveBtn" type="submit"></button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Mode 2: Full S11 My Farm & Profile Overview -->
+      <div id="profileOverviewSection" hidden>
+        <div class="home-head">
+          <span class="home-avatar" id="profileAvatar" aria-hidden="true"></span>
+          <div>
+            <h1 id="profileNameDisplay" class="home-hello" style="font-size:24px;"></h1>
+            <p class="home-farmline" id="profilePhoneDisplay"></p>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <span class="eyebrow" id="profileFarmOverviewTitle"></span>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="profile-details-list">
+          <!-- Location Row -->
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileLoc"></span>
+              <span class="profile-detail-val" id="profileLocVal"></span>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="btnEditLoc" type="button"></button>
+          </div>
+
+          <!-- Land Row -->
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileLand"></span>
+              <span class="profile-detail-val" id="profileLandVal"></span>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="btnEditLand" type="button"></button>
+          </div>
+
+          <!-- Crop Row -->
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileCrop"></span>
+              <span class="profile-detail-val" id="profileCropVal"></span>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="btnEditCrop" type="button"></button>
+          </div>
+
+          <!-- Language Row -->
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileLang"></span>
+              <span class="profile-detail-val" id="profileLangVal"></span>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="btnEditLang" type="button"></button>
+          </div>
+
+          <!-- API Key Row -->
+          <div class="profile-detail-row" style="flex-direction:column; gap:8px;">
+            <div class="profile-detail-meta" style="width:100%;">
+              <span class="profile-detail-label" id="sarvamKeyLabel">Sarvam API Key</span>
+              <span class="profile-detail-val" id="sarvamKeyStatus" style="font-size:12px; opacity:0.7;"></span>
+            </div>
+            <div style="display:flex; gap:6px; width:100%;">
+              <input class="input" id="sarvamKeyInput" type="password" placeholder="Paste Sarvam.ai key"
+                     autocomplete="off" style="flex:1; font-size:13px;">
+              <button class="btn btn--ghost btn--sm" id="sarvamKeySave" type="button" style="white-space:nowrap;">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top: 24px;">
+          <button class="btn btn--outline" id="profileSignoutBtn" type="button"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- O1–O6 · Officer triage and distress caseload dashboard -->
+    <section class="starter-card officer-card" id="viewOfficer" aria-labelledby="officerDashTitle" hidden>
+      <div class="home-head">
+        <span class="home-avatar" style="background:hsl(var(--sky)); color:#ffffff; font-size:20px; display:flex; align-items:center; justify-content:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h1M9 13h1M9 17h1M15 13h1M15 17h1"/>
+          </svg>
+        </span>
+        <div>
+          <h1 id="officerDashTitle" class="home-hello" style="font-size:24px;"></h1>
+          <p class="home-farmline" id="officerJurisdictionLine"></p>
+        </div>
+      </div>
+
+      <!-- Distress Band Summary Cards -->
+      <div class="officer-stats-grid">
+        <div class="stat-tile stat-tile--critical" data-filter="CRITICAL">
+          <span class="stat-tile__count" id="statCriticalCount">0</span>
+          <span class="stat-tile__label" id="statCriticalLabel">Critical Risk</span>
+        </div>
+        <div class="stat-tile stat-tile--high" data-filter="HIGH">
+          <span class="stat-tile__count" id="statHighCount">0</span>
+          <span class="stat-tile__label" id="statHighLabel">High Risk</span>
+        </div>
+        <div class="stat-tile stat-tile--medium" data-filter="MEDIUM">
+          <span class="stat-tile__count" id="statMediumCount">0</span>
+          <span class="stat-tile__label" id="statMediumLabel">Moderate Risk</span>
+        </div>
+        <div class="stat-tile" data-filter="ALL">
+          <span class="stat-tile__count" id="statTotalCount">0</span>
+          <span class="stat-tile__label" id="statTotalLabel">Total Monitored</span>
+        </div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="officer-search-row">
+        <input class="input" id="officerSearchInput" type="search" placeholder="Search farmer or village...">
+        <div class="officer-filter-chips" id="officerFilterChips">
+          <button class="filter-chip filter-chip--active" data-band="ALL" type="button" id="filterAllBtn">All</button>
+          <button class="filter-chip" data-band="CRITICAL" type="button" id="filterCriticalBtn">Critical</button>
+          <button class="filter-chip" data-band="HIGH" type="button" id="filterHighBtn">High</button>
+          <button class="filter-chip" data-band="MEDIUM" type="button" id="filterMediumBtn">Moderate</button>
+          <button class="filter-chip" data-band="LOW" type="button" id="filterLowBtn">Low</button>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <span class="eyebrow" id="officerCaseloadHeading"></span>
+        <span class="section-rule"></span>
+      </div>
+
+      <!-- Caseload List -->
+      <div class="officer-caseload-list" id="officerCaseloadList"></div>
+
+      <div class="btn-row" style="margin-top: 28px;">
+        <button class="btn btn--outline" id="officerSignoutBtn" type="button">Sign Out</button>
+      </div>
+    </section>
+
+    <!-- Module 5: My Loan -->
+    <section class="starter-card" id="viewLoan" aria-labelledby="loanTitle" hidden>
+      <span class="eyebrow" id="loanStepLabel"></span>
+      <h1 id="loanTitle"></h1>
+      <p id="loanHelp" class="field-note" style="margin-top: 4px;"></p>
+
+      <form id="loanForm" novalidate style="margin-top: 16px;">
+        <div class="field">
+          <label for="loanAmountInput" id="lblLoanAmount"></label>
+          <input class="input" id="loanAmountInput" type="number" min="0" step="5000">
+        </div>
+        <div class="field">
+          <label for="loanTenureInput" id="lblLoanTenure"></label>
+          <input class="input" id="loanTenureInput" type="number" min="1" step="1">
+        </div>
+        <div class="field">
+          <label for="loanRateInput" id="lblLoanRate"></label>
+          <input class="input" id="loanRateInput" type="number" min="0" max="50" step="0.1">
+        </div>
+        
+        <div class="btn-row" style="margin-top: 16px;">
+          <button class="btn btn--primary" id="loanCalcBtn" type="submit"></button>
+        </div>
+      </form>
+
+      <div id="loanResultBox" style="margin-top: 24px;" hidden>
+        <div class="section-head">
+          <span class="eyebrow" id="loanResultTitle"></span>
+          <span class="section-rule"></span>
+        </div>
+        
+        <div class="profile-details-list">
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblLoanEmi"></span>
+              <span class="profile-detail-val" id="valLoanEmi"></span>
+            </div>
+          </div>
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblLoanTotalInterest"></span>
+              <span class="profile-detail-val" id="valLoanTotalInterest"></span>
+            </div>
+          </div>
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblLoanTotalPayment"></span>
+              <span class="profile-detail-val" id="valLoanTotalPayment"></span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; padding: 12px; background: hsl(var(--primary) / .08); border-radius: var(--radius); border: 1px solid hsl(var(--primary) / .2);">
+          <p id="loanKccNote" style="font-size: 12.5px; line-height: 1.4; color: hsl(var(--primary));"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- S7–S11 Farmer Tab Navigation -->
+    <nav class="farmer-nav" id="farmerNav" aria-label="Farmer navigation" hidden>
+      <button class="farmer-nav__btn" data-route="home" type="button" aria-current="page">
+        <span class="farmer-nav__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 20h10M12 20v-8M12 12c-3-4-8-4-8-4s0 6 5 6h3zM12 12c3-4 8-4 8-4s0 6-5 6h-3z"/>
+          </svg>
+        </span>
+        <span class="farmer-nav__label" id="navHomeLabel">Home</span>
+      </button>
+      <button class="farmer-nav__btn" data-route="mandi" type="button">
+        <span class="farmer-nav__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1zM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10M12 3v18M3 7h18"/>
+          </svg>
+        </span>
+        <span class="farmer-nav__label" id="navMandiLabel">Mandi</span>
+      </button>
+      <button class="farmer-nav__btn" data-route="loan" type="button">
+        <span class="farmer-nav__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+        </span>
+        <span class="farmer-nav__label" id="navLoanLabel">Loans</span>
+      </button>
+      <button class="farmer-nav__btn" data-route="help" type="button">
+        <span class="farmer-nav__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </span>
+        <span class="farmer-nav__label" id="navHelpLabel">Help</span>
+      </button>
+      <button class="farmer-nav__btn" data-route="profile" type="button">
+        <span class="farmer-nav__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
+        <span class="farmer-nav__label" id="navProfileLabel">Profile</span>
+      </button>
+    </nav>
+  </main>
+
+  <section class="language-gate" id="languageGate" aria-labelledby="languageTitle" role="dialog" aria-modal="true">
+    <div class="language-gate__content">
+      <span class="eyebrow">Kisan Saathi</span>
+      <h1 id="languageTitle">Choose your language</h1>
+      <p id="languagePrompt">You can change this any time.</p>
+      <div class="language-grid" id="languageGrid" aria-label="Available languages"></div>
+      <p class="voice-note" id="voiceNote" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <script type="module" src="assets/js/farmer.js"></script>
+</body>
+</html>

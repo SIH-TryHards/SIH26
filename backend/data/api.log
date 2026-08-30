@@ -1,0 +1,24 @@
+[auth] otp_mode=stub officer=OFF-1001
+INFO:     127.0.0.1:59814 - "GET /api/v1/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52088 - "GET /api/v1/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49941 - "OPTIONS /api/v1/farmers/me/profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56184 - "OPTIONS /api/v1/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56184 - "GET /api/v1/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56184 - "OPTIONS /api/v1/farmers/me/profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56184 - "POST /api/v1/farmers/me/profile HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56184 - "POST /api/v1/farmers/me/profile HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64628 - "OPTIONS /api/v1/auth/logout HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64628 - "POST /api/v1/auth/logout HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64628 - "OPTIONS /api/v1/auth/otp/request HTTP/1.1" 200 OK
+[OTP] 9692225447 -> 692765
+INFO:     127.0.0.1:64628 - "POST /api/v1/auth/otp/request HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64628 - "OPTIONS /api/v1/auth/otp/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64628 - "POST /api/v1/auth/otp/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64628 - "POST /api/v1/farmers/me/profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63826 - "POST /api/v1/auth/logout HTTP/1.1" 200 OK
+[OTP] 9692225447 -> 898441
+INFO:     127.0.0.1:63279 - "POST /api/v1/auth/otp/request HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53304 - "POST /api/v1/auth/otp/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53304 - "OPTIONS /api/v1/farmers/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53304 - "GET /api/v1/farmers/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56550 - "OPTIONS /api/v1/health HTTP/1.1" 400 Bad Request

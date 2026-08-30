@@ -1,0 +1,21 @@
+INTERNAL HACKATHON 2026
+
+Judging Scheme (SIH-style): Idea/Innovation · Technical Feasibility · Impact · Prototype/MVP Quality · Presentation
+Deliverables: Prototype/MVP  +  PPT (SIH-style)  +  3-min YouTube Demo Video
+
+Feasibility for Internal Round:  All 7 problem statements below are scoped to be realistically buildable as a prototype/MVP within a typical internal hackathon window . Each includes the minimum viable version judges should expect — anything beyond that is explicitly marked as a stretch goal, not a requirement.
+
+Smart Crop Advisory & Farmer Distress Early-Warning System
+
+Category: Software    Theme: Agriculture, FoodTech & Rural Development
+Background
+Farmers often lack timely, localized advisory on crop health, weather risk, and market prices — leading to crop loss, debt distress, and delayed government scheme access.
+Description
+Develop a multilingual, low-bandwidth platform that combines weather APIs, soil/crop data, and market price feeds to give real-time, hyperlocal advisory. Include a distress-prediction module (using indicators like erratic rainfall + price crash + loan due dates) to proactively flag farmers who may need govt./NGO intervention.
+Expected Outcomes
+•Regional-language advisory (voice + text, works on basic smartphones)
+•Predictive distress-risk score with alert routing to local agri-officers
+•Market price + mandi comparison module
+Implementation Notes:  Treat this as two connected modules: an advisory engine (rainfall/soil/crop data in, plain-language recommendation out, in the farmer's language) and a distress-risk scorer (a simple weighted rule or small model combining 2-3 signals like rainfall deviation, price drop, and loan due-date proximity). For the demo, simulated/sample district-level data is completely fine — judges care about whether the logic is sound and the output is genuinely usable by a non-technical farmer, not whether it's connected to live government data feeds.
+
+Note: These are modeled closely on the recurring style, structure, and themes SIH uses year to year (per the official sih.gov.in theme list), not verbatim copies of any specific past PS .

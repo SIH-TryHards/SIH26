@@ -1,0 +1,88 @@
+
+
+1. Product & MVP
+
+What exactly should our final prototype do?
+What are the absolute must-have features for the hackathon?
+What should be considered stretch goals?
+What will the complete farmer workflow look like?
+What will the agri-officer workflow look like?
+
+2. System Architecture
+
+What overall architecture should we use?
+Monolithic vs modular monolith vs microservices?
+What major modules/services do we need?
+How will the Farmer App, Officer Dashboard, backend, database, advisory engine, risk engine, and market module communicate?
+
+3. Technology Stack
+
+Which frontend framework should we use and why?
+Which backend framework?
+Which database?
+What should we use for maps, charts, authentication, voice/text, translation, etc.? Especially for Indic languages such as Hindi, Marathi, Gujrati, Telugu, Tamil, Malayalam, Kannada, Odia, Bengali etc..etc..
+Which choices are fastest and safest for a hackathon rather than unnecessarily complex?
+
+4. Data & Database Design
+
+What data entities do we need? Farmer, Farm, Crop, Weather, Market Price, Loan, Risk Assessment, Advisory, etc.
+What fields should each contain?
+Which data will be simulated and which can come from APIs?
+How should the data flow through the system?
+
+5. Advisory Engine
+
+What inputs should the advisory engine consider?
+How should weather + crop + soil + growth stage translate into actionable recommendations?
+Should we use rule-based logic, an ML model, or a combination?
+How will multilingual text and voice be generated?
+
+6. Distress-Risk Engine
+
+Which signals should contribute to the risk score?
+How should rainfall deviation, market price decline, and loan due dates be weighted?
+What should LOW / MEDIUM / HIGH / CRITICAL thresholds be?
+How do we make the score explainable so an officer can see why a farmer is at risk?
+
+7. Mandi Comparison
+
+What information should farmers see?
+Should we only compare prices or also consider distance/transport cost and estimated net revenue?
+
+8. Frontend/UI
+
+What screens do we actually need?
+How do we make the farmer interface simple, low-bandwidth, and usable by non-technical users?
+What should the officer dashboard show?
+
+9. API & Integration
+
+What APIs/endpoints do we need?
+What request/response structure should we agree on before frontend and backend development starts?
+How will different team members work independently without breaking each other's modules?
+
+10. Team & GitHub Workflow
+
+How should the 6 members divide responsibilities?
+What branch strategy should we use?
+How will we handle issues, pull requests, code reviews, and integration?
+
+11. Demo Strategy
+
+What exact scenario should we demonstrate in the 3-minute video?
+What sample farmers/data should we create to demonstrate LOW, MEDIUM, and HIGH/CRITICAL risk?
+What part of the system should be our main innovation/highlight?
+
+12. Final Decisions
+By the end of this discussion, we should have:
+
+finalized MVP scope
+finalized tech stack
+finalized architecture
+finalized database structure
+finalized core algorithms/rules
+finalized API structure
+assigned responsibilities
+agreed GitHub workflow
+agreed development order
+

@@ -1,0 +1,143 @@
+/* Kisan Setu - Clean Modern Agricultural Theme & Refined UI */
+@import url('https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Rozha+One&display=swap');
+
+:root {
+  --primary-green: #1b4332;
+  --forest-green: #2d6a4f;
+  --leaf-green: #40916c;
+  --light-green: #52b788;
+  --mint-bg: #f0fdf4;
+  --soil-brown: #582f0e;
+  --terracotta: #c84b31;
+  --wheat-gold: #e9c46a;
+  --mustard-yellow: #f4a261;
+  --clean-bg: #f8fafc;
+}
+
+body {
+  font-family: 'Outfit', 'Hind', system-ui, -apple-system, sans-serif;
+  background-color: var(--clean-bg);
+  color: #0f172a;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+.font-desi-heading {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Touch targets and form controls */
+input, select, button {
+  min-height: 44px;
+}
+
+/* Clean Modern Card */
+.desi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.desi-card:hover {
+  box-shadow: 0 8px 20px -4px rgba(45, 106, 79, 0.12);
+  border-color: #cbd5e1;
+}
+
+.desi-card-gold {
+  border-top: 4px solid #f59e0b;
+}
+
+.desi-card-green {
+  border-top: 4px solid #10b981;
+}
+
+.desi-card-red {
+  border-top: 4px solid #ef4444;
+}
+
+/* Audio Wave Animation for Voice Reader */
+.audio-bar {
+  width: 3px;
+  background-color: #10b981;
+  border-radius: 2px;
+  animation: audioWave 1.2s ease-in-out infinite;
+}
+
+.audio-bar:nth-child(1) { height: 10px; animation-delay: 0.1s; }
+.audio-bar:nth-child(2) { height: 18px; animation-delay: 0.3s; }
+.audio-bar:nth-child(3) { height: 14px; animation-delay: 0.2s; }
+.audio-bar:nth-child(4) { height: 22px; animation-delay: 0.4s; }
+.audio-bar:nth-child(5) { height: 15px; animation-delay: 0.25s; }
+
+@keyframes audioWave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+/* Distress Pulse Animation */
+@keyframes distressPulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+  70% { box-shadow: 0 0 0 14px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+.distress-pulse-active {
+  animation: distressPulse 2s infinite;
+}
+
+/* Low-Bandwidth Mode */
+.low-bandwidth * {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+}
+
+/* Gauge SVG */
+.gauge-svg {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.gauge-meter-bg {
+  stroke: #f1f5f9;
+}
+
+.gauge-meter-value {
+  stroke-dasharray: 283;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease, stroke 0.4s ease;
+}
+
+/* Range Slider */
+input[type=range] {
+  accent-color: #059669;
+}
+
+/* Hide scrollbar for clean horizontal navigation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Print Styling */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .desi-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}
