@@ -52,3 +52,63 @@ export const OFFICER = {
   district: 'Nashik',
   phone: '+919000010001',   /* demo number */
 };
+
+/* Official scheme directory copied as data, not as UI, from the
+   Krishi Sethi reference. Keep every external destination explicit
+   so the Help screen can render the same safe card component. */
+export const GOVERNMENT_SCHEMES = [
+  {
+    id: 'pm-kisan',
+    category: 'Income support',
+    title: 'PM-Kisan Samman Nidhi',
+    description: 'Income support information and beneficiary status for eligible landholding farmers.',
+    url: 'https://pmkisan.gov.in/',
+    helplines: [
+      { label: '155261', href: 'tel:155261' },
+      { label: '011-24300606', href: 'tel:01124300606' },
+    ],
+  },
+  {
+    id: 'pmfby',
+    category: 'Crop insurance',
+    title: 'Pradhan Mantri Fasal Bima Yojana (PMFBY)',
+    description: 'Crop insurance information, claim guidance, and policy status through the official portal.',
+    url: 'https://pmfby.gov.in/',
+    helplines: [
+      { label: '14447', href: 'tel:14447' },
+      { label: '1800-180-1551', href: 'tel:18001801551' },
+    ],
+  },
+  {
+    id: 'machinery',
+    category: 'Equipment subsidy',
+    title: 'Farm Equipment & Machinery Subsidies',
+    description: 'Government assistance information for eligible farm machinery and equipment purchases.',
+    url: 'https://agrimachinery.nic.in/index/index',
+    helplines: [],
+  },
+  {
+    id: 'kcc',
+    category: 'Credit & loans',
+    title: 'Kisan Credit Card (KCC)',
+    description: 'Learn about crop-credit access, interest support, and the application route through official channels.',
+    url: 'https://agricoop.nic.in',
+    helplines: [{ label: '1800-11-2211', href: 'tel:1800112211' }],
+  },
+  {
+    id: 'pmksy',
+    category: 'Irrigation',
+    title: 'Pradhan Mantri Krishi Sinchayee Yojana (PMKSY)',
+    description: 'Official irrigation and water-use assistance information for eligible farmers.',
+    url: 'https://pmksy.gov.in',
+    helplines: [],
+  },
+  {
+    id: 'enam',
+    category: 'Mandi trading',
+    title: 'National Agriculture Market (e-NAM)',
+    description: 'Electronic trading information for connecting participating agricultural markets across India.',
+    url: 'https://enam.gov.in',
+    helplines: [{ label: '1800-270-0224', href: 'tel:18002700224' }],
+  },
+];

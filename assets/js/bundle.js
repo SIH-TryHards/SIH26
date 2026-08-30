@@ -6493,6 +6493,96 @@
     visitSuccess.hidden = false;
     visitReasonInput.value = "";
   }
+  function renderDistressMonitor() {
+    const mount = $("distressMonitorMount");
+    if (!mount)
+      return;
+    mount.innerHTML = `
+    <div class="distress-card" style="margin-top:16px;">
+      <div class="distress-header">
+        <div>
+          <h3 style="font-size:14px; font-weight:800; color:hsl(var(--foreground));">Predictive Distress Risk & Early Warning</h3>
+          <span style="font-size:11px; color:hsl(var(--muted-foreground));">3-Factor Algorithm: Rain + Price + Loan</span>
+        </div>
+        <div class="distress-score" style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; padding:4px 8px; border-radius:12px; font-weight:800; font-size:12px;">
+          High Distress: 85/100
+        </div>
+      </div>
+      <div class="distress-factors" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px;">
+        <div style="background:hsl(var(--muted)); padding:10px; border-radius:var(--radius); text-align:center;">
+          <div style="font-size:10px; color:hsl(var(--muted-foreground));">3-Day Rain</div>
+          <div style="font-size:13px; font-weight:700;">76 mm</div>
+          <div style="font-size:10px; color:#b91c1c; margin-top:4px;">Inundation Risk</div>
+        </div>
+        <div style="background:hsl(var(--muted)); padding:10px; border-radius:var(--radius); text-align:center;">
+          <div style="font-size:10px; color:hsl(var(--muted-foreground));">Mandi vs MSP</div>
+          <div style="font-size:13px; font-weight:700;">-\u20B91,175</div>
+          <div style="font-size:10px; color:#b91c1c; margin-top:4px;">Price Crash</div>
+        </div>
+        <div style="background:hsl(var(--muted)); padding:10px; border-radius:var(--radius); text-align:center;">
+          <div style="font-size:10px; color:hsl(var(--muted-foreground));">Loan Due</div>
+          <div style="font-size:13px; font-weight:700;">3 Days</div>
+          <div style="font-size:10px; color:#b91c1c; margin-top:4px;">Imminent</div>
+        </div>
+      </div>
+    </div>
+  `;
+  }
+  function renderLoanSchedule(result) {
+    const statusMount = $("loanStatusCards");
+    if (statusMount) {
+      statusMount.innerHTML = `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+        <div style="background:hsl(var(--primary)/.1); padding:16px; border-radius:var(--radius); text-align:center; border:1px solid hsl(var(--primary)/.2);">
+          <div style="font-size:11px; font-weight:700; color:hsl(var(--primary)); text-transform:uppercase;">Monthly EMI</div>
+          <div style="font-size:24px; font-weight:800; color:hsl(var(--foreground)); line-height:1.2; margin-top:4px;">\u20B9${Math.round(result.emi).toLocaleString("en-IN")}</div>
+          <div style="font-size:11px; color:hsl(var(--muted-foreground)); mt:4px;">Total Payable: \u20B9${Math.round(result.totalPayment).toLocaleString("en-IN")}</div>
+        </div>
+        <div style="background:hsl(var(--card)); padding:16px; border-radius:var(--radius); text-align:center; border:1px solid hsl(var(--border)); display:flex; flex-direction:column; justify-content:center;">
+          <div style="font-size:11px; font-weight:700; color:hsl(var(--muted-foreground)); text-transform:uppercase;">Total Interest</div>
+          <div style="font-size:20px; font-weight:800; color:hsl(var(--foreground)); line-height:1.2; margin-top:4px;">\u20B9${Math.round(result.totalInterest).toLocaleString("en-IN")}</div>
+        </div>
+      </div>
+    `;
+    }
+    const tableMount = $("loanScheduleMount");
+    if (tableMount && result.schedule) {
+      tableMount.innerHTML = `
+      <div class="section-head"><span class="eyebrow">Monthly Installment Schedule</span><span class="section-rule"></span></div>
+      <div class="mandi-table-wrapper" style="max-height: 400px; overflow-y: auto;">
+        <table class="mandi-table">
+          <thead style="position: sticky; top: 0; background: hsl(var(--muted)); z-index: 10;">
+            <tr>
+              <th style="width: 40px; text-align:center;">Paid</th>
+              <th>Due Date</th>
+              <th>Base EMI</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${result.schedule.map((s) => {
+        const isPaid = s.month <= 6;
+        return `
+                <tr>
+                  <td style="text-align:center;">
+                    <input type="checkbox" ${isPaid ? "checked" : ""} style="accent-color:hsl(var(--primary)); transform:scale(1.2);">
+                  </td>
+                  <td style="font-weight:600;">${new Date(s.date).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}</td>
+                  <td style="font-weight:700; color:hsl(var(--foreground));">\u20B9${Math.round(s.emi).toLocaleString("en-IN")}</td>
+                  <td style="color:hsl(var(--muted-foreground));">\u20B9${Math.round(s.principal).toLocaleString("en-IN")}</td>
+                  <td style="color:hsl(var(--muted-foreground));">\u20B9${Math.round(s.interest).toLocaleString("en-IN")}</td>
+                  <td style="font-weight:700;">\u20B9${Math.round(s.balance).toLocaleString("en-IN")}</td>
+                </tr>
+              `;
+      }).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+    }
+  }
   function renderLoan() {
     const data = getLoanData();
     if (data) {
@@ -6501,9 +6591,8 @@
       $("loanRateInput").value = data.rate || "";
       if (data.amount > 0 && data.tenureMonths > 0 && data.rate > 0) {
         const result = generateSchedule(data.amount, data.rate, data.tenureMonths);
-        $("valLoanEmi").textContent = `\u20B9${Math.round(result.emi).toLocaleString("en-IN")}`;
-        $("valLoanTotalInterest").textContent = `\u20B9${Math.round(result.totalInterest).toLocaleString("en-IN")}`;
-        $("valLoanTotalPayment").textContent = `\u20B9${Math.round(result.totalPayment).toLocaleString("en-IN")}`;
+        renderDistressMonitor();
+        renderLoanSchedule(result);
         $("loanResultBox").hidden = false;
       } else {
         $("loanResultBox").hidden = true;

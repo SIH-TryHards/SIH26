@@ -373,7 +373,8 @@
       <div class="officer-contact-card" id="officerCard">
         <div class="officer-avatar" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h1M9 13h1M9 17h1M15 13h1M15 17h1"/>
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M9.8 9.2a2.3 2.3 0 114.1 1.5c-.7.9-1.9 1.2-1.9 2.5M12 17h.01"/>
           </svg>
         </div>
         <div class="officer-meta">
@@ -426,9 +427,16 @@
             <span class="helpline-name" id="disasterName"></span>
             <span class="helpline-desc" id="disasterHours"></span>
           </div>
-          <a class="btn btn--outline btn--sm" id="disasterCallBtn" href="tel:1077"></a>
+          <a class="btn btn--outline btn--sm" id="disasterCallBtn" href="tel:18001208040"></a>
         </div>
       </div>
+
+      <div class="section-head schemes-heading">
+        <span class="eyebrow" id="schemesTitle"></span>
+        <span class="section-rule"></span>
+      </div>
+      <p class="section-intro" id="schemesIntro"></p>
+      <div class="scheme-grid" id="schemeGrid"></div>
     </section>
 
     <!-- S6.5 Profile / S11 My Farm Overview -->
@@ -612,31 +620,15 @@
           <span class="eyebrow" id="loanResultTitle"></span>
           <span class="section-rule"></span>
         </div>
-        
-        <div class="profile-details-list">
-          <div class="profile-detail-row">
-            <div class="profile-detail-meta">
-              <span class="profile-detail-label" id="lblLoanEmi"></span>
-              <span class="profile-detail-val" id="valLoanEmi"></span>
-            </div>
-          </div>
-          <div class="profile-detail-row">
-            <div class="profile-detail-meta">
-              <span class="profile-detail-label" id="lblLoanTotalInterest"></span>
-              <span class="profile-detail-val" id="valLoanTotalInterest"></span>
-            </div>
-          </div>
-          <div class="profile-detail-row">
-            <div class="profile-detail-meta">
-              <span class="profile-detail-label" id="lblLoanTotalPayment"></span>
-              <span class="profile-detail-val" id="valLoanTotalPayment"></span>
-            </div>
-          </div>
+
+        <div id="distressMonitorMount"></div>
+        <div id="loanStatusCards" class="loan-status-grid"></div>
+
+        <div class="loan-note">
+          <p id="loanKccNote"></p>
         </div>
 
-        <div style="margin-top: 16px; padding: 12px; background: hsl(var(--primary) / .08); border-radius: var(--radius); border: 1px solid hsl(var(--primary) / .2);">
-          <p id="loanKccNote" style="font-size: 12.5px; line-height: 1.4; color: hsl(var(--primary));"></p>
-        </div>
+        <div id="loanScheduleMount" class="loan-schedule-mount"></div>
       </div>
     </section>
 
@@ -669,7 +661,8 @@
       <button class="farmer-nav__btn" data-route="help" type="button">
         <span class="farmer-nav__icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M9.8 9.2a2.3 2.3 0 114.1 1.5c-.7.9-1.9 1.2-1.9 2.5M12 17h.01"/>
           </svg>
         </span>
         <span class="farmer-nav__label" id="navHelpLabel">Help</span>

@@ -14,7 +14,7 @@ import { fetchWeather } from '../services/weather.js';
 import { buildAdvisories } from '../advisory.js';
 import { getMandisForDistrict, getPrices } from '../services/simPrices.js';
 import { rankMandis } from '../mandi.js';
-import { FREIGHT_PER_KM, MANDI_FEE_PCT } from '../data.js';
+import { FREIGHT_PER_KM, MANDI_FEE_PCT, GOVERNMENT_SCHEMES } from '../data.js';
 
 async function request(path, { method = 'POST', body, token } = {}) {
   let res;
@@ -139,6 +139,10 @@ export const apiRepository = {
   /* ---- S10 officer contact card ---- */
   getOfficerContact() {
     return { name: 'A. Kulkarni', phone: '+919876543210', district: 'Nashik' };
+  },
+
+  getGovernmentSchemes() {
+    return GOVERNMENT_SCHEMES;
   },
 
   /* ---- S10 visit request (local until backend persists) ---- */

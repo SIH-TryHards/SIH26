@@ -217,8 +217,11 @@ const en = {
   'help.helplinesTitle': 'Emergency Helplines',
   'help.kcc': 'Kisan Call Centre (Toll Free)',
   'help.kccPhone': '1800-180-1551',
+  'help.kccSupport': 'Free crop and farming guidance by phone.',
   'help.disasterLine': 'State Crop Distress & Disaster Line',
   'help.disasterPhone': '1800-120-8040',
+  'help.disasterSupport': 'Use this line for crop-loss and disaster support.',
+  'help.schemesIntro': 'Official portals for income support, insurance, credit, irrigation, equipment, and mandi access.',
 
 
   'loan.title': 'Plan Your Farm Loan',

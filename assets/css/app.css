@@ -46,6 +46,11 @@
 
 * { box-sizing: border-box; }
 
+::selection {
+  background: hsl(84 72% 62%);
+  color: hsl(128 28% 14%);
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -126,6 +131,9 @@ button { font: inherit; color: inherit; }
   padding: 10px 20px;
   border: 1px solid transparent;
   border-radius: calc(var(--radius) - 2px);
+  text-decoration: none;
+  white-space: normal;
+  appearance: none;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -134,6 +142,12 @@ button { font: inherit; color: inherit; }
 }
 
 .btn:active { transform: scale(.98); }
+
+.btn--sm {
+  min-height: 40px;
+  padding: 7px 13px;
+  font-size: 13px;
+}
 
 .btn--primary {
   background: hsl(var(--primary));
@@ -1136,6 +1150,10 @@ button { font: inherit; color: inherit; }
 /* ---------- S10 Help styles ---------- */
 
 .officer-contact-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
   padding: 16px;
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
@@ -1180,6 +1198,21 @@ button { font: inherit; color: inherit; }
   color: hsl(var(--primary));
 }
 
+.officer-district {
+  margin: 1px 0 0;
+  font-size: 12px;
+  font-weight: 650;
+  color: hsl(var(--primary));
+}
+
+.officer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
 .visit-form {
   padding: 14px;
   border: 1px solid hsl(var(--border));
@@ -1193,6 +1226,67 @@ button { font: inherit; color: inherit; }
   flex-direction: column;
   gap: 8px;
 }
+
+.helpline-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  background: hsl(var(--card));
+}
+
+.helpline-meta { min-width: 0; }
+.helpline-name { display: block; font-size: 13.5px; font-weight: 700; }
+.helpline-desc { display: block; margin-top: 3px; color: hsl(var(--muted-foreground)); font-size: 12px; }
+
+.section-intro {
+  margin: -3px 0 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.schemes-heading { margin-top: 28px; }
+
+.scheme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.scheme-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--card));
+  box-shadow: var(--shadow-sm);
+}
+
+.scheme-card__category {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border: 1px solid hsl(var(--ring) / .45);
+  border-radius: 999px;
+  color: hsl(32 70% 30%);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.scheme-card h3 { margin: 0; font-size: 15px; line-height: 1.3; }
+.scheme-card p { flex: 1; margin: 0; color: hsl(var(--muted-foreground)); font-size: 12.5px; line-height: 1.45; }
+.scheme-card__link { width: 100%; min-height: 40px; font-size: 13px; }
+.scheme-card__helplines { color: hsl(var(--muted-foreground)); font-size: 11px; line-height: 1.45; }
+.scheme-card__helplines a { color: hsl(var(--primary)); font-weight: 700; text-decoration: none; }
+.scheme-card__helplines a:hover { text-decoration: underline; }
 
 .helpline-item {
   display: flex;
@@ -2162,4 +2256,45 @@ button { font: inherit; color: inherit; }
 .best-net-row {
   background: hsl(var(--primary) / 0.05);
   border-left: 3px solid hsl(var(--primary));
+}
+
+/* Farmer-safe predictive support monitor */
+.distress-card {
+  margin: 16px 0 20px;
+  padding: 16px;
+  background: hsl(var(--secondary) / .58);
+  border: 1px solid hsl(var(--primary) / .18);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.distress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.distress-title-wrap { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.distress-icon { display: grid; flex: 0 0 32px; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: hsl(var(--primary)); color: white; }
+.distress-card h3 { margin: 0; font-size: 15px; line-height: 1.3; }
+.distress-card p { margin: 4px 0 0; color: hsl(var(--muted-foreground)); font-size: 12px; line-height: 1.45; }
+.distress-private { padding: 5px 9px; border: 1px solid hsl(var(--primary) / .25); border-radius: 999px; color: hsl(var(--primary)); font-size: 11px; font-weight: 800; white-space: nowrap; }
+.distress-factors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.distress-factor { padding: 10px; border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 3px); background: hsl(var(--card) / .8); }
+.distress-factor span, .distress-factor small { display: block; color: hsl(var(--muted-foreground)); font-size: 11px; }
+.distress-factor strong { display: block; margin: 4px 0 2px; color: hsl(var(--primary)); font-size: 13px; }
+.distress-note { padding-top: 10px; border-top: 1px solid hsl(var(--primary) / .14); }
+
+.loan-note { margin-top: 16px; padding: 12px; border: 1px solid hsl(var(--primary) / .2); border-radius: var(--radius); background: hsl(var(--primary) / .08); }
+.loan-note p { margin: 0; color: hsl(var(--primary)); font-size: 12.5px; line-height: 1.45; }
+.loan-schedule-mount { margin-top: 24px; }
+
+@media (max-width: 560px) {
+  .officer-contact-card { grid-template-columns: auto minmax(0, 1fr); }
+  .officer-actions { grid-column: 1 / -1; justify-content: stretch; }
+  .officer-actions .btn { flex: 1; }
+  .scheme-grid, .distress-factors { grid-template-columns: 1fr; }
+  .helpline-card { align-items: flex-start; flex-direction: column; }
+  .helpline-card .btn { width: 100%; }
 }

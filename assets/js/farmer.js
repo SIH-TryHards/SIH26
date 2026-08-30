@@ -299,8 +299,9 @@ function applyCopy() {
   $('helpStepLabel').textContent = t('nav.help');
   $('helpTitle').textContent = t('help.title');
   $('helpHelp').textContent = t('help.help');
+  $('officerSectionTitle').textContent = t('help.officerTitle');
   $('officerRole').textContent = t('help.officerRole');
-  $('officerCallBtn').textContent = t('help.callBtn');
+  $('officerCallBtn').innerHTML = `${icons.phone(16)}<span>${escapeHtml(t('help.callBtn'))}</span>`;
   $('officerVisitToggleBtn').textContent = t('help.visitBtn');
   $('visitFormTitle').textContent = t('help.visitTitle');
   $('lblVisitDate').textContent = t('help.visitDateLabel');
@@ -308,15 +309,15 @@ function applyCopy() {
   $('visitReasonInput').placeholder = t('help.visitReasonPh');
   $('visitSubmitBtn').textContent = t('help.visitSubmit');
   $('visitCancelBtn').textContent = t('help.visitCancel');
-  $('helplinesTitle').textContent = t('help.helplinesTitle');
+  $('helplinesSectionTitle').textContent = t('help.helplinesTitle');
   $('kccName').textContent = t('help.kcc');
+  $('kccHours').textContent = t('help.kccSupport');
+  $('kccCallBtn').innerHTML = `${icons.phone(15)}<span>${escapeHtml(t('help.kccPhone'))}</span>`;
   $('disasterName').textContent = t('help.disasterLine');
-
+  $('disasterHours').textContent = t('help.disasterSupport');
+  $('disasterCallBtn').innerHTML = `${icons.phone(15)}<span>${escapeHtml(t('help.disasterPhone'))}</span>`;
   $('schemesTitle').textContent = t('help.schemesTitle');
-  $('scheme1Title').textContent = t('help.scheme1Title');
-  $('scheme1Desc').textContent = t('help.scheme1Desc');
-  $('scheme2Title').textContent = t('help.scheme2Title');
-  $('scheme2Desc').textContent = t('help.scheme2Desc');
+  $('schemesIntro').textContent = t('help.schemesIntro');
 
 
   /* Navigation labels */
@@ -1856,8 +1857,28 @@ function renderHelp() {
   const district = meCache?.profile?.district_name ?? draft.districtName ?? officer.district;
 
   $('officerName').textContent = officer.name;
-  $('officerJurisdiction').textContent = `${district} · Maharashtra`;
+  $('officerDistrict').textContent = `${district} · Maharashtra`;
   $('officerCallBtn').href = `tel:${officer.phone}`;
+  $('kccCallBtn').href = 'tel:18001801551';
+  $('disasterCallBtn').href = 'tel:18001208040';
+
+  const schemes = repository.getGovernmentSchemes?.() ?? [];
+  $('schemeGrid').innerHTML = schemes.map((scheme) => `
+    <article class="scheme-card">
+      <span class="scheme-card__category">${escapeHtml(scheme.category)}</span>
+      <h3>${escapeHtml(scheme.title)}</h3>
+      <p>${escapeHtml(scheme.description)}</p>
+      <a class="btn btn--primary scheme-card__link" href="${escapeHtml(scheme.url)}" target="_blank" rel="noopener noreferrer">
+        <span>Visit official portal</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      ${scheme.helplines?.length ? `
+        <div class="scheme-card__helplines">
+          <span>Helpline</span>
+          ${scheme.helplines.map((line) => `<a href="${escapeHtml(line.href)}">${escapeHtml(line.label)}</a>`).join(' / ')}
+        </div>` : ''}
+    </article>
+  `).join('');
 
   // Set min date to tomorrow
   const tomorrow = new Date();
@@ -1911,6 +1932,93 @@ function onVisitSubmit(e) {
 
 /* ---------- Module 5: My Loan ---------- */
 
+
+function renderDistressMonitor() {
+  const mount = $('distressMonitorMount');
+  if (!mount) return;
+
+  /* Farmer-safe presentation: the officer dashboard owns the actual
+     score and band. The farmer only sees that the relevant signals are
+     being monitored and why the information is useful. */
+  mount.innerHTML = `
+    <div class="distress-card">
+      <div class="distress-header">
+        <div class="distress-title-wrap">
+          <span class="distress-icon">${icons.activity(17)}</span>
+          <div>
+            <h3>Predictive Distress Risk &amp; Early Warning Monitor</h3>
+            <p>Rain, mandi prices, and loan timing help your officer prepare timely support.</p>
+          </div>
+        </div>
+        <span class="distress-private">Support watch active</span>
+      </div>
+      <div class="distress-factors">
+        <div class="distress-factor"><span>Rain outlook</span><strong>Monitored</strong><small>Weather-aware support</small></div>
+        <div class="distress-factor"><span>Mandi prices</span><strong>Monitored</strong><small>Market-aware support</small></div>
+        <div class="distress-factor"><span>Loan timing</span><strong>Monitored</strong><small>Reminder-aware support</small></div>
+      </div>
+      <p class="distress-note">Detailed risk assessment stays private to the assigned agriculture officer.</p>
+    </div>
+  `;
+}
+
+function renderLoanSchedule(result) {
+  const statusMount = $('loanStatusCards');
+  if (statusMount) {
+    statusMount.innerHTML = `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+        <div style="background:hsl(var(--primary)/.1); padding:16px; border-radius:var(--radius); text-align:center; border:1px solid hsl(var(--primary)/.2);">
+          <div style="font-size:11px; font-weight:700; color:hsl(var(--primary)); text-transform:uppercase;">Monthly EMI</div>
+          <div style="font-size:24px; font-weight:800; color:hsl(var(--foreground)); line-height:1.2; margin-top:4px;">₹${Math.round(result.emi).toLocaleString('en-IN')}</div>
+          <div style="font-size:11px; color:hsl(var(--muted-foreground)); mt:4px;">Total Payable: ₹${Math.round(result.totalPayment).toLocaleString('en-IN')}</div>
+        </div>
+        <div style="background:hsl(var(--card)); padding:16px; border-radius:var(--radius); text-align:center; border:1px solid hsl(var(--border)); display:flex; flex-direction:column; justify-content:center;">
+          <div style="font-size:11px; font-weight:700; color:hsl(var(--muted-foreground)); text-transform:uppercase;">Total Interest</div>
+          <div style="font-size:20px; font-weight:800; color:hsl(var(--foreground)); line-height:1.2; margin-top:4px;">₹${Math.round(result.totalInterest).toLocaleString('en-IN')}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const tableMount = $('loanScheduleMount');
+  if (tableMount && result.schedule) {
+    tableMount.innerHTML = `
+      <div class="section-head"><span class="eyebrow">Monthly Installment Schedule</span><span class="section-rule"></span></div>
+      <div class="mandi-table-wrapper" style="max-height: 400px; overflow-y: auto;">
+        <table class="mandi-table">
+          <thead style="position: sticky; top: 0; background: hsl(var(--muted)); z-index: 10;">
+            <tr>
+              <th style="width: 40px; text-align:center;">Paid</th>
+              <th>Due Date</th>
+              <th>Base EMI</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${result.schedule.map(s => {
+              const isPaid = s.month <= 6; // Mock 6 months paid
+              return `
+                <tr>
+                  <td style="text-align:center;">
+                    <input type="checkbox" ${isPaid ? 'checked' : ''} style="accent-color:hsl(var(--primary)); transform:scale(1.2);">
+                  </td>
+                  <td style="font-weight:600;">${new Date(s.date).toLocaleDateString('en-IN', {month:'short', year:'numeric'})}</td>
+                  <td style="font-weight:700; color:hsl(var(--foreground));">₹${Math.round(s.emi).toLocaleString('en-IN')}</td>
+                  <td style="color:hsl(var(--muted-foreground));">₹${Math.round(s.principal).toLocaleString('en-IN')}</td>
+                  <td style="color:hsl(var(--muted-foreground));">₹${Math.round(s.interest).toLocaleString('en-IN')}</td>
+                  <td style="font-weight:700;">₹${Math.round(s.balance).toLocaleString('en-IN')}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+}
+
 function renderLoan() {
   const data = storage.getLoanData();
   if (data) {
@@ -1920,10 +2028,9 @@ function renderLoan() {
     
     if (data.amount > 0 && data.tenureMonths > 0 && data.rate > 0) {
       const result = generateSchedule(data.amount, data.rate, data.tenureMonths);
-      $('valLoanEmi').textContent = `₹${Math.round(result.emi).toLocaleString('en-IN')}`;
-      $('valLoanTotalInterest').textContent = `₹${Math.round(result.totalInterest).toLocaleString('en-IN')}`;
-      $('valLoanTotalPayment').textContent = `₹${Math.round(result.totalPayment).toLocaleString('en-IN')}`;
-      $('loanResultBox').hidden = false;
+              renderDistressMonitor();
+        renderLoanSchedule(result);
+        $('loanResultBox').hidden = false;
     } else {
       $('loanResultBox').hidden = true;
     }

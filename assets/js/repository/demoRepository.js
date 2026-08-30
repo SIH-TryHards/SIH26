@@ -6,7 +6,7 @@
    ============================================================ */
 
 import { LOCATION_TREE, SOIL_TYPES, IRRIGATION_TYPES, CROP_CATALOGUE,
-         FREIGHT_PER_KM, MANDI_FEE_PCT, OFFICER } from '../data.js';
+         FREIGHT_PER_KM, MANDI_FEE_PCT, OFFICER, GOVERNMENT_SCHEMES } from '../data.js';
 import { simulateWeather } from '../services/simWeather.js';
 import { getMandisForDistrict, getPrices } from '../services/simPrices.js';
 import { buildAdvisories, calculateStage } from '../advisory.js';
@@ -120,6 +120,10 @@ export const demoRepository = {
   /* ---- S10 officer contact card ---- */
   getOfficerContact() {
     return OFFICER;
+  },
+
+  getGovernmentSchemes() {
+    return GOVERNMENT_SCHEMES;
   },
 
   /* ---- O1–O6 Officer triage and caseload (pathway.md P9–P11) ---- */
