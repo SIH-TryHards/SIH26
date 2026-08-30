@@ -29,5 +29,11 @@ export const SARVAM_LOCALES = {
   te: 'te-IN',
 };
 
-/* ---- connected mode ---- */
-export const API_BASE_URL = 'http://localhost:8001/api/v1';
+/* ---- connected mode (deployment-aware) ----
+   Browser on localhost → local API; otherwise → deployed Render service.
+   Replace YOUR-RENDER-SERVICE with the actual Render URL after deploying. */
+export const API_BASE_URL =
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8001/api/v1'
+    : 'https://YOUR-RENDER-SERVICE.onrender.com/api/v1';

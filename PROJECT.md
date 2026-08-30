@@ -38,6 +38,7 @@
 | M1 | Data & Agronomy Engines | Implement telemetry query, simulated parity, hydrology conversions, 12-crop phenology, spray evaluator, tomorrow action plan in `weather.js`, `simWeather.js`, `advisory.js` | Survey | DONE |
 | M2 | UI Components, Styling & Zero-Emoji Hardening | Build DOM structure, CSS styling, SVG icons, dashboard controller rendering, and clean repo emojis | M1 | DONE |
 | M3 | E2E Integration, Verification & Audit Gate | Execute test suite against complete system, adversarial challenge, and forensic audit | M1, M2, E2E-Track | DONE |
+| M4 | i18n Polish & Full Wiring (Aug 31) | Rewrite all 385 English strings for farmer-friendly plain language (FAO/ICAR-verified terms, grade-6 reading level), add 20+ new keys for phenology/telemetry/spray/tomorrow/distress/loan tables, wire every hard-coded label in `farmer.js` via `t()`, fix missing severity.watch and mandi/loan table headers | M2 | DONE |
 
 ## Interface Contracts
 ### `assets/js/services/weather.js` ↔ `assets/js/farmer.js`

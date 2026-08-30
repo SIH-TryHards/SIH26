@@ -1,23 +1,38 @@
-# SIH26 - Kisan Saathi
+# Kisan Saathi — Precision Crop Advisory & Early Warning
 
-Hey everyone! This is the official repo for our Kisan Saathi project for SIH 26. We're building a Team Based Project on Smart Crop Advisory & Farmer Distress Early-Warning System. 
+Smart crop advisory and farmer distress early-warning platform for SIH 2026. Built for smallholders: plain language, low bandwidth, works on basic smartphones.
 
-### Core Features:
-- **Precision Agronomy Dashoard:** Tracks crop phenology, live wheather (using Open-Meteo API), and microclimatic spray feasiblity.
-- **Mandi Intelligence:** Helps farmers find exactly where to sell for the best *take-home net profit*, instead of just looking at the highest gross price. Shows live modal rates, ranges, and Gov MSP status.
-- **Multilingual Support:** Built-in i18n for English, Hindi, Marathi, Bengali, Tamil, and Telugu.
-- **Distress Early Warning:** Predictive risk scoring based on weather failures, loan EMIs, and mandi price crashes to route help from Agri-Officers.
+### Core Features
+- **Precision Agronomy Dashboard** — Live weather (Open-Meteo), 12-crop phenology tracker, FAO-56 evapotranspiration, soil hydration tiers, spray-window decision engine and tomorrow's action plan. All telemetry renders from `services/weather.js` with full offline fallback via `simWeather.js`.
+- **Mandi Intelligence** — Net take-home ranking (price × quantity − freight − mandi fee). Compares nearby mandis by actual profit, not just quoted price. Live AGMARKNET via backend (`/api/v1/mandi/prices`) with deterministic fallback.
+- **Multilingual (6 languages)** — Hand-curated `i18n.js` with 385 English keys (polished, farmer-friendly, grade-6 reading level) + Hindi, Marathi, Bengali, Tamil, Telugu. Missing keys fall back to English gracefully; geography names can live-translate via Sarvam AI when a key is configured.
+- **Distress Early Warning** — Interactive risk explorer (rain × price × EMI timing) for farmer planning; officer triage dashboard with prioritised caseload, search and action logging.
+- **Advisory Engine** — 7 pure rules (harvest-rain, hold-spray, irrigate, heat, waterlog, rainfed-stress, fungal-watch) emitting `severity/title/body/why` keys — never raw sentences.
 
-### How to run:
-Because we use modern ES6 modules, if you just double click the `index.html` file in your browser, it might throw a CORS error. 
+### How to Run (ES Modules — needs a server)
 
-To fix this, we created a standlaone bundled version! Just open `KisanSaathi_Standalone.html` directly in your browser. No server needed at all.
+**Frontend + Backend (recommended):**
+```bash
+# Terminal 1 — API (port 8001)
+python -m uvicorn backend.app.main:app --port 8001
 
-If u want to edit the code, make sure you rebuild the bundle using esbuild:
-`.\package\esbuild.exe assets/js/farmer.js --bundle --outfile=assets/js/bundle.js`
+# Terminal 2 — Frontend (port 8000)
+python -m http.server 8000
+# open http://localhost:8000/
+```
 
-We're still working on hooking up all the backend API integrations, but the UI is mostly complete for the core demo pathways. 
+**Offline demo (no server):**
+Open `KisanSaathi_Standalone.html` directly — no server needed.
 
-Feel free to open a PR if u find any bugs!
+**Environment:**
+Copy `backend/.env.example` → `backend/.env` and set `JWT_SECRET`, `DATAGOVIN_API_KEY` (optional, for live mandi prices) and `CORS_ORIGINS` if needed.
 
-Credits : Prasanna | Shreyas | Peeyush | Devum | Tejas | XerumGG
+### Project Structure
+- `index.html` — Single-page app shell with 7 farmer views + officer dashboard
+- `assets/js/farmer.js` — Main controller (~2.9k lines, all UI wiring)
+- `assets/js/i18n.js` — 385-key English source + 5 Indian languages
+- `assets/js/advisory.js` — Pure agronomy engines
+- `assets/js/services/weather.js` — Live Open-Meteo provider
+- `backend/app/main.py` — FastAPI + SQLite (port 8001)
+
+Credits: Prasanna · Shreyas · Peeyush · Devum · Tejas · XerumGG

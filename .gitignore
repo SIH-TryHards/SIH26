@@ -26,7 +26,11 @@ yarn-error.log*
 *_cache.json
 .DS_Store
 
+# Reference prototype — not part of main app
+krishi sethi/
+
 # Scratch / Temp files
 scratch_*.txt
+scratch_*.log
 *.tmp
 *.bak

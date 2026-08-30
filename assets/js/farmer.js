@@ -36,8 +36,7 @@ const _el = (id) => document.getElementById(id);
 const $ = (id) => {
   const el = _el(id);
   if (el) return el;
-  /* Return a safe no-op proxy so .textContent = ... never throws */
-  return new Proxy({}, { get: () => '', set: () => true });
+  return document.createElement('div');
 };
 
 const languageGate = $('languageGate');
@@ -1206,12 +1205,12 @@ function renderCropPhenology(draft) {
   const pheno = calculateCropPhenology(crop, sown);
 
   const STAGES_META = [
-    { key: 'sowing', name: 'Sowing' },
-    { key: 'vegetative', name: 'Vegetative' },
-    { key: 'flowering', name: 'Flowering' },
-    { key: 'grain_fill', name: 'Grain Fill' },
-    { key: 'maturity', name: 'Maturity' },
-    { key: 'harvest_ready', name: 'Harvest' }
+    { key: 'sowing', name: t('pheno.sowing') },
+    { key: 'vegetative', name: t('pheno.vegetative') },
+    { key: 'flowering', name: t('pheno.flowering') },
+    { key: 'grain_fill', name: t('pheno.grainFill') },
+    { key: 'maturity', name: t('pheno.maturity') },
+    { key: 'harvest_ready', name: t('pheno.harvest') }
   ];
 
   const daysRemaining = Math.max(0, pheno.totalDuration - pheno.daysElapsed);
@@ -1224,7 +1223,7 @@ function renderCropPhenology(draft) {
             ${icons.sprout(16)} Growth Tracker
           </span>
           <h2 class="phenology-crop-name">${escapeHtml(pheno.cropName)} &mdash; ${escapeHtml(pheno.stageName)}</h2>
-          <p class="phenology-sub">Day ${pheno.daysElapsed} of ${pheno.totalDuration} &middot; Expected Harvest: ${pheno.expectedHarvestDate}</p>
+          <p class="phenology-sub">${escapeHtml(t('pheno.dayOf', { elapsed: pheno.daysElapsed, total: pheno.totalDuration, date: pheno.expectedHarvestDate }))}</p>
         </div>
         <span class="phenology-badge">${pheno.progressPct}% Season Progress</span>
       </div>
@@ -1250,19 +1249,19 @@ function renderCropPhenology(draft) {
 
       <div class="phenology-meta-grid">
         <div class="phenology-meta-item">
-          <span class="phenology-meta-label">Crop Factor (Kc)</span>
+          <span class="phenology-meta-label">${escapeHtml(t('pheno.kc'))}</span>
           <span class="phenology-meta-val">${pheno.kc.toFixed(2)}</span>
         </div>
         <div class="phenology-meta-item">
-          <span class="phenology-meta-label">Thermal Units (GDD)</span>
+          <span class="phenology-meta-label">${escapeHtml(t('pheno.gdd'))}</span>
           <span class="phenology-meta-val">${pheno.gddAccrued} &deg;C-days</span>
         </div>
         <div class="phenology-meta-item">
-          <span class="phenology-meta-label">Stage Duration</span>
+          <span class="phenology-meta-label">${escapeHtml(t('pheno.stageDuration'))}</span>
           <span class="phenology-meta-val">${pheno.daysInStage} / ${pheno.stageDuration} days</span>
         </div>
         <div class="phenology-meta-item">
-          <span class="phenology-meta-label">Days to Harvest</span>
+          <span class="phenology-meta-label">${escapeHtml(t('pheno.daysToHarvest'))}</span>
           <span class="phenology-meta-val">${daysRemaining} days</span>
         </div>
       </div>
@@ -1324,27 +1323,27 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
       <!-- 1. Temperature -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Temperature</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.temp'))}</span>
           <span class="telemetry-card__icon">${icons.thermometer(18)}</span>
         </div>
         <div class="telemetry-card__val">${temp.toFixed(1)} &deg;C</div>
-        <div class="telemetry-card__sub">Max ${weather.tempMaxC ?? 32} &deg;C &middot; Min ${weather.daily?.tempMin ?? 22} &deg;C</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.maxMin', { max: weather.tempMaxC ?? 32, min: weather.daily?.tempMin ?? 22 }))}</div>
       </div>
 
       <!-- 2. Apparent Temperature -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Feels Like</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.feelsLike'))}</span>
           <span class="telemetry-card__icon">${icons.thermometer(18)}</span>
         </div>
         <div class="telemetry-card__val">${feelsLike.toFixed(1)} &deg;C</div>
-        <div class="telemetry-card__sub">Thermal Comfort Index</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.thermalComfort'))}</div>
       </div>
 
       <!-- 3. Soil Moisture (5-Tier Hydration) -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Soil Moisture</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.soilMoisture'))}</span>
           <span class="telemetry-card__icon">${icons.droplet(18)}</span>
         </div>
         <div class="telemetry-card__val">${vwc.toFixed(1)}% VWC</div>
@@ -1356,7 +1355,7 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
       <!-- 4. ET0 & Crop Water Demand -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Evapotranspiration</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.et0'))}</span>
           <span class="telemetry-card__icon">${icons.droplet(18)}</span>
         </div>
         <div class="telemetry-card__val">${et0.toFixed(1)} mm/day</div>
@@ -1366,17 +1365,17 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
       <!-- 5. Humidity -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Humidity</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.humidity'))}</span>
           <span class="telemetry-card__icon">${icons.droplet(18)}</span>
         </div>
         <div class="telemetry-card__val">${Math.round(rh)}%</div>
-        <div class="telemetry-card__sub">Atmospheric Moisture</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.atmosMoisture'))}</div>
       </div>
 
       <!-- 6. Wind Speed & Direction -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Wind Speed</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.wind'))}</span>
           <span class="telemetry-card__icon">${icons.wind(18)}</span>
         </div>
         <div class="telemetry-card__val">${windSpd.toFixed(1)} km/h</div>
@@ -1386,7 +1385,7 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
       <!-- 7. UV Index -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">UV Index</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.uv'))}</span>
           <span class="telemetry-card__icon">${icons.sun(18)}</span>
         </div>
         <div class="telemetry-card__val">${uv.toFixed(1)}</div>
@@ -1396,21 +1395,21 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
       <!-- 8. Surface Pressure -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Surface Pressure</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.pressure'))}</span>
           <span class="telemetry-card__icon">${icons.gauge(18)}</span>
         </div>
         <div class="telemetry-card__val">${Math.round(pressure)} hPa</div>
-        <div class="telemetry-card__sub">Barometric Stability</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.barometric'))}</div>
       </div>
 
       <!-- 9. Cloud Cover -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
-          <span class="telemetry-card__label">Cloud Cover</span>
+          <span class="telemetry-card__label">${escapeHtml(t('tele.cloud'))}</span>
           <span class="telemetry-card__icon">${icons.cloud(18)}</span>
         </div>
         <div class="telemetry-card__val">${Math.round(cloud)}%</div>
-        <div class="telemetry-card__sub">Solar Radiation Flux</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.solarFlux'))}</div>
       </div>
     </div>
   `;
@@ -1441,7 +1440,7 @@ function renderSprayWindow(weather) {
           <span class="phenology-eyebrow">
             ${icons.sprayer(16)} Safe to Spray
           </span>
-          <h2 class="phenology-crop-name">Spray Conditions</h2>
+          <h2 class="phenology-crop-name">${escapeHtml(t('spray.conditions'))}</h2>
         </div>
         <span class="spray-status-badge spray-status-badge--${spray.status}">
           ${icons.sprayStatusIcon(spray.status, 14)} ${statusLabel}
@@ -1455,25 +1454,25 @@ function renderSprayWindow(weather) {
 
       <div class="spray-metrics-grid">
         <div class="spray-metric">
-          <span class="spray-metric__label">Delta T (&Delta;T)</span>
+          <span class="spray-metric__label">${escapeHtml(t('spray.deltaT'))}</span>
           <span class="spray-metric__val">${spray.deltaT ?? '--'} &deg;C</span>
         </div>
         <div class="spray-metric">
-          <span class="spray-metric__label">Wind Speed</span>
+          <span class="spray-metric__label">${escapeHtml(t('spray.windSpeed'))}</span>
           <span class="spray-metric__val">${spray.params?.windSpeedKmH ?? '--'} km/h</span>
         </div>
         <div class="spray-metric">
-          <span class="spray-metric__label">Rain Risk</span>
+          <span class="spray-metric__label">${escapeHtml(t('spray.rainRisk'))}</span>
           <span class="spray-metric__val">${spray.params?.tomorrowRainMm ? spray.params.tomorrowRainMm + ' mm forecast' : '0.0 mm'}</span>
         </div>
         <div class="spray-metric">
-          <span class="spray-metric__label">Temperature &amp; RH</span>
+          <span class="spray-metric__label">${escapeHtml(t('spray.tempRh'))}</span>
           <span class="spray-metric__val">${spray.params?.tempC ?? '--'} &deg;C &middot; ${spray.params?.rhPct ?? '--'}%</span>
         </div>
       </div>
 
       <div class="spray-slots-wrap">
-        <span class="spray-slots-label">Recommended Application Slots</span>
+        <span class="spray-slots-label">${escapeHtml(t('spray.recommendedSlots'))}</span>
         <div class="spray-slots-list">
           ${slots.length ? slots.map(s => `
             <span class="spray-slot-pill">
@@ -1481,7 +1480,7 @@ function renderSprayWindow(weather) {
             </span>
           `).join('') : `
             <span class="spray-slot-pill" style="border-color:hsl(var(--danger)/.3); color:hsl(var(--danger));">
-              ${icons.xCircle(13)} Application Suspended Due to Constraints
+              ${icons.xCircle(13)} ${escapeHtml(t('spray.suspended'))}
             </span>
           `}
         </div>
@@ -1507,19 +1506,19 @@ function renderTomorrowActionPlan(draft, weather, pheno) {
           <span class="phenology-eyebrow">
             ${icons.activity(16)} Tomorrow's Action Plan
           </span>
-          <h2 class="phenology-crop-name">Daily Field Operations Directive</h2>
+          <h2 class="phenology-crop-name">${escapeHtml(t('tomorrow.directive'))}</h2>
         </div>
       </div>
 
       <div class="action-plan-synopsis-banner">
-        <span class="action-plan-synopsis-title">Meteorological Synopsis</span>
+        <span class="action-plan-synopsis-title">${escapeHtml(t('tomorrow.synopsis'))}</span>
         <span class="action-plan-synopsis-text">${escapeHtml(plan.synopsis)}</span>
       </div>
 
       <div class="action-plan-grid">
         <div class="action-plan-directive-box">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="phenology-meta-label">Irrigation Directive</span>
+            <span class="phenology-meta-label">${escapeHtml(t('tomorrow.irrigationDirective'))}</span>
             <span class="action-directive-badge action-directive-badge--${plan.irrigationDirective.action.toLowerCase()}">
               ${plan.irrigationDirective.action}
             </span>
@@ -1533,7 +1532,7 @@ function renderTomorrowActionPlan(draft, weather, pheno) {
         </div>
 
         <div class="action-checklist-wrap">
-          <span class="action-checklist-title">Operational Checklist</span>
+          <span class="action-checklist-title">${escapeHtml(t('tomorrow.checklist'))}</span>
           <ul class="action-checklist">
             ${plan.checklist.map(item => `
               <li class="checklist-item">
@@ -1866,12 +1865,12 @@ async function renderMandi(overrideQty) {
           <tr>
             <th>APMC Mandi Yard & Location</th>
             <th>Today's Modal Rate</th>
-            <th>Rate per Kg</th>
-            <th>Daily Range (Min-Max)</th>
-            <th>Day-over-Day Trend</th>
-            <th>Govt MSP Status</th>
+            <th>${escapeHtml(t('mandi.table.ratePerKg'))}</th>
+            <th>${escapeHtml(t('mandi.table.dailyRange'))}</th>
+            <th>${escapeHtml(t('mandi.table.trend'))}</th>
+            <th>${escapeHtml(t('mandi.table.mspStatus'))}</th>
             <th>Arrival & Variety</th>
-            <th>Take-Home Net</th>
+            <th>${escapeHtml(t('mandi.table.takeHome'))}</th>
           </tr>
         </thead>
         <tbody>
@@ -1906,7 +1905,7 @@ async function renderMandi(overrideQty) {
                   <span style="display:inline-flex; align-items:center; padding:2px 6px; border-radius:4px; background:${mspBg}; color:${mspColor}; font-weight:700; font-size:11px;">
                     ${mspText}
                   </span>
-                  <div style="font-size:10px; color:hsl(var(--muted-foreground)); margin-top:2px;">Govt MSP: ₹${r.msp}</div>
+                  <div style="font-size:10px; color:hsl(var(--muted-foreground)); margin-top:2px;">${escapeHtml(t('mandi.mspLabel', { msp: r.msp }))}</div>
                 </td>
                 <td style="font-size:12px;">
                   <div style="font-weight:600;">${r.arrivalDate}</div>
@@ -1957,12 +1956,12 @@ function renderHelp() {
       <h3>${escapeHtml(scheme.title)}</h3>
       <p>${escapeHtml(scheme.description)}</p>
       <a class="btn btn--primary scheme-card__link" href="${escapeHtml(scheme.url)}" target="_blank" rel="noopener noreferrer">
-        <span>Visit official portal</span>
+        <span>${escapeHtml(t('mandi.visitPortal'))}</span>
         <span aria-hidden="true">↗</span>
       </a>
       ${scheme.helplines?.length ? `
         <div class="scheme-card__helplines">
-          <span>Helpline</span>
+          <span>${escapeHtml(t('mandi.helpline'))}</span>
           ${scheme.helplines.map((line) => `<a href="${escapeHtml(line.href)}">${escapeHtml(line.label)}</a>`).join(' / ')}
         </div>` : ''}
     </article>
@@ -2048,38 +2047,38 @@ function renderDistressMonitor() {
         <div class="distress-title-wrap">
           <span class="distress-icon">${icons.activity(17)}</span>
           <div>
-            <h3>Predictive Distress Risk &amp; Early Warning Monitor</h3>
-            <p>Move the signals to understand how weather, prices, and loan timing change your planning risk.</p>
+            <h3>${escapeHtml(t('distress.title'))}</h3>
+            <p>${escapeHtml(t('distress.subtitle'))}</p>
           </div>
         </div>
-        <span class="distress-private">Planning simulation</span>
+        <span class="distress-private">${escapeHtml(t('distress.planningNote'))}</span>
       </div>
       <div class="distress-score-row">
-        <div><span class="distress-score-label">Planning risk score</span><strong id="distressScoreValue">—/100</strong></div>
-        <span class="distress-score-band" id="distressScoreBand">Move a slider</span>
+        <div><span class="distress-score-label">${escapeHtml(t('distress.riskScore'))}</span><strong id="distressScoreValue">—/100</strong></div>
+        <span class="distress-score-band" id="distressScoreBand">${escapeHtml(t('distress.moveSlider'))}</span>
       </div>
       <div class="distress-score-progress" role="progressbar" aria-label="Planning risk score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <span id="distressScoreProgress"></span>
       </div>
-      <div class="distress-score-scale"><span>0–35 Lower pressure</span><span>36–59 Watch</span><span>60–100 Attention</span></div>
+      <div class="distress-score-scale"><span>${escapeHtml(t('distress.scaleLow'))}</span><span>${escapeHtml(t('distress.scaleWatch'))}</span><span>${escapeHtml(t('distress.scaleHigh'))}</span></div>
       <div class="distress-sliders">
         <label class="distress-slider-field" for="distressRainInput">
-          <span><b>3-day rain forecast</b><output id="distressRainValue">76 mm</output></span>
+          <span><b>${escapeHtml(t('distress.rainLabel'))}</b><output id="distressRainValue">76 mm</output></span>
           <input id="distressRainInput" type="range" min="0" max="100" value="76" step="1">
-          <small>0 mm dry · 100 mm flood risk</small>
+          <small>${escapeHtml(t('distress.rainHint'))}</small>
         </label>
         <label class="distress-slider-field" for="distressPriceInput">
-          <span><b>Mandi price drop vs recent average</b><output id="distressPriceValue">50%</output></span>
+          <span><b>${escapeHtml(t('distress.priceLabel'))}</b><output id="distressPriceValue">50%</output></span>
           <input id="distressPriceInput" type="range" min="0" max="50" value="50" step="1">
-          <small>0% stable · 50% severe drop</small>
+          <small>${escapeHtml(t('distress.priceHint'))}</small>
         </label>
         <label class="distress-slider-field" for="distressLoanInput">
-          <span><b>Days until next EMI due</b><output id="distressLoanValue">3 days</output></span>
+          <span><b>${escapeHtml(t('distress.loanLabel'))}</b><output id="distressLoanValue">3 days</output></span>
           <input id="distressLoanInput" type="range" min="0" max="120" value="3" step="1">
-          <small>0 days due now · 120 days safe window</small>
+          <small>${escapeHtml(t('distress.loanHint'))}</small>
         </label>
       </div>
-      <p class="distress-note">This is a private planning simulation and does not change the officer’s separate assessment.</p>
+      <p class="distress-note">${escapeHtml(t('distress.subtitle'))}</p>
     </div>
   `;
 
@@ -2104,7 +2103,7 @@ function renderDistressMonitor() {
     const score = Math.max(0, Math.min(100, Math.round(
       rain * 0.4 + price * 0.8 + Math.max(0, 30 - days) * 0.45
     )));
-    const band = score >= 80 ? 'Critical attention' : score >= 60 ? 'High attention' : score >= 35 ? 'Watch closely' : 'Lower pressure';
+    const band = score >= 80 ? t('distress.critical') : score >= 60 ? t('distress.high') : score >= 35 ? t('distress.watch') : t('distress.low');
     outputs.rain.textContent = `${rain} mm`;
     outputs.price.textContent = `${price}%`;
     outputs.loan.textContent = `${days} ${days === 1 ? 'day' : 'days'}`;
@@ -2122,29 +2121,29 @@ function renderLoanSchedule(result) {
   const statusMount = $('loanStatusCards');
   if (statusMount) {
     statusMount.innerHTML = `
-      <div class="loan-status-card"><span>Monthly EMI</span><strong>₹${Math.round(result.emi).toLocaleString('en-IN')}</strong></div>
-      <div class="loan-status-card"><span>Total payable</span><strong>₹${Math.round(result.totalPayment).toLocaleString('en-IN')}</strong></div>
-      <div class="loan-status-card"><span>Total interest</span><strong>₹${Math.round(result.totalInterest).toLocaleString('en-IN')}</strong></div>
+      <div class="loan-status-card"><span>${escapeHtml(t('loan.status.emi'))}</span><strong>₹${Math.round(result.emi).toLocaleString('en-IN')}</strong></div>
+      <div class="loan-status-card"><span>${escapeHtml(t('loan.status.totalPayable'))}</span><strong>₹${Math.round(result.totalPayment).toLocaleString('en-IN')}</strong></div>
+      <div class="loan-status-card"><span>${escapeHtml(t('loan.status.totalInterest'))}</span><strong>₹${Math.round(result.totalInterest).toLocaleString('en-IN')}</strong></div>
     `;
   }
 
   const tableMount = $('loanScheduleMount');
   if (tableMount && result.schedule) {
     tableMount.innerHTML = `
-      <div class="section-head"><span class="eyebrow">Monthly Installment Schedule</span><span class="section-rule"></span></div>
+      <div class="section-head"><span class="eyebrow">${escapeHtml(t('loan.schedule.title'))}</span><span class="section-rule"></span></div>
       <div class="mandi-table-wrapper loan-schedule-table-wrapper">
         <table class="mandi-table loan-schedule-table">
           <thead>
             <tr>
               <th>Paid on 1st?</th>
-              <th>Due Date (1st of Month)</th>
-              <th>Base EMI</th>
-              <th>Rollover Arrears</th>
-              <th>Total Due this Month</th>
+              <th>${escapeHtml(t('loan.schedule.dueDateFull'))}</th>
+              <th>${escapeHtml(t('loan.schedule.baseEmi'))}</th>
+              <th>${escapeHtml(t('loan.schedule.rolloverArrears'))}</th>
+              <th>${escapeHtml(t('loan.schedule.totalDueMonth'))}</th>
               <th>Principal</th>
               <th>Interest</th>
               <th>Status</th>
-              <th>Remaining Principal</th>
+              <th>${escapeHtml(t('loan.schedule.remainingPrincipal'))}</th>
             </tr>
           </thead>
           <tbody>
