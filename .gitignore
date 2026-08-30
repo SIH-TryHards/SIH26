@@ -30,13 +30,3 @@ yarn-error.log*
 scratch_*.txt
 *.tmp
 *.bak
-
-# AI Generated Docs
-GEMINI.md
-Instruct.txt
-ORIGINAL_REQUEST.md
-PROJECT.md
-TEST_INFRA.md
-TEST_READY.md
-docs/command.txt
-docs/Project Overview.txt
