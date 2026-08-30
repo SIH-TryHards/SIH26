@@ -19,3 +19,5 @@ If u want to edit the code, make sure you rebuild the bundle using esbuild:
 We're still working on hooking up all the backend API integrations, but the UI is mostly complete for the core demo pathways. 
 
 Feel free to open a PR if u find any bugs!
+
+Credits : Prasanna | Shreyas | Peeyush | Devum | Tejas | XerumGG
