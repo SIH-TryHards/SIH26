@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#31572c">
   <meta name="description" content="Kisan Saathi — Precision Crop Advisory &amp; Early Warning Platform.">
   <title>Kisan Saathi — Precision Agronomy</title>
-  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/app.css?v=20260831-3">
 </head>
 <body>
   <main class="app-shell" id="appShell">
@@ -351,7 +351,7 @@
       <form id="mandiQtyForm" class="mandi-qty-row" novalidate>
         <div class="field">
           <label id="lblMandiCrop"></label>
-          <select class="input" id="mandiCropSelect"></select>
+          <div id="mandiCropSelect"></div>
         </div>
         <div class="field">
           <label for="mandiQtyInput" id="lblMandiQty"></label>
@@ -437,6 +437,11 @@
           </div>
           <a class="btn btn--outline btn--sm" id="disasterCallBtn" href="tel:18001208040"></a>
         </div>
+      </div>
+
+      <div class="help-quick-actions" aria-label="Quick help actions">
+        <a class="btn btn--primary" id="helpKccQuickCall" href="tel:18001801551"></a>
+        <a class="btn btn--outline" id="helpPmkisanPortal" href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer"></a>
       </div>
 
       <div class="section-head schemes-heading">
@@ -545,6 +550,13 @@
               <span class="profile-detail-label" id="lblProfileContact"></span>
               <span class="profile-detail-val" id="profileContactVal">Phone call</span>
             </div>
+          </div>
+          <div class="profile-detail-row profile-theme-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileTheme">Appearance</span>
+              <span class="profile-detail-val" id="profileThemeVal">Light mode</span>
+            </div>
+            <button class="btn btn--outline btn--sm" id="themeToggleBtn" type="button">Use dark mode</button>
           </div>
         </div>
 
@@ -755,6 +767,6 @@
     </div>
   </section>
 
-  <script type="module" src="assets/js/farmer.js?v=20260830-3"></script>
+  <script type="module" src="assets/js/farmer.js?v=20260831-3"></script>
 </body>
 </html>

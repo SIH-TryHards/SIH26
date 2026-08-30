@@ -51,11 +51,33 @@
   color: hsl(128 28% 14%);
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: 135 18% 10%;
+  --foreground: 90 26% 93%;
+  --card: 135 16% 15%;
+  --card-foreground: 90 26% 93%;
+  --primary: 112 38% 58%;
+  --primary-foreground: 135 25% 9%;
+  --secondary: 112 25% 22%;
+  --secondary-foreground: 105 40% 89%;
+  --muted: 135 14% 21%;
+  --muted-foreground: 100 17% 73%;
+  --accent: 112 24% 27%;
+  --accent-foreground: 105 40% 92%;
+  --danger: 5 70% 65%;
+  --border: 130 16% 30%;
+  --input: 130 15% 35%;
+  --ring: 40 90% 64%;
+  --shadow-sm: 0 1px 2px hsl(0 0% 0% / .28);
+  --shadow-md: 0 4px 12px hsl(0 0% 0% / .32), 0 12px 32px hsl(0 0% 0% / .24);
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(160deg, hsl(var(--background)), hsl(84 40% 94%));
+  background: linear-gradient(160deg, hsl(var(--background)), hsl(var(--secondary) / .72));
   color: hsl(var(--foreground));
 }
 
@@ -2318,6 +2340,7 @@ button { font: inherit; color: inherit; }
 .mandi-farm-context strong { margin-top: 3px; font-size: 13px; }
 .mandi-qty-row { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(150px, .7fr) auto; align-items: end; gap: 12px; }
 .mandi-qty-row .btn { min-height: 44px; }
+#mandiCropSelect, #mandiCropSelect .select { width: 100%; }
 .field-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; color: hsl(var(--muted-foreground)); font-size: 11px; }
 .field-meta--valid { color: hsl(var(--primary)); font-weight: 700; }
 .quick-choice-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
@@ -2356,6 +2379,9 @@ button { font: inherit; color: inherit; }
 .distress-score-band { padding: 6px 10px; border-radius: 999px; background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); font-size: 11px; font-weight: 800; }
 .distress-score-band[data-band="critical"], .distress-score-band[data-band="high"] { background: hsl(0 80% 92%); color: hsl(0 60% 35%); }
 .distress-score-band[data-band="watch"] { background: hsl(40 90% 90%); color: hsl(30 70% 32%); }
+.distress-score-progress { height: 12px; margin: 10px 13px 0; overflow: hidden; border-radius: 999px; background: hsl(var(--border)); }
+.distress-score-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, hsl(142 55% 40%), hsl(42 90% 54%), hsl(0 70% 54%)); transition: width .2s ease; }
+.distress-score-scale { display: flex; justify-content: space-between; gap: 8px; margin: 5px 13px 0; color: hsl(var(--muted-foreground)); font-size: 10px; }
 .distress-sliders { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
 .distress-slider-field { display: block; padding: 11px; border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 3px); background: hsl(var(--card) / .8); }
 .distress-slider-field > span { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; }
@@ -2366,12 +2392,38 @@ button { font: inherit; color: inherit; }
 .btn--danger { border-color: hsl(0 60% 78%); background: hsl(0 75% 97%); color: hsl(0 55% 38%); }
 .btn--danger:hover { background: hsl(0 75% 92%); }
 .profile-security-note { font-size: 12px !important; }
+.help-quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.help-quick-actions .btn { min-height: 42px; font-size: 13px; }
+.profile-theme-row { background: linear-gradient(120deg, hsl(var(--card)), hsl(var(--secondary) / .45)); }
+textarea.input { display: block; max-width: 100%; min-width: 0; resize: vertical; overflow-wrap: anywhere; }
+.visit-form { max-width: 100%; overflow: hidden; }
+.mandi-table-wrapper { max-width: 100%; }
+#viewMandi .mandi-table { min-width: 1080px; table-layout: fixed; }
+#viewMandi .mandi-table th { white-space: normal; line-height: 1.25; vertical-align: bottom; }
+#viewMandi .mandi-table th:nth-child(1) { width: 20%; }
+#viewMandi .mandi-table th:nth-child(2) { width: 13%; }
+#viewMandi .mandi-table th:nth-child(3) { width: 10%; }
+#viewMandi .mandi-table th:nth-child(4) { width: 13%; }
+#viewMandi .mandi-table th:nth-child(5) { width: 11%; }
+#viewMandi .mandi-table th:nth-child(6) { width: 14%; }
+#viewMandi .mandi-table th:nth-child(7) { width: 10%; }
+#viewMandi .mandi-table th:nth-child(8) { width: 12%; }
+.loan-schedule-table { min-width: 1020px; table-layout: fixed; }
+.loan-schedule-table td { overflow-wrap: anywhere; }
+.loan-schedule-table .loan-status-pill { white-space: normal; text-align: center; }
+
+:root[data-theme="dark"] body { background: linear-gradient(160deg, hsl(var(--background)), hsl(var(--secondary))); }
+:root[data-theme="dark"] .mandi-inversion { background: hsl(38 45% 22%); border-color: hsl(40 55% 42%); color: hsl(40 90% 86%); }
+:root[data-theme="dark"] .loan-row--overdue { background: hsl(0 30% 18%); }
+:root[data-theme="dark"] .btn--danger { background: hsl(0 35% 20%); color: hsl(0 75% 78%); border-color: hsl(0 45% 43%); }
+:root[data-theme="dark"] .btn--danger:hover { background: hsl(0 35% 25%); }
 
 @media (max-width: 760px) {
   .mandi-qty-row, .loan-form-grid { grid-template-columns: 1fr; }
   .mandi-qty-row .btn { width: 100%; }
   .mandi-farm-context { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .loan-status-grid, .distress-sliders { grid-template-columns: 1fr; }
-  .loan-schedule-table { table-layout: auto; min-width: 680px; }
-  #viewMandi .mandi-table { table-layout: auto; min-width: 780px; }
+  .loan-schedule-table { table-layout: fixed; min-width: 1020px; }
+  #viewMandi .mandi-table { table-layout: fixed; min-width: 1080px; }
+  .help-quick-actions .btn { flex: 1 1 220px; }
 }

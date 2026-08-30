@@ -223,6 +223,8 @@ const en = {
   'help.disasterLine': 'State Crop Distress & Disaster Line',
   'help.disasterPhone': '1800-120-8040',
   'help.disasterSupport': 'Use this line for crop-loss and disaster support.',
+  'help.kccQuickCall': 'Kisan Call Centre (1800-180-1551)',
+  'help.pmkisanPortal': 'PM-Kisan Portal',
   'help.schemesIntro': 'Official portals for income support, insurance, credit, irrigation, equipment, and mandi access.',
 
 
@@ -255,6 +257,7 @@ const en = {
   'profile.contactLabel': 'Preferred contact',
   'profile.securityNote': 'We never ask for your Gmail password. Your phone OTP remains the sign-in method.',
   'profile.clearData': 'Clear all data',
+  'profile.themeLabel': 'Appearance',
 
   'officer.logAction': 'Log Action',
   'officer.actionTitle': 'Log action for {name}',

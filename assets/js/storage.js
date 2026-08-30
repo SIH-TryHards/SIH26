@@ -16,6 +16,7 @@ export const KEYS = {
   visitRequests: `${PREFIX}.visit-requests`,
   loan: `${PREFIX}.loan`,
   mandiPreferences: `${PREFIX}.mandi-preferences`,
+  theme: `${PREFIX}.theme`,
 };
 
 function rawGet(key) {
@@ -166,6 +167,14 @@ export function saveMandiPreferences(patch) {
   const next = { ...getMandiPreferences(), ...patch };
   rawSet(KEYS.mandiPreferences, JSON.stringify(next));
   return next;
+}
+
+export function getTheme() {
+  return rawGet(KEYS.theme) || 'light';
+}
+
+export function saveTheme(theme) {
+  return rawSet(KEYS.theme, theme === 'dark' ? 'dark' : 'light');
 }
 
 /* Clear only Kisan Saathi's own namespace. This deliberately avoids

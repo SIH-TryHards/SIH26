@@ -12,8 +12,8 @@
    names translate live via Sarvam when a key is configured.
    ============================================================ */
 
-import { LANGUAGES, t, getLang, setLang } from './i18n.js';
-import * as storage from './storage.js';
+import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260831-1';
+import * as storage from './storage.js?v=20260831-1';
 import { repository, getAuth } from './repository/index.js';
 import * as router from './router.js';
 import { createSelect } from './components/select.js';
@@ -30,7 +30,7 @@ import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
 import * as voice from './voice.js';
 import * as icons from './icons.js';
-import { generateSchedule } from './loan.js';
+import { generateSchedule } from './loan.js?v=20260831-1';
 
 const _el = (id) => document.getElementById(id);
 const $ = (id) => {
@@ -112,6 +112,13 @@ const LAND = repository.getLandOptions();
 const CROPS = repository.getCropCatalogue();
 const SEVERITY_ICON = { urgent: icons.alert, warning: icons.alert, watch: icons.alert, info: icons.info };
 
+const mandiCropSelect = createSelect({
+  placeholder: t('ph.select'),
+  labelledBy: 'lblMandiCrop',
+  onChange: onMandiCropChange,
+});
+_el('mandiCropSelect')?.append(mandiCropSelect.el);
+
 /* true when the gate covers a first visit: picking a language then
    advances into S2. A reopen from the globe button just changes
    language in place. */
@@ -119,6 +126,23 @@ let gateAdvances = false;
 
 function getLanguageByCode(code) {
   return LANGUAGES.find((l) => l.code === code) ?? null;
+}
+
+function applyTheme() {
+  const theme = storage.getTheme?.() === 'dark' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = theme;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = theme === 'dark' ? '#142016' : '#31572c';
+  const value = $('profileThemeVal');
+  const button = $('themeToggleBtn');
+  if (value) value.textContent = theme === 'dark' ? 'Dark mode' : 'Light mode';
+  if (button) button.textContent = theme === 'dark' ? 'Use light mode' : 'Use dark mode';
+}
+
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  storage.saveTheme?.(next);
+  applyTheme();
 }
 
 /* ---------- S1 language gate ---------- */
@@ -295,7 +319,8 @@ function applyCopy() {
   $('lblMandiCrop').textContent = t('mandi.cropLabel');
   $('lblMandiQty').textContent = t('mandi.qtyLabel');
   $('mandiQtyInput').placeholder = t('mandi.qtyPh');
-    $('mandiRecalcBtn').textContent = t('mandi.recalc');
+  mandiCropSelect.setPlaceholder(t('ph.select'));
+  $('mandiRecalcBtn').textContent = t('mandi.recalc');
   $('mandiResultsLabel').textContent = t('mandi.bestNetTag');
 
   /* S10 help chrome */
@@ -320,6 +345,8 @@ function applyCopy() {
   $('disasterName').textContent = t('help.disasterLine');
   $('disasterHours').textContent = t('help.disasterSupport');
   $('disasterCallBtn').innerHTML = `${icons.phone(15)}<span>${escapeHtml(t('help.disasterPhone'))}</span>`;
+  $('helpKccQuickCall').innerHTML = `${icons.phone(15)}<span>${escapeHtml(t('help.kccQuickCall'))}</span>`;
+  $('helpPmkisanPortal').innerHTML = `${icons.building(15)}<span>${escapeHtml(t('help.pmkisanPortal'))}</span><span aria-hidden="true">↗</span>`;
   $('schemesTitle').textContent = t('help.schemesTitle');
   $('schemesIntro').textContent = t('help.schemesIntro');
 
@@ -358,6 +385,8 @@ function applyCopy() {
   $('clearAllDataBtn').textContent = t('profile.clearData');
   $('lblProfileEmail').textContent = t('profile.emailLabel');
   $('lblProfileContact').textContent = t('profile.contactLabel');
+  $('lblProfileTheme').textContent = t('profile.themeLabel');
+  applyTheme();
 
   paintAuthState();
   /* renderHome is called by the 'home' route handler, not here.
@@ -1048,8 +1077,11 @@ async function onGuest() {
 
 async function onSignout() {
   const session = storage.getSession();
-  const auth = await getAuth();
-  if (session?.token) await auth.logout(session.token);
+  /* Clear local access immediately. A remote logout is best-effort and
+     must never make a farmer wait for an unavailable API. */
+  if (session?.token) {
+    getAuth().then((auth) => auth.logout(session.token)).catch(() => {});
+  }
   storage.clearSession();
   meCache = null;
   otpSent = false;
@@ -1646,6 +1678,14 @@ function paintListenButton(speaking) {
     : `${icons.speaker(18)}<span>${escapeHtml(t('home.listen'))}</span>`;
 }
 
+function paintAdvisoryDetailListen(speaking) {
+  const btn = $('advisoryDetailListen');
+  btn.dataset.speaking = String(speaking);
+  btn.innerHTML = speaking
+    ? `${icons.stopIcon(16)}<span>${escapeHtml(t('home.stop'))}</span>`
+    : `${icons.speaker(16)}<span>${escapeHtml(t('home.listen'))}</span>`;
+}
+
 function onListen() {
   if (voice.isSpeaking()) {
     voice.stop();
@@ -1672,6 +1712,24 @@ function onListen() {
   }
 }
 
+function onAdvisoryDetailListen() {
+  if (voice.isSpeaking()) {
+    voice.stop();
+    paintAdvisoryDetailListen(false);
+    return;
+  }
+
+  const a = homeAdvisories[selectedAdvisoryIndex];
+  if (!a) return;
+  const p = renderParams(a.params);
+  const locale = getLanguageByCode(getLang())?.locale ?? 'en-IN';
+  const result = voice.speak([t(a.titleKey, p), t(a.bodyKey, p), t(a.whyKey, p)], locale, {
+    onStart: () => paintAdvisoryDetailListen(true),
+    onEnd: () => paintAdvisoryDetailListen(false),
+  });
+  $('advisoryVoiceNote').textContent = result.ok ? '' : t('home.voiceUnavailable');
+}
+
 function onAcknowledge() {
   acked = true;
   $('ackBtn').innerHTML = `${icons.check(18)}<span>${escapeHtml(t('home.acked'))}</span>`;
@@ -1693,6 +1751,8 @@ function renderAdvisoryDetail() {
   $('advisoryDetailTitle').textContent = t(a.titleKey, p);
   $('advisoryDetailBody').textContent = t(a.bodyKey, p);
   $('advisoryDetailWhy').textContent = t(a.whyKey, p);
+  paintAdvisoryDetailListen(false);
+  $('advisoryVoiceNote').textContent = '';
 
   const ackBtn = $('advisoryDetailAck');
   if (isAcked) {
@@ -1756,23 +1816,17 @@ async function translateGeo() {
 async function renderMandi(overrideQty) {
   const draft = storage.getDraftProfile() ?? {};
   const preferences = storage.getMandiPreferences?.() ?? {};
-  const cropSelectNode = $('mandiCropSelect');
   const selectedCrop = preferences.crop
     ?? meCache?.crop_cycle?.crop
     ?? draft.crop
     ?? 'cotton';
-  if (cropSelectNode && cropSelectNode.options) {
-    cropSelectNode.innerHTML = CROPS.map((crop) =>
-      `<option value="${escapeHtml(crop.value)}">${escapeHtml(t(crop.key))}</option>`).join('');
-    cropSelectNode.value = CROPS.some((crop) => crop.value === selectedCrop)
-      ? selectedCrop
-      : CROPS[0].value;
-  }
+  mandiCropSelect.setOptions(CROPS.map((crop) => ({ value: crop.value, label: t(crop.key) })));
+  mandiCropSelect.setValue(CROPS.some((crop) => crop.value === selectedCrop) ? selectedCrop : CROPS[0].value);
   const eff = {
     ...draft,
     districtCode: meCache?.profile?.district_code ?? draft.districtCode ?? 'nashik',
     districtName: meCache?.profile?.district_name ?? draft.districtName ?? 'Nashik',
-    crop: cropSelectNode?.value || selectedCrop,
+    crop: mandiCropSelect.getValue() || selectedCrop,
   };
 
   $('mandiStateValue').textContent = eff.stateName ?? '—';
@@ -1878,8 +1932,7 @@ function onMandiQtyChange() {
   }
 }
 
-function onMandiCropChange() {
-  const crop = $('mandiCropSelect').value;
+function onMandiCropChange(crop) {
   storage.saveMandiPreferences?.({ crop });
   renderMandi(mandiQty);
 }
@@ -1918,9 +1971,10 @@ function renderHelp() {
   // Set min date to tomorrow
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  visitDateInput.min = tomorrow.toISOString().slice(0, 10);
-  if (!visitDateInput.value) {
-    visitDateInput.value = tomorrow.toISOString().slice(0, 10);
+  const minimumDate = tomorrow.toISOString().slice(0, 10);
+  visitDateInput.min = minimumDate;
+  if (!visitDateInput.value || visitDateInput.value < minimumDate) {
+    visitDateInput.value = minimumDate;
   }
   updateVisitReasonCount();
 }
@@ -1943,7 +1997,8 @@ function onVisitCancel() {
 function onVisitSubmit(e) {
   e.preventDefault();
   const dateVal = visitDateInput.value;
-  if (!dateVal) {
+  const minimumDate = visitDateInput.min;
+  if (!dateVal || (minimumDate && dateVal < minimumDate)) {
     visitError.textContent = t('err.required', { field: t('help.visitDateLabel') });
     visitError.hidden = false;
     return;
@@ -2003,6 +2058,10 @@ function renderDistressMonitor() {
         <div><span class="distress-score-label">Planning risk score</span><strong id="distressScoreValue">—/100</strong></div>
         <span class="distress-score-band" id="distressScoreBand">Move a slider</span>
       </div>
+      <div class="distress-score-progress" role="progressbar" aria-label="Planning risk score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span id="distressScoreProgress"></span>
+      </div>
+      <div class="distress-score-scale"><span>0–35 Lower pressure</span><span>36–59 Watch</span><span>60–100 Attention</span></div>
       <div class="distress-sliders">
         <label class="distress-slider-field" for="distressRainInput">
           <span><b>3-day rain forecast</b><output id="distressRainValue">76 mm</output></span>
@@ -2036,6 +2095,8 @@ function renderDistressMonitor() {
   };
   const scoreNode = $('distressScoreValue');
   const bandNode = $('distressScoreBand');
+  const progressNode = $('distressScoreProgress');
+  const progressTrack = mount.querySelector('.distress-score-progress');
   const update = () => {
     const rain = Number(inputs.rain.value);
     const price = Number(inputs.price.value);
@@ -2050,6 +2111,8 @@ function renderDistressMonitor() {
     scoreNode.textContent = `${score}/100`;
     bandNode.textContent = band;
     bandNode.dataset.band = score >= 80 ? 'critical' : score >= 60 ? 'high' : score >= 35 ? 'watch' : 'low';
+    progressNode.style.width = `${score}%`;
+    progressTrack.setAttribute('aria-valuenow', String(score));
   };
   Object.values(inputs).forEach((input) => input.addEventListener('input', update));
   update();
@@ -2456,10 +2519,9 @@ function showView(name) {
 
   const headerOfficerBtn = document.getElementById('headerOfficerBtn');
   if (headerOfficerBtn) {
-    // Hide if on dashboard views (home, mandi, profile, help, officer, loan, auth)
-    // Only show on onboarding views (welcome, location, land, crop)
-    const isDashboard = ['home', 'mandi', 'profile', 'help', 'officer', 'loan', 'auth'].includes(name);
-    headerOfficerBtn.style.display = isDashboard ? 'none' : '';
+    // Keep officer access on the landing view only, never inside farmer screens.
+    headerOfficerBtn.hidden = name !== 'welcome';
+    headerOfficerBtn.style.display = name === 'welcome' ? '' : 'none';
   }
 
   /* Bottom Navigation visibility and active state */
@@ -2553,6 +2615,7 @@ function wire() {
   });
   $('profileForm').addEventListener('submit', onSubmitProfile);
   $('listenBtn').addEventListener('click', onListen);
+  $('advisoryDetailListen').addEventListener('click', onAdvisoryDetailListen);
   $('ackBtn').addEventListener('click', onAcknowledge);
   $('advisoryDetailBack').addEventListener('click', () => router.go('home'));
 
@@ -2593,7 +2656,6 @@ function wire() {
 
   /* S9 Mandi and S10 Help wiring */
   $('mandiQtyInput').addEventListener('input', onMandiQtyChange);
-  $('mandiCropSelect').addEventListener('change', onMandiCropChange);
   officerVisitToggleBtn.addEventListener('click', onToggleVisitForm);
   visitForm.addEventListener('submit', onVisitSubmit);
   visitReasonInput.addEventListener('input', updateVisitReasonCount);
@@ -2605,6 +2667,7 @@ function wire() {
   $('btnEditCrop').addEventListener('click', () => router.go('crop'));
   $('btnEditLang').addEventListener('click', () => openPickerBtn.click());
   $('profileSignoutBtn').addEventListener('click', onSignout);
+  $('themeToggleBtn').addEventListener('click', toggleTheme);
   $('btnEditProfileContact').addEventListener('click', () => {
     $('profileFormSection').hidden = false;
     $('profileOverviewSection').hidden = true;
@@ -2671,6 +2734,7 @@ function wire() {
 }
 
 function boot() {
+  applyTheme();
   const saved = storage.getLanguage();
   const validSaved = saved && getLanguageByCode(saved);
   if (validSaved) setLang(saved);
