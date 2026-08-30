@@ -341,10 +341,17 @@
       <h1 id="mandiTitle"></h1>
       <p id="mandiHelp"></p>
 
+      <div class="mandi-farm-context" aria-label="Current field and crop profile">
+        <div><span>State</span><strong id="mandiStateValue">—</strong></div>
+        <div><span>District</span><strong id="mandiDistrictValue">—</strong></div>
+        <div><span>Soil</span><strong id="mandiSoilValue">—</strong></div>
+        <div><span>Land area</span><strong id="mandiAreaValue">—</strong></div>
+      </div>
+
       <form id="mandiQtyForm" class="mandi-qty-row" novalidate>
         <div class="field">
           <label id="lblMandiCrop"></label>
-          <span class="mandi-crop-pill" id="mandiCropDisplay"></span>
+          <select class="input" id="mandiCropSelect"></select>
         </div>
         <div class="field">
           <label for="mandiQtyInput" id="lblMandiQty"></label>
@@ -399,7 +406,8 @@
         </div>
         <div class="field">
           <label for="visitReasonInput" id="lblVisitReason"></label>
-          <input class="input" id="visitReasonInput" type="text" maxlength="200" autocomplete="off">
+          <textarea class="input" id="visitReasonInput" rows="3" minlength="50" maxlength="200" autocomplete="off"></textarea>
+          <div class="field-meta"><span id="visitReasonHint"></span><span id="visitReasonCount">0/50</span></div>
         </div>
         <p class="form-error" id="visitError" role="alert" hidden></p>
         <p class="notice-ok" id="visitSuccess" aria-live="polite" hidden></p>
@@ -452,6 +460,20 @@
             <input class="input" id="displayNameInput" type="text"
                    autocomplete="name" maxlength="80">
           </div>
+          <div class="field">
+            <label for="profileEmailInput" id="lblProfileEmailSetup">Email address (optional)</label>
+            <input class="input" id="profileEmailInput" type="email"
+                   autocomplete="email" maxlength="160" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="profileContactInput" id="lblProfileContactSetup">Preferred contact</label>
+            <select class="input" id="profileContactInput">
+              <option value="call">Phone call</option>
+              <option value="sms">SMS</option>
+              <option value="whatsapp">WhatsApp</option>
+            </select>
+          </div>
+          <p class="field-note profile-security-note" id="profileSecurityNote">We never ask for your Gmail password. Your phone OTP remains the sign-in method.</p>
           <p class="form-error" id="profileError" role="alert" hidden></p>
           <div class="btn-row">
             <button class="btn btn--primary" id="profileSaveBtn" type="submit"></button>
@@ -511,22 +533,24 @@
             <button class="btn btn--ghost btn--sm" id="btnEditLang" type="button"></button>
           </div>
 
-          <!-- API Key Row -->
-          <div class="profile-detail-row" style="flex-direction:column; gap:8px;">
-            <div class="profile-detail-meta" style="width:100%;">
-              <span class="profile-detail-label" id="sarvamKeyLabel">Sarvam API Key</span>
-              <span class="profile-detail-val" id="sarvamKeyStatus" style="font-size:12px; opacity:0.7;"></span>
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileEmail"></span>
+              <span class="profile-detail-val" id="profileEmailVal">—</span>
             </div>
-            <div style="display:flex; gap:6px; width:100%;">
-              <input class="input" id="sarvamKeyInput" type="password" placeholder="Paste Sarvam.ai key"
-                     autocomplete="off" style="flex:1; font-size:13px;">
-              <button class="btn btn--ghost btn--sm" id="sarvamKeySave" type="button" style="white-space:nowrap;">Save</button>
+            <button class="btn btn--ghost btn--sm" id="btnEditProfileContact" type="button">Change</button>
+          </div>
+          <div class="profile-detail-row">
+            <div class="profile-detail-meta">
+              <span class="profile-detail-label" id="lblProfileContact"></span>
+              <span class="profile-detail-val" id="profileContactVal">Phone call</span>
             </div>
           </div>
         </div>
 
-        <div class="btn-row" style="margin-top: 24px;">
+        <div class="btn-row profile-account-actions" style="margin-top: 24px;">
           <button class="btn btn--outline" id="profileSignoutBtn" type="button"></button>
+          <button class="btn btn--danger" id="clearAllDataBtn" type="button">Clear all data</button>
         </div>
       </div>
     </section>
@@ -600,16 +624,59 @@
         <div class="field">
           <label for="loanAmountInput" id="lblLoanAmount"></label>
           <input class="input" id="loanAmountInput" type="number" min="0" step="5000">
+          <div class="quick-choice-row" aria-label="Loan amount presets">
+            <button type="button" class="quick-choice" data-loan-amount="50000">₹50K</button>
+            <button type="button" class="quick-choice" data-loan-amount="100000">₹1 Lakh</button>
+            <button type="button" class="quick-choice" data-loan-amount="200000">₹2 Lakh</button>
+            <button type="button" class="quick-choice" data-loan-amount="300000">₹3 Lakh</button>
+            <button type="button" class="quick-choice" data-loan-amount="500000">₹5 Lakh</button>
+          </div>
         </div>
         <div class="field">
-          <label for="loanTenureInput" id="lblLoanTenure"></label>
-          <input class="input" id="loanTenureInput" type="number" min="1" step="1">
+          <label for="loanTenureInput" id="lblLoanTenure">Time Period</label>
+          <div class="loan-tenure-row">
+            <input class="input" id="loanTenureInput" type="number" min="1" step="1">
+            <select class="input" id="loanTenureUnit" aria-label="Tenure unit">
+              <option value="months">Months</option>
+              <option value="years">Years</option>
+            </select>
+          </div>
+          <div class="quick-choice-row" aria-label="Tenure presets">
+            <button type="button" class="quick-choice" data-loan-tenure="12">1 Year</button>
+            <button type="button" class="quick-choice" data-loan-tenure="24">2 Years</button>
+            <button type="button" class="quick-choice" data-loan-tenure="36">3 Years</button>
+            <button type="button" class="quick-choice" data-loan-tenure="60">5 Years</button>
+          </div>
         </div>
         <div class="field">
           <label for="loanRateInput" id="lblLoanRate"></label>
           <input class="input" id="loanRateInput" type="number" min="0" max="50" step="0.1">
+          <div class="quick-choice-row" aria-label="Interest rate presets">
+            <button type="button" class="quick-choice" data-loan-rate="4">4% KCC</button>
+            <button type="button" class="quick-choice" data-loan-rate="7">7% KCC base</button>
+            <button type="button" class="quick-choice" data-loan-rate="8.5">8.5% Tractor</button>
+            <button type="button" class="quick-choice" data-loan-rate="11">11% Commercial</button>
+          </div>
         </div>
-        
+        <div class="loan-form-grid">
+          <div class="field">
+            <label for="loanFirstInstallmentInput">First installment date</label>
+            <input class="input" id="loanFirstInstallmentInput" type="date">
+            <div class="quick-choice-row">
+              <button type="button" class="quick-choice" data-loan-date="next">Next month</button>
+              <button type="button" class="quick-choice" data-loan-date="today">Today</button>
+              <button type="button" class="quick-choice" data-loan-date="october">1 Oct</button>
+              <button type="button" class="quick-choice" data-loan-date="january">1 Jan</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="loanPaidInput">Installments paid so far</label>
+            <input class="input" id="loanPaidInput" type="number" min="0" step="1" value="0">
+            <input class="loan-range" id="loanPaidRange" type="range" min="0" max="12" step="1" value="0" aria-label="Installments paid so far">
+            <div class="field-meta"><span>0 paid</span><span id="loanPaidSummary">0 of 12</span></div>
+          </div>
+        </div>
+        <p class="form-error" id="loanFormError" role="alert" hidden></p>
         <div class="btn-row" style="margin-top: 16px;">
           <button class="btn btn--primary" id="loanCalcBtn" type="submit"></button>
         </div>
@@ -688,6 +755,6 @@
     </div>
   </section>
 
-  <script type="module" src="assets/js/farmer.js"></script>
+  <script type="module" src="assets/js/farmer.js?v=20260830-3"></script>
 </body>
 </html>

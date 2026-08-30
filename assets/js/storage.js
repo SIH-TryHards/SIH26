@@ -15,6 +15,7 @@ export const KEYS = {
   translations: `${PREFIX}.translations.v1`,
   visitRequests: `${PREFIX}.visit-requests`,
   loan: `${PREFIX}.loan`,
+  mandiPreferences: `${PREFIX}.mandi-preferences`,
 };
 
 function rawGet(key) {
@@ -152,4 +153,27 @@ export function getLoanData() {
 export function saveLoanData(data) {
   rawSet(KEYS.loan, JSON.stringify(data));
   return data;
+}
+
+/* ---- local farmer preferences ---- */
+export function getMandiPreferences() {
+  const raw = rawGet(KEYS.mandiPreferences);
+  if (!raw) return {};
+  try { return JSON.parse(raw); } catch { return {}; }
+}
+
+export function saveMandiPreferences(patch) {
+  const next = { ...getMandiPreferences(), ...patch };
+  rawSet(KEYS.mandiPreferences, JSON.stringify(next));
+  return next;
+}
+
+/* Clear only Kisan Saathi's own namespace. This deliberately avoids
+   localStorage.clear(), which could delete unrelated sites' settings. */
+export function clearAllData() {
+  try {
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith(PREFIX))
+      .forEach((key) => localStorage.removeItem(key));
+  } catch { /* private browsing may deny enumeration */ }
 }

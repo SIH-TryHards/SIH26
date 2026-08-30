@@ -2298,3 +2298,80 @@ button { font: inherit; color: inherit; }
   .helpline-card { align-items: flex-start; flex-direction: column; }
   .helpline-card .btn { width: 100%; }
 }
+
+/* Review pass: full-width data views and explicit controls */
+#viewMandi, #viewLoan { max-width: 980px; }
+#viewMandi .mandi-table { min-width: 0; table-layout: fixed; }
+#viewMandi .mandi-table th, #viewMandi .mandi-table td { overflow-wrap: anywhere; }
+.mandi-farm-context {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 18px 0 14px;
+  padding: 12px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--muted) / .45);
+}
+.mandi-farm-context span, .mandi-farm-context strong { display: block; }
+.mandi-farm-context span { color: hsl(var(--muted-foreground)); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.mandi-farm-context strong { margin-top: 3px; font-size: 13px; }
+.mandi-qty-row { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(150px, .7fr) auto; align-items: end; gap: 12px; }
+.mandi-qty-row .btn { min-height: 44px; }
+.field-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; color: hsl(var(--muted-foreground)); font-size: 11px; }
+.field-meta--valid { color: hsl(var(--primary)); font-weight: 700; }
+.quick-choice-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.quick-choice { min-height: 32px; padding: 5px 9px; border: 1px solid hsl(var(--border)); border-radius: 7px; background: hsl(var(--muted) / .55); color: hsl(var(--foreground)); font-size: 11px; font-weight: 700; cursor: pointer; }
+.quick-choice:hover, .quick-choice:focus-visible { border-color: hsl(var(--primary)); background: hsl(var(--secondary)); }
+.loan-tenure-row { display: grid; grid-template-columns: 1fr 130px; gap: 8px; }
+.loan-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.loan-range { width: 100%; margin-top: 12px; accent-color: hsl(var(--primary)); }
+.loan-status-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.loan-status-card { padding: 13px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: hsl(var(--card)); }
+.loan-status-card:first-child { border-color: hsl(var(--primary) / .3); background: hsl(var(--secondary) / .5); }
+.loan-status-card span, .loan-status-card strong { display: block; }
+.loan-status-card span { color: hsl(var(--muted-foreground)); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.loan-status-card strong { margin-top: 5px; font-size: 20px; }
+.loan-schedule-table-wrapper { overflow-x: auto; overflow-y: visible; }
+.loan-schedule-table { min-width: 0; table-layout: fixed; }
+.loan-schedule-table th, .loan-schedule-table td { font-size: 11px; }
+.loan-schedule-table th { white-space: normal; line-height: 1.25; }
+.loan-schedule-table td { word-break: normal; }
+.loan-schedule-table th:nth-child(1) { width: 10%; }
+.loan-schedule-table th:nth-child(2) { width: 16%; }
+.loan-schedule-table th:nth-child(3), .loan-schedule-table th:nth-child(4), .loan-schedule-table th:nth-child(5) { width: 11%; }
+.loan-schedule-table th:nth-child(6), .loan-schedule-table th:nth-child(7) { width: 10%; }
+.loan-schedule-table th:nth-child(8) { width: 14%; }
+.loan-schedule-table th:nth-child(9) { width: 15%; }
+.loan-paid-cell input { width: 18px; height: 18px; accent-color: hsl(var(--primary)); }
+.loan-date-cell { font-weight: 700; }
+.loan-row--overdue { background: hsl(0 70% 97%); }
+.loan-status-pill { display: inline-block; padding: 4px 7px; border-radius: 999px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.loan-status-pill--paid { background: hsl(120 30% 91%); color: hsl(120 35% 27%); }
+.loan-status-pill--overdue { background: hsl(0 70% 92%); color: hsl(0 55% 37%); }
+.loan-status-pill--upcoming { background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+.distress-score-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 15px; padding: 13px; border: 1px solid hsl(var(--primary) / .2); border-radius: var(--radius); background: hsl(var(--card) / .7); }
+.distress-score-label { display: block; color: hsl(var(--muted-foreground)); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.distress-score-row strong { display: block; margin-top: 3px; font-size: 28px; line-height: 1; }
+.distress-score-band { padding: 6px 10px; border-radius: 999px; background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); font-size: 11px; font-weight: 800; }
+.distress-score-band[data-band="critical"], .distress-score-band[data-band="high"] { background: hsl(0 80% 92%); color: hsl(0 60% 35%); }
+.distress-score-band[data-band="watch"] { background: hsl(40 90% 90%); color: hsl(30 70% 32%); }
+.distress-sliders { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.distress-slider-field { display: block; padding: 11px; border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 3px); background: hsl(var(--card) / .8); }
+.distress-slider-field > span { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; }
+.distress-slider-field output { color: hsl(var(--primary)); font-weight: 800; white-space: nowrap; }
+.distress-slider-field input { width: 100%; margin: 12px 0 4px; accent-color: hsl(var(--primary)); }
+.distress-slider-field small { color: hsl(var(--muted-foreground)); font-size: 10px; }
+.profile-account-actions { justify-content: space-between; }
+.btn--danger { border-color: hsl(0 60% 78%); background: hsl(0 75% 97%); color: hsl(0 55% 38%); }
+.btn--danger:hover { background: hsl(0 75% 92%); }
+.profile-security-note { font-size: 12px !important; }
+
+@media (max-width: 760px) {
+  .mandi-qty-row, .loan-form-grid { grid-template-columns: 1fr; }
+  .mandi-qty-row .btn { width: 100%; }
+  .mandi-farm-context { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .loan-status-grid, .distress-sliders { grid-template-columns: 1fr; }
+  .loan-schedule-table { table-layout: auto; min-width: 680px; }
+  #viewMandi .mandi-table { table-layout: auto; min-width: 780px; }
+}

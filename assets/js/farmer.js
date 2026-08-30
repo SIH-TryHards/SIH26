@@ -26,7 +26,7 @@ import {
   buildAdvisories
 } from './advisory.js';
 import { classifySoilHydration } from './services/weather.js';
-import { SARVAM_LOCALES, SARVAM_API_KEY, setSarvamKey } from './config.js';
+import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
 import * as voice from './voice.js';
 import * as icons from './icons.js';
@@ -271,6 +271,9 @@ function applyCopy() {
   /* S6.5 profile completion chrome */
   $('lblName').textContent = t('p.name');
   $('displayNameInput').placeholder = t('p.namePh');
+  $('lblProfileEmailSetup').textContent = t('profile.emailLabel');
+  $('lblProfileContactSetup').textContent = t('profile.contactLabel');
+  $('profileSecurityNote').textContent = t('profile.securityNote');
   $('profileSaveBtn').textContent = t('p.save');
 
   /* S7 home chrome */
@@ -307,6 +310,7 @@ function applyCopy() {
   $('lblVisitDate').textContent = t('help.visitDateLabel');
   $('lblVisitReason').textContent = t('help.visitReasonLabel');
   $('visitReasonInput').placeholder = t('help.visitReasonPh');
+  $('visitReasonHint').textContent = t('help.visitReasonHint');
   $('visitSubmitBtn').textContent = t('help.visitSubmit');
   $('visitCancelBtn').textContent = t('help.visitCancel');
   $('helplinesSectionTitle').textContent = t('help.helplinesTitle');
@@ -351,6 +355,9 @@ function applyCopy() {
   $('btnEditCrop').textContent = t('profile.change');
   $('btnEditLang').textContent = t('profile.change');
   $('profileSignoutBtn').textContent = t('profile.signout');
+  $('clearAllDataBtn').textContent = t('profile.clearData');
+  $('lblProfileEmail').textContent = t('profile.emailLabel');
+  $('lblProfileContact').textContent = t('profile.contactLabel');
 
   paintAuthState();
   /* renderHome is called by the 'home' route handler, not here.
@@ -1105,6 +1112,13 @@ async function onSubmitProfile(event) {
   const name = $('displayNameInput').value.trim();
   if (!name) { showErrorText(errNode, 'err.auth.name'); return; }
 
+  const email = $('profileEmailInput').value.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errNode.textContent = 'Enter a valid email address or leave it blank.';
+    errNode.hidden = false;
+    return;
+  }
+
   const session = storage.getSession();
   if (!session?.token) { router.go('auth'); return; }
 
@@ -1114,7 +1128,7 @@ async function onSubmitProfile(event) {
     const draft = storage.getDraftProfile() ?? {};
     meCache = await auth.saveProfile(profilePayload(name, draft), session.token);
     storage.saveSession({ ...session, name });
-    storage.saveDraftProfile({ attached: true });
+    storage.saveDraftProfile({ name, email: email || null, contactPreference: $('profileContactInput').value, attached: true });
     router.go('home');
   } catch (e) {
     /* dead session → sign back in; anything else shows inline */
@@ -1741,15 +1755,30 @@ async function translateGeo() {
 
 async function renderMandi(overrideQty) {
   const draft = storage.getDraftProfile() ?? {};
+  const preferences = storage.getMandiPreferences?.() ?? {};
+  const cropSelectNode = $('mandiCropSelect');
+  const selectedCrop = preferences.crop
+    ?? meCache?.crop_cycle?.crop
+    ?? draft.crop
+    ?? 'cotton';
+  if (cropSelectNode && cropSelectNode.options) {
+    cropSelectNode.innerHTML = CROPS.map((crop) =>
+      `<option value="${escapeHtml(crop.value)}">${escapeHtml(t(crop.key))}</option>`).join('');
+    cropSelectNode.value = CROPS.some((crop) => crop.value === selectedCrop)
+      ? selectedCrop
+      : CROPS[0].value;
+  }
   const eff = {
     ...draft,
     districtCode: meCache?.profile?.district_code ?? draft.districtCode ?? 'nashik',
     districtName: meCache?.profile?.district_name ?? draft.districtName ?? 'Nashik',
-    crop: meCache?.crop_cycle?.crop ?? draft.crop ?? 'cotton',
+    crop: cropSelectNode?.value || selectedCrop,
   };
 
-  const cropName = t(`crop.${eff.crop}`);
-  $('mandiCropDisplay').textContent = cropName;
+  $('mandiStateValue').textContent = eff.stateName ?? '—';
+  $('mandiDistrictValue').textContent = eff.districtName ?? '—';
+  $('mandiSoilValue').textContent = eff.soilType ? t(`soil.${eff.soilType}`) : '—';
+  $('mandiAreaValue').textContent = eff.areaAcres ? `${eff.areaAcres} acres` : '—';
 
   if (overrideQty !== undefined) {
     mandiQty = overrideQty;
@@ -1794,7 +1823,7 @@ async function renderMandi(overrideQty) {
         <tbody>
           ${rows.map(r => {
             const isBest = r.isBestNet;
-            const trendIcon = r.trend7dPct > 0 ? '-' : r.trend7dPct < 0 ? '-' : '"?';
+            const trendIcon = r.trend7dPct > 0 ? '↗' : r.trend7dPct < 0 ? '↘' : '→';
             const trendColor = r.trend7dPct > 0 ? 'hsl(120 40% 30%)' : r.trend7dPct < 0 ? 'hsl(0 60% 40%)' : 'hsl(var(--muted-foreground))';
             const trendBg = r.trend7dPct > 0 ? 'hsl(120 40% 95%)' : r.trend7dPct < 0 ? 'hsl(0 60% 95%)' : '#f8f9fa';
             
@@ -1808,7 +1837,7 @@ async function renderMandi(overrideQty) {
                 <td>
                   <div style="font-weight:700; color:hsl(var(--foreground)); font-size:13px;">${escapeHtml(r.name)}</div>
                   <div style="font-size:11px; color:hsl(var(--muted-foreground)); margin-top:2px;">
-                    ${isBest ? `<span style="color:hsl(var(--primary)); font-weight:600;">${icons.check(12)} Best Net (${r.distanceKm}km)</span>` : `${r.distanceKm} km away ^' ${r.operatingDays}`}
+                    ${isBest ? `<span style="color:hsl(var(--primary)); font-weight:600;">${icons.check(12)} Best Net (${r.distanceKm} km)</span>` : `${r.distanceKm} km away · ${r.operatingDays}`}
                   </div>
                 </td>
                 <td style="font-weight:800; font-size:14px;">₹${r.price.toLocaleString('en-IN')}/Qtl</td>
@@ -1849,6 +1878,12 @@ function onMandiQtyChange() {
   }
 }
 
+function onMandiCropChange() {
+  const crop = $('mandiCropSelect').value;
+  storage.saveMandiPreferences?.({ crop });
+  renderMandi(mandiQty);
+}
+
 /* ---------- S10 Need help / Officer contact (pathway.md P7) ---------- */
 
 function renderHelp() {
@@ -1887,6 +1922,7 @@ function renderHelp() {
   if (!visitDateInput.value) {
     visitDateInput.value = tomorrow.toISOString().slice(0, 10);
   }
+  updateVisitReasonCount();
 }
 
 function onToggleVisitForm() {
@@ -1912,6 +1948,13 @@ function onVisitSubmit(e) {
     visitError.hidden = false;
     return;
   }
+  const reason = visitReasonInput.value.trim();
+  if (reason.length < 50) {
+    visitError.textContent = t('help.visitReasonTooShort');
+    visitError.hidden = false;
+    visitReasonInput.focus();
+    return;
+  }
   visitError.hidden = true;
 
   const officer = repository.getOfficerContact();
@@ -1920,7 +1963,7 @@ function onVisitSubmit(e) {
 
   storage.saveVisitRequest({
     preferredDate: dateVal,
-    reason: visitReasonInput.value.trim() || null,
+    reason,
     officerId: officer.staff_id,
     farmerPhone: session?.phone ?? draft.phone ?? null,
   });
@@ -1928,6 +1971,13 @@ function onVisitSubmit(e) {
   visitSuccess.textContent = t('help.visitSuccess', { name: officer.name });
   visitSuccess.hidden = false;
   visitReasonInput.value = '';
+  updateVisitReasonCount();
+}
+
+function updateVisitReasonCount() {
+  const count = Math.min(visitReasonInput.value.trim().length, 200);
+  $('visitReasonCount').textContent = `${count}/50`;
+  $('visitReasonCount').classList.toggle('field-meta--valid', count >= 50);
 }
 
 /* ---------- Module 5: My Loan ---------- */
@@ -1937,9 +1987,6 @@ function renderDistressMonitor() {
   const mount = $('distressMonitorMount');
   if (!mount) return;
 
-  /* Farmer-safe presentation: the officer dashboard owns the actual
-     score and band. The farmer only sees that the relevant signals are
-     being monitored and why the information is useful. */
   mount.innerHTML = `
     <div class="distress-card">
       <div class="distress-header">
@@ -1947,36 +1994,74 @@ function renderDistressMonitor() {
           <span class="distress-icon">${icons.activity(17)}</span>
           <div>
             <h3>Predictive Distress Risk &amp; Early Warning Monitor</h3>
-            <p>Rain, mandi prices, and loan timing help your officer prepare timely support.</p>
+            <p>Move the signals to understand how weather, prices, and loan timing change your planning risk.</p>
           </div>
         </div>
-        <span class="distress-private">Support watch active</span>
+        <span class="distress-private">Planning simulation</span>
       </div>
-      <div class="distress-factors">
-        <div class="distress-factor"><span>Rain outlook</span><strong>Monitored</strong><small>Weather-aware support</small></div>
-        <div class="distress-factor"><span>Mandi prices</span><strong>Monitored</strong><small>Market-aware support</small></div>
-        <div class="distress-factor"><span>Loan timing</span><strong>Monitored</strong><small>Reminder-aware support</small></div>
+      <div class="distress-score-row">
+        <div><span class="distress-score-label">Planning risk score</span><strong id="distressScoreValue">—/100</strong></div>
+        <span class="distress-score-band" id="distressScoreBand">Move a slider</span>
       </div>
-      <p class="distress-note">Detailed risk assessment stays private to the assigned agriculture officer.</p>
+      <div class="distress-sliders">
+        <label class="distress-slider-field" for="distressRainInput">
+          <span><b>3-day rain forecast</b><output id="distressRainValue">76 mm</output></span>
+          <input id="distressRainInput" type="range" min="0" max="100" value="76" step="1">
+          <small>0 mm dry · 100 mm flood risk</small>
+        </label>
+        <label class="distress-slider-field" for="distressPriceInput">
+          <span><b>Mandi price drop vs recent average</b><output id="distressPriceValue">50%</output></span>
+          <input id="distressPriceInput" type="range" min="0" max="50" value="50" step="1">
+          <small>0% stable · 50% severe drop</small>
+        </label>
+        <label class="distress-slider-field" for="distressLoanInput">
+          <span><b>Days until next EMI due</b><output id="distressLoanValue">3 days</output></span>
+          <input id="distressLoanInput" type="range" min="0" max="120" value="3" step="1">
+          <small>0 days due now · 120 days safe window</small>
+        </label>
+      </div>
+      <p class="distress-note">This is a private planning simulation and does not change the officer’s separate assessment.</p>
     </div>
   `;
+
+  const inputs = {
+    rain: $('distressRainInput'),
+    price: $('distressPriceInput'),
+    loan: $('distressLoanInput'),
+  };
+  const outputs = {
+    rain: $('distressRainValue'),
+    price: $('distressPriceValue'),
+    loan: $('distressLoanValue'),
+  };
+  const scoreNode = $('distressScoreValue');
+  const bandNode = $('distressScoreBand');
+  const update = () => {
+    const rain = Number(inputs.rain.value);
+    const price = Number(inputs.price.value);
+    const days = Number(inputs.loan.value);
+    const score = Math.max(0, Math.min(100, Math.round(
+      rain * 0.4 + price * 0.8 + Math.max(0, 30 - days) * 0.45
+    )));
+    const band = score >= 80 ? 'Critical attention' : score >= 60 ? 'High attention' : score >= 35 ? 'Watch closely' : 'Lower pressure';
+    outputs.rain.textContent = `${rain} mm`;
+    outputs.price.textContent = `${price}%`;
+    outputs.loan.textContent = `${days} ${days === 1 ? 'day' : 'days'}`;
+    scoreNode.textContent = `${score}/100`;
+    bandNode.textContent = band;
+    bandNode.dataset.band = score >= 80 ? 'critical' : score >= 60 ? 'high' : score >= 35 ? 'watch' : 'low';
+  };
+  Object.values(inputs).forEach((input) => input.addEventListener('input', update));
+  update();
 }
 
 function renderLoanSchedule(result) {
   const statusMount = $('loanStatusCards');
   if (statusMount) {
     statusMount.innerHTML = `
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
-        <div style="background:hsl(var(--primary)/.1); padding:16px; border-radius:var(--radius); text-align:center; border:1px solid hsl(var(--primary)/.2);">
-          <div style="font-size:11px; font-weight:700; color:hsl(var(--primary)); text-transform:uppercase;">Monthly EMI</div>
-          <div style="font-size:24px; font-weight:800; color:hsl(var(--foreground)); line-height:1.2; margin-top:4px;">₹${Math.round(result.emi).toLocaleString('en-IN')}</div>
-          <div style="font-size:11px; color:hsl(var(--muted-foreground)); mt:4px;">Total Payable: ₹${Math.round(result.totalPayment).toLocaleString('en-IN')}</div>
-        </div>
-        <div style="background:hsl(var(--card)); padding:16px; border-radius:var(--radius); text-align:center; border:1px solid hsl(var(--border)); display:flex; flex-direction:column; justify-content:center;">
-          <div style="font-size:11px; font-weight:700; color:hsl(var(--muted-foreground)); text-transform:uppercase;">Total Interest</div>
-          <div style="font-size:20px; font-weight:800; color:hsl(var(--foreground)); line-height:1.2; margin-top:4px;">₹${Math.round(result.totalInterest).toLocaleString('en-IN')}</div>
-        </div>
-      </div>
+      <div class="loan-status-card"><span>Monthly EMI</span><strong>₹${Math.round(result.emi).toLocaleString('en-IN')}</strong></div>
+      <div class="loan-status-card"><span>Total payable</span><strong>₹${Math.round(result.totalPayment).toLocaleString('en-IN')}</strong></div>
+      <div class="loan-status-card"><span>Total interest</span><strong>₹${Math.round(result.totalInterest).toLocaleString('en-IN')}</strong></div>
     `;
   }
 
@@ -1984,31 +2069,41 @@ function renderLoanSchedule(result) {
   if (tableMount && result.schedule) {
     tableMount.innerHTML = `
       <div class="section-head"><span class="eyebrow">Monthly Installment Schedule</span><span class="section-rule"></span></div>
-      <div class="mandi-table-wrapper" style="max-height: 400px; overflow-y: auto;">
-        <table class="mandi-table">
-          <thead style="position: sticky; top: 0; background: hsl(var(--muted)); z-index: 10;">
+      <div class="mandi-table-wrapper loan-schedule-table-wrapper">
+        <table class="mandi-table loan-schedule-table">
+          <thead>
             <tr>
-              <th style="width: 40px; text-align:center;">Paid</th>
-              <th>Due Date</th>
+              <th>Paid on 1st?</th>
+              <th>Due Date (1st of Month)</th>
               <th>Base EMI</th>
+              <th>Rollover Arrears</th>
+              <th>Total Due this Month</th>
               <th>Principal</th>
               <th>Interest</th>
-              <th>Balance</th>
+              <th>Status</th>
+              <th>Remaining Principal</th>
             </tr>
           </thead>
           <tbody>
             ${result.schedule.map(s => {
-              const isPaid = s.month <= 6; // Mock 6 months paid
+              const isPaid = Boolean(s.isPaid);
+              const status = s.status || (isPaid ? 'Paid' : 'Upcoming');
+              const rowState = isPaid ? 'paid' : status.startsWith('Overdue') ? 'overdue' : 'upcoming';
+              const arrears = Number(s.rolloverArrears) || 0;
+              const totalDue = Number(s.totalDue) || (isPaid ? 0 : Number(s.emi) || 0);
               return `
-                <tr>
-                  <td style="text-align:center;">
-                    <input type="checkbox" ${isPaid ? 'checked' : ''} style="accent-color:hsl(var(--primary)); transform:scale(1.2);">
+                <tr class="loan-row--${rowState}">
+                  <td data-label="Paid on 1st?" class="loan-paid-cell">
+                    <input type="checkbox" data-loan-paid-month="${s.month}" ${isPaid ? 'checked' : ''} aria-label="Mark month ${s.month} as paid">
                   </td>
-                  <td style="font-weight:600;">${new Date(s.date).toLocaleDateString('en-IN', {month:'short', year:'numeric'})}</td>
-                  <td style="font-weight:700; color:hsl(var(--foreground));">₹${Math.round(s.emi).toLocaleString('en-IN')}</td>
-                  <td style="color:hsl(var(--muted-foreground));">₹${Math.round(s.principal).toLocaleString('en-IN')}</td>
-                  <td style="color:hsl(var(--muted-foreground));">₹${Math.round(s.interest).toLocaleString('en-IN')}</td>
-                  <td style="font-weight:700;">₹${Math.round(s.balance).toLocaleString('en-IN')}</td>
+                  <td data-label="Due Date" class="loan-date-cell">${new Date(s.date).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</td>
+                  <td data-label="Base EMI">₹${Math.round(s.emi).toLocaleString('en-IN')}</td>
+                  <td data-label="Rollover Arrears">₹${Math.round(arrears).toLocaleString('en-IN')}</td>
+                  <td data-label="Total Due this Month">₹${Math.round(totalDue).toLocaleString('en-IN')}</td>
+                  <td data-label="Principal">₹${Math.round(s.principal).toLocaleString('en-IN')}</td>
+                  <td data-label="Interest">₹${Math.round(s.interest).toLocaleString('en-IN')}</td>
+                  <td data-label="Status"><span class="loan-status-pill loan-status-pill--${rowState}">${status}</span></td>
+                  <td data-label="Remaining Principal">₹${Math.round(s.balance).toLocaleString('en-IN')}</td>
                 </tr>
               `;
             }).join('')}
@@ -2016,6 +2111,14 @@ function renderLoanSchedule(result) {
         </table>
       </div>
     `;
+    tableMount.querySelectorAll('[data-loan-paid-month]').forEach((box) => {
+      box.addEventListener('change', (event) => {
+        const data = storage.getLoanData() ?? {};
+        const paidMonths = Number(event.target.dataset.loanPaidMonth);
+        storage.saveLoanData({ ...data, installmentsPaid: event.target.checked ? paidMonths : Math.max(0, paidMonths - 1) });
+        renderLoan();
+      });
+    });
   }
 }
 
@@ -2023,14 +2126,20 @@ function renderLoan() {
   const data = storage.getLoanData();
   if (data) {
     $('loanAmountInput').value = data.amount || '';
-    $('loanTenureInput').value = data.tenureMonths || '';
+    const unit = $('loanTenureUnit');
+    unit.value = data.tenureUnit || 'months';
+    $('loanTenureInput').value = unit.value === 'years'
+      ? Math.max(1, Math.round((data.tenureMonths || 0) / 12))
+      : data.tenureMonths || '';
     $('loanRateInput').value = data.rate || '';
+    $('loanFirstInstallmentInput').value = data.firstInstallmentDate || nextMonthDate();
+    syncPaidControls(data.installmentsPaid || 0, data.tenureMonths || 0);
     
-    if (data.amount > 0 && data.tenureMonths > 0 && data.rate > 0) {
-      const result = generateSchedule(data.amount, data.rate, data.tenureMonths);
-              renderDistressMonitor();
-        renderLoanSchedule(result);
-        $('loanResultBox').hidden = false;
+    if (data.amount > 0 && data.tenureMonths > 0 && data.rate >= 0 && data.rate <= 50) {
+      const result = generateSchedule(data.amount, data.rate, data.tenureMonths, data.firstInstallmentDate || nextMonthDate(), data.installmentsPaid || 0);
+      renderDistressMonitor();
+      renderLoanSchedule(result);
+      $('loanResultBox').hidden = false;
     } else {
       $('loanResultBox').hidden = true;
     }
@@ -2038,20 +2147,50 @@ function renderLoan() {
     // defaults
     $('loanAmountInput').value = '50000';
     $('loanTenureInput').value = '12';
+    $('loanTenureUnit').value = 'months';
     $('loanRateInput').value = '7.0';
+    $('loanFirstInstallmentInput').value = nextMonthDate();
+    syncPaidControls(0, 12);
     $('loanResultBox').hidden = true;
   }
+}
+
+function nextMonthDate() {
+  const date = new Date();
+  date.setDate(1);
+  date.setMonth(date.getMonth() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function syncPaidControls(value, months) {
+  const entered = Number($('loanTenureInput').value) || 12;
+  const inferredMonths = $('loanTenureUnit').value === 'years' ? entered * 12 : entered;
+  const max = Math.max(1, months || inferredMonths);
+  const paid = Math.max(0, Math.min(max, Number(value) || 0));
+  $('loanPaidInput').max = String(max);
+  $('loanPaidRange').max = String(max);
+  $('loanPaidInput').value = String(paid);
+  $('loanPaidRange').value = String(paid);
+  $('loanPaidSummary').textContent = `${paid} of ${max}`;
 }
 
 function onLoanSubmit(e) {
   e.preventDefault();
   const amt = parseFloat($('loanAmountInput').value);
-  const ten = parseInt($('loanTenureInput').value, 10);
+  const enteredTenure = parseInt($('loanTenureInput').value, 10);
+  const unit = $('loanTenureUnit').value;
+  const ten = unit === 'years' ? enteredTenure * 12 : enteredTenure;
   const rate = parseFloat($('loanRateInput').value);
+  const firstInstallmentDate = $('loanFirstInstallmentInput').value || nextMonthDate();
+  const installmentsPaid = Math.max(0, Math.min(ten, parseInt($('loanPaidInput').value, 10) || 0));
 
-  if (amt > 0 && ten > 0 && rate > 0) {
-    storage.saveLoanData({ amount: amt, tenureMonths: ten, rate: rate });
+  if (amt > 0 && ten > 0 && rate >= 0 && rate <= 50) {
+    $('loanFormError').hidden = true;
+    storage.saveLoanData({ amount: amt, tenureMonths: ten, tenureUnit: unit, rate, firstInstallmentDate, installmentsPaid });
     renderLoan();
+  } else {
+    $('loanFormError').textContent = 'Enter a loan amount, a valid tenure, and an interest rate from 0% to 50%.';
+    $('loanFormError').hidden = false;
   }
 }
 
@@ -2062,13 +2201,15 @@ function renderProfile() {
   const draft = storage.getDraftProfile() ?? {};
 
   const name = session?.name || draft.name || meCache?.display_name || null;
-  const setupSec = $('profileSetupSection');
+  const setupSec = $('profileFormSection');
   const overviewSec = $('profileOverviewSection');
 
   if (!name) {
     /* Mode 1: First-time display name capture */
     setupSec.hidden = false;
     overviewSec.hidden = true;
+    $('profileEmailInput').value = draft.email || '';
+    $('profileContactInput').value = draft.contactPreference || 'call';
     $('displayNameInput').focus();
     return;
   }
@@ -2093,6 +2234,8 @@ function renderProfile() {
   const masked = session?.masked ?? `••• ${(session?.phone ?? draft.phone ?? '1234567890').slice(-3)}`;
   $('profileNameDisplay').textContent = name;
   $('profilePhoneDisplay').textContent = `${t('profile.phoneLabel')}: ${masked}`;
+  $('profileEmailVal').textContent = draft.email || 'Not added';
+  $('profileContactVal').textContent = ({ call: 'Phone call', sms: 'SMS', whatsapp: 'WhatsApp' })[draft.contactPreference] || 'Phone call';
 
   const isMasked = name.includes('•');
   $('profileAvatar').textContent = isMasked
@@ -2415,11 +2558,45 @@ function wire() {
 
   /* Module 5 My Loan wiring */
   $('loanForm').addEventListener('submit', onLoanSubmit);
+  document.querySelectorAll('[data-loan-amount]').forEach((button) => {
+    button.addEventListener('click', () => { $('loanAmountInput').value = button.dataset.loanAmount; });
+  });
+  document.querySelectorAll('[data-loan-tenure]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const months = Number(button.dataset.loanTenure);
+      $('loanTenureUnit').value = 'years';
+      $('loanTenureInput').value = String(months / 12);
+      syncPaidControls($('loanPaidInput').value, months);
+    });
+  });
+  document.querySelectorAll('[data-loan-rate]').forEach((button) => {
+    button.addEventListener('click', () => { $('loanRateInput').value = button.dataset.loanRate; });
+  });
+  document.querySelectorAll('[data-loan-date]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const date = new Date();
+      if (button.dataset.loanDate === 'next') date.setMonth(date.getMonth() + 1, 1);
+      if (button.dataset.loanDate === 'today') date.setDate(date.getDate());
+      if (button.dataset.loanDate === 'october') date.setMonth(9, 1);
+      if (button.dataset.loanDate === 'january') date.setMonth(0, 1);
+      $('loanFirstInstallmentInput').value = date.toISOString().slice(0, 10);
+    });
+  });
+  $('loanPaidInput').addEventListener('input', (event) => syncPaidControls(event.target.value));
+  $('loanPaidRange').addEventListener('input', (event) => syncPaidControls(event.target.value));
+  $('loanTenureUnit').addEventListener('change', () => {
+    const input = $('loanTenureInput');
+    const months = Number(input.value) || 0;
+    input.value = $('loanTenureUnit').value === 'years' ? Math.max(1, Math.round(months / 12)) : months * 12 || '';
+    syncPaidControls($('loanPaidInput').value);
+  });
 
   /* S9 Mandi and S10 Help wiring */
   $('mandiQtyInput').addEventListener('input', onMandiQtyChange);
+  $('mandiCropSelect').addEventListener('change', onMandiCropChange);
   officerVisitToggleBtn.addEventListener('click', onToggleVisitForm);
   visitForm.addEventListener('submit', onVisitSubmit);
+  visitReasonInput.addEventListener('input', updateVisitReasonCount);
   $('visitCancelBtn').addEventListener('click', onVisitCancel);
 
   /* S11 Profile Edit & Signout wiring */
@@ -2428,17 +2605,22 @@ function wire() {
   $('btnEditCrop').addEventListener('click', () => router.go('crop'));
   $('btnEditLang').addEventListener('click', () => openPickerBtn.click());
   $('profileSignoutBtn').addEventListener('click', onSignout);
-
-  /* Sarvam API key setup */
-  $('sarvamKeyStatus').textContent = SARVAM_API_KEY ? 'Key configured' : 'Not configured';
-  $('sarvamKeyInput').value = SARVAM_API_KEY ? '••••••••' : '';
-  $('sarvamKeySave').addEventListener('click', () => {
-    const val = $('sarvamKeyInput').value.trim();
-    if (val && val !== '••••••••') {
-      setSarvamKey(val);
-      $('sarvamKeyStatus').textContent = 'Key saved — reload to activate';
-      $('sarvamKeyInput').value = '••••••••';
-    }
+  $('btnEditProfileContact').addEventListener('click', () => {
+    $('profileFormSection').hidden = false;
+    $('profileOverviewSection').hidden = true;
+    const session = storage.getSession();
+    const draft = storage.getDraftProfile() ?? {};
+    $('displayNameInput').value = session?.name || draft.name || '';
+    $('profileEmailInput').value = draft.email || '';
+    $('profileContactInput').value = draft.contactPreference || 'call';
+    $('displayNameInput').focus();
+  });
+  $('clearAllDataBtn').addEventListener('click', () => {
+    if (!window.confirm('Clear your Kisan Saathi profile, loan plan, visits, and saved preferences from this device?')) return;
+    storage.clearAllData();
+    meCache = null;
+    window.location.hash = '#/welcome';
+    window.location.reload();
   });
 
 
