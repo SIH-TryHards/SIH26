@@ -495,9 +495,9 @@ const en = {
   'distress.badgeImminent': 'Imminent due',
   'distress.badgeUpcoming': 'Upcoming due',
   'distress.badgeSafe': 'Safe buffer',
-  'distress.levelCritical': '🔴 Critical distress alert (score > 80)',
-  'distress.levelWatch': '🟡 Moderate watch (score 51–80)',
-  'distress.levelStable': '🟢 Normal & stable (score ≤ 50)',
+  'distress.levelCritical': 'Critical distress alert (score > 80)',
+  'distress.levelWatch': 'Moderate watch (score 51–80)',
+  'distress.levelStable': 'Normal & stable (score ≤ 50)',
 
 };
 
@@ -898,7 +898,7 @@ const hi = {
   'distress.compound': 'मौसम, फसल भाव और ऋण भुगतान से जुड़ा संयुक्त दबाव बहुत अधिक है।', 'distress.rainDrought': 'गंभीर सूखा दबाव: खड़ी फसल के मुरझाने का खतरा अधिक है।', 'distress.rainFlood': 'जलभराव का खतरा: अधिक बारिश से खेत में पानी रुक सकता है।', 'distress.rainNormal': 'नमी पर्याप्त है: बारिश फसल की सामान्य जरूरत के अनुसार है।',
   'distress.rainDroughtBadge': 'सूखे की कमी', 'distress.rainFloodBadge': 'बाढ़ का खतरा', 'distress.normalBadge': 'सामान्य', 'distress.mspAbove': 'सरकारी एमएसपी: ₹{msp}/क्विंटल (+₹{amount} एमएसपी से ऊपर)', 'distress.mspBelow': 'सरकारी एमएसपी: ₹{msp}/क्विंटल (-₹{amount} एमएसपी से नीचे)', 'distress.mspAtMargin': 'एमएसपी के पास', 'distress.mspProfitable': 'लाभदायक', 'distress.mspBelowBadge': 'एमएसपी से कम',
   'distress.loanUrgent': 'तुरंत ध्यान दें: एक सप्ताह में किस्त देनी है। नकदी पर अधिक दबाव है।', 'distress.loanUpcoming': 'किस्त आने वाली है: भुगतान इस महीने की अवधि में है।', 'distress.loanSafe': 'सुरक्षित अंतर: फसल बेचने और पैसे की व्यवस्था के लिए पर्याप्त समय है।', 'distress.badgeImminent': 'तुरंत देय', 'distress.badgeUpcoming': 'जल्द देय', 'distress.badgeSafe': 'सुरक्षित अंतर',
-  'distress.levelCritical': '🔴 गंभीर संकट चेतावनी (स्कोर > 80)', 'distress.levelWatch': '🟡 मध्यम निगरानी (स्कोर 51–80)', 'distress.levelStable': '🟢 सामान्य और स्थिर (स्कोर ≤ 50)',
+  'distress.levelCritical': 'गंभीर संकट चेतावनी (स्कोर > 80)', 'distress.levelWatch': 'मध्यम निगरानी (स्कोर 51–80)', 'distress.levelStable': 'सामान्य और स्थिर (स्कोर ≤ 50)',
 
 };
 
@@ -1299,7 +1299,7 @@ const mr = {
   'distress.compound': 'हवामान, पिकाचे भाव आणि कर्जाच्या देयकांमुळे एकत्रित ताण जास्त आहे.', 'distress.rainDrought': 'गंभीर दुष्काळाचा ताण: उभे पीक कोमेजण्याचा धोका जास्त आहे.', 'distress.rainFlood': 'जलभरावाचा धोका: अतिवृष्टीमुळे शेतात पाणी साचू शकते.', 'distress.rainNormal': 'ओलावा पुरेसा आहे: पाऊस पिकाच्या सामान्य गरजेनुसार आहे.',
   'distress.rainDroughtBadge': 'दुष्काळाची कमतरता', 'distress.rainFloodBadge': 'पुराचा धोका', 'distress.normalBadge': 'सामान्य', 'distress.mspAbove': 'सरकारी एमएसपी: ₹{msp}/क्विंटल (+₹{amount} एमएसपीपेक्षा जास्त)', 'distress.mspBelow': 'सरकारी एमएसपी: ₹{msp}/क्विंटल (-₹{amount} एमएसपीपेक्षा कमी)', 'distress.mspAtMargin': 'एमएसपीजवळ', 'distress.mspProfitable': 'फायद्याचे', 'distress.mspBelowBadge': 'एमएसपीपेक्षा कमी',
   'distress.loanUrgent': 'तातडीचे: एका आठवड्यात हप्ता देय आहे. रोख प्रवाहावर मोठा ताण आहे.', 'distress.loanUpcoming': 'देयक जवळ आले: हप्ता चालू मासिक कालावधीत देय आहे.', 'distress.loanSafe': 'सुरक्षित अंतर: पीक विक्री आणि पैशांची व्यवस्था करण्यासाठी पुरेसा वेळ आहे.', 'distress.badgeImminent': 'तातडीचे देय', 'distress.badgeUpcoming': 'लवकर देय', 'distress.badgeSafe': 'सुरक्षित अंतर',
-  'distress.levelCritical': '🔴 गंभीर संकट इशारा (स्कोअर > 80)', 'distress.levelWatch': '🟡 मध्यम निरीक्षण (स्कोअर 51–80)', 'distress.levelStable': '🟢 सामान्य आणि स्थिर (स्कोअर ≤ 50)',
+  'distress.levelCritical': 'गंभीर संकट इशारा (स्कोअर > 80)', 'distress.levelWatch': 'मध्यम निरीक्षण (स्कोअर 51–80)', 'distress.levelStable': 'सामान्य आणि स्थिर (स्कोअर ≤ 50)',
 
 };
 
@@ -1700,7 +1700,7 @@ const bn = {
   'distress.compound': 'আবহাওয়া, ফসলের দাম এবং ঋণের কিস্তি মিলিয়ে চাপ খুব বেশি।', 'distress.rainDrought': 'তীব্র খরার চাপ: দাঁড়ানো ফসল শুকিয়ে যাওয়ার ঝুঁকি বেশি।', 'distress.rainFlood': 'জলাবদ্ধতার ঝুঁকি: অতিরিক্ত বৃষ্টিতে জমিতে পানি জমতে পারে।', 'distress.rainNormal': 'আর্দ্রতা যথেষ্ট: বৃষ্টি ফসলের স্বাভাবিক প্রয়োজনের মধ্যে আছে।',
   'distress.rainDroughtBadge': 'খরার ঘাটতি', 'distress.rainFloodBadge': 'বন্যার বিপদ', 'distress.normalBadge': 'স্বাভাবিক', 'distress.mspAbove': 'সরকারি এমএসপি: ₹{msp}/কুইন্টাল (+₹{amount} এমএসপির উপরে)', 'distress.mspBelow': 'সরকারি এমএসপি: ₹{msp}/কুইন্টাল (-₹{amount} এমএসপির নিচে)', 'distress.mspAtMargin': 'এমএসপির কাছাকাছি', 'distress.mspProfitable': 'লাভজনক', 'distress.mspBelowBadge': 'এমএসপির নিচে',
   'distress.loanUrgent': 'জরুরি: এক সপ্তাহের মধ্যে কিস্তি দিতে হবে। নগদ প্রবাহে বেশি চাপ রয়েছে।', 'distress.loanUpcoming': 'কিস্তি আসন্ন: চলতি মাসিক সময়ের মধ্যে কিস্তি দিতে হবে।', 'distress.loanSafe': 'নিরাপদ সময়: ফসল বিক্রি ও টাকার ব্যবস্থা করার যথেষ্ট সময় আছে।', 'distress.badgeImminent': 'জরুরি বকেয়া', 'distress.badgeUpcoming': 'শীঘ্রই বকেয়া', 'distress.badgeSafe': 'নিরাপদ সময়',
-  'distress.levelCritical': '🔴 গুরুতর সংকট সতর্কতা (স্কোর > ৮০)', 'distress.levelWatch': '🟡 মাঝারি নজরদারি (স্কোর ৫১–৮০)', 'distress.levelStable': '🟢 স্বাভাবিক ও স্থিতিশীল (স্কোর ≤ ৫০)',
+  'distress.levelCritical': 'গুরুতর সংকট সতর্কতা (স্কোর > ৮০)', 'distress.levelWatch': 'মাঝারি নজরদারি (স্কোর ৫১–৮০)', 'distress.levelStable': 'স্বাভাবিক ও স্থিতিশীল (স্কোর ≤ ৫০)',
 
 };
 
@@ -2102,7 +2102,7 @@ const ta = {
   'distress.compound': 'வானிலை, பயிர் விலை மற்றும் கடன் தவணைகளால் ஒருங்கிணைந்த அழுத்தம் அதிகமாக உள்ளது.', 'distress.rainDrought': 'கடுமையான வறட்சி அழுத்தம்: பயிர் வாடும் ஆபத்து அதிகம்.', 'distress.rainFlood': 'நீர்த்தேக்க ஆபத்து: அதிக மழையால் வயலில் நீர் தேங்கலாம்.', 'distress.rainNormal': 'ஈரப்பதம் போதுமானது: மழை பயிரின் இயல்பான தேவைக்குள் உள்ளது.',
   'distress.rainDroughtBadge': 'வறட்சி குறைவு', 'distress.rainFloodBadge': 'வெள்ள ஆபத்து', 'distress.normalBadge': 'இயல்பு', 'distress.mspAbove': 'அரசு MSP: ₹{msp}/குவிண்டால் (+₹{amount} MSP-க்கு மேல்)', 'distress.mspBelow': 'அரசு MSP: ₹{msp}/குவிண்டால் (-₹{amount} MSP-க்கு கீழ்)', 'distress.mspAtMargin': 'MSP அருகில்', 'distress.mspProfitable': 'லாபகரமானது', 'distress.mspBelowBadge': 'MSP-க்கு கீழ்',
   'distress.loanUrgent': 'அவசரம்: ஒரு வாரத்திற்குள் தவணை செலுத்த வேண்டும். பணப்புழக்க அழுத்தம் அதிகம்.', 'distress.loanUpcoming': 'தவணை வரவிருக்கிறது: இந்த மாத காலத்திற்குள் செலுத்த வேண்டும்.', 'distress.loanSafe': 'பாதுகாப்பான இடைவெளி: அறுவடை விற்பனைக்கும் பண ஏற்பாட்டிற்கும் போதுமான நேரம் உள்ளது.', 'distress.badgeImminent': 'உடனடி தவணை', 'distress.badgeUpcoming': 'விரைவில் தவணை', 'distress.badgeSafe': 'பாதுகாப்பான இடைவெளி',
-  'distress.levelCritical': '🔴 கடுமையான நெருக்கடி எச்சரிக்கை (மதிப்பெண் > 80)', 'distress.levelWatch': '🟡 மிதமான கண்காணிப்பு (மதிப்பெண் 51–80)', 'distress.levelStable': '🟢 இயல்பு மற்றும் நிலையானது (மதிப்பெண் ≤ 50)',
+  'distress.levelCritical': 'கடுமையான நெருக்கடி எச்சரிக்கை (மதிப்பெண் > 80)', 'distress.levelWatch': 'மிதமான கண்காணிப்பு (மதிப்பெண் 51–80)', 'distress.levelStable': 'இயல்பு மற்றும் நிலையானது (மதிப்பெண் ≤ 50)',
 
 };
 
@@ -2504,7 +2504,7 @@ const te = {
   'distress.compound': 'వాతావరణం, పంట ధరలు మరియు రుణ వాయిదాల వల్ల కలిపి ఒత్తిడి ఎక్కువగా ఉంది.', 'distress.rainDrought': 'తీవ్రమైన కరువు ఒత్తిడి: నిలిచిన పంట వాడిపోయే ప్రమాదం ఎక్కువ.', 'distress.rainFlood': 'నీరు నిలిచే ప్రమాదం: అధిక వర్షంతో పొలంలో నీరు చేరవచ్చు.', 'distress.rainNormal': 'తేమ సరిపోతుంది: వర్షపాతం పంట సాధారణ అవసరాల్లో ఉంది.',
   'distress.rainDroughtBadge': 'కరువు లోటు', 'distress.rainFloodBadge': 'వరద ప్రమాదం', 'distress.normalBadge': 'సాధారణం', 'distress.mspAbove': 'ప్రభుత్వ MSP: ₹{msp}/క్వింటాల్ (+₹{amount} MSP కంటే ఎక్కువ)', 'distress.mspBelow': 'ప్రభుత్వ MSP: ₹{msp}/క్వింటాల్ (-₹{amount} MSP కంటే తక్కువ)', 'distress.mspAtMargin': 'MSP సమీపంలో', 'distress.mspProfitable': 'లాభదాయకం', 'distress.mspBelowBadge': 'MSP కంటే తక్కువ',
   'distress.loanUrgent': 'అత్యవసరం: ఒక వారంలో వాయిదా చెల్లించాలి. నగదు ప్రవాహంపై ఒత్తిడి ఎక్కువ.', 'distress.loanUpcoming': 'వాయిదా సమీపంలో ఉంది: ఈ నెల వ్యవధిలో చెల్లించాలి.', 'distress.loanSafe': 'సురక్షిత సమయం: పంట విక్రయం మరియు డబ్బు ఏర్పాటుకు తగిన సమయం ఉంది.', 'distress.badgeImminent': 'తక్షణ బకాయి', 'distress.badgeUpcoming': 'త్వరలో బకాయి', 'distress.badgeSafe': 'సురక్షిత సమయం',
-  'distress.levelCritical': '🔴 తీవ్రమైన సంక్షోభ హెచ్చరిక (స్కోర్ > 80)', 'distress.levelWatch': '🟡 మోస్తరు పర్యవేక్షణ (స్కోర్ 51–80)', 'distress.levelStable': '🟢 సాధారణం మరియు స్థిరంగా ఉంది (స్కోర్ ≤ 50)',
+  'distress.levelCritical': 'తీవ్రమైన సంక్షోభ హెచ్చరిక (స్కోర్ > 80)', 'distress.levelWatch': 'మోస్తరు పర్యవేక్షణ (స్కోర్ 51–80)', 'distress.levelStable': 'సాధారణం మరియు స్థిరంగా ఉంది (స్కోర్ ≤ 50)',
 
 };
 

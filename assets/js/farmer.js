@@ -12,7 +12,7 @@
    names translate live via Sarvam when a key is configured.
    ============================================================ */
 
-import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260831-2';
+import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260831-8';
 import * as storage from './storage.js';
 import { repository, getAuth } from './repository/index.js';
 import * as router from './router.js';
@@ -30,7 +30,7 @@ import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
 import * as voice from './voice.js';
 import * as icons from './icons.js';
-import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from './loan.js';
+import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from './loan.js?v=20260831-8';
 
 const _el = (id) => document.getElementById(id);
 const $ = (id) => {
@@ -2231,11 +2231,7 @@ function renderDistressPlanner() {
   if (scoreNum) scoreNum.textContent = `${score} / 100`;
   if (meterBar) {
     meterBar.style.width = `${score}%`;
-    meterBar.style.backgroundColor = score > 80
-      ? 'hsl(0 75% 55%)'
-      : score >= 51
-      ? 'hsl(38 92% 50%)'
-      : 'hsl(142 60% 42%)';
+    meterBar.style.backgroundColor = 'hsl(var(--primary))';
   }
   if (levelText) {
     if (score > 80) {
@@ -2513,13 +2509,13 @@ function renderLoan() {
   if (nextCountEl) {
     if (result.paidCount === tenureMonths) {
       nextCountEl.className = 'bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs';
-      nextCountEl.textContent = `✅ ${t('loan.allPaid')}`;
+      nextCountEl.textContent = t('loan.allPaid');
     } else if (result.nextDueDaysRemaining < 0) {
       nextCountEl.className = 'bg-rose-100 text-rose-900 border border-rose-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs';
-      nextCountEl.textContent = `🚨 ${t('loan.overdueBy', { days: Math.abs(result.nextDueDaysRemaining) })}`;
+      nextCountEl.textContent = t('loan.overdueBy', { days: Math.abs(result.nextDueDaysRemaining) });
     } else {
       nextCountEl.className = 'bg-white text-sky-900 border border-sky-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs';
-      nextCountEl.textContent = `⏳ ${t('loan.daysRemaining', { days: result.nextDueDaysRemaining })}`;
+      nextCountEl.textContent = t('loan.daysRemaining', { days: result.nextDueDaysRemaining });
     }
   }
 

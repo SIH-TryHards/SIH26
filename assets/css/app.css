@@ -2795,6 +2795,156 @@ textarea.input { display: block; max-width: 100%; min-width: 0; resize: vertical
   }
 }
 
+/* Final loan palette: the loan flow follows the same green-and-white system
+   as the rest of Kisan Saathi. Status is carried by copy and meter position,
+   not by introducing a second rainbow of accent colors. */
+
+#viewLoan .bg-white,
+#viewLoan .bg-slate-50,
+#viewLoan .bg-slate-100 {
+  background-color: hsl(var(--card)) !important;
+}
+
+#viewLoan .bg-slate-200,
+#viewLoan .bg-blue-50,
+#viewLoan .bg-sky-50,
+#viewLoan .bg-sky-100,
+#viewLoan .bg-rose-50,
+#viewLoan .bg-rose-100,
+#viewLoan .bg-amber-50,
+#viewLoan .bg-amber-100,
+#viewLoan .bg-emerald-50,
+#viewLoan .bg-emerald-100 {
+  background-color: hsl(var(--secondary)) !important;
+}
+
+#viewLoan .bg-rose-600,
+#viewLoan .bg-rose-700,
+#viewLoan .bg-emerald-500,
+#viewLoan .bg-emerald-600,
+#viewLoan .bg-amber-400 {
+  background-color: hsl(var(--primary)) !important;
+}
+
+#viewLoan .text-slate-300,
+#viewLoan .text-slate-400,
+#viewLoan .text-slate-500,
+#viewLoan .text-slate-600,
+#viewLoan .text-slate-700,
+#viewLoan .text-slate-800,
+#viewLoan .text-slate-900,
+#viewLoan .text-slate-950 {
+  color: hsl(var(--foreground)) !important;
+}
+
+#viewLoan .text-rose-600,
+#viewLoan .text-rose-700,
+#viewLoan .text-rose-800,
+#viewLoan .text-rose-900,
+#viewLoan .text-rose-950,
+#viewLoan .text-blue-700,
+#viewLoan .text-amber-700,
+#viewLoan .text-amber-800,
+#viewLoan .text-sky-800,
+#viewLoan .text-sky-900 {
+  color: hsl(var(--primary)) !important;
+}
+
+#viewLoan .text-emerald-400,
+#viewLoan .text-emerald-700,
+#viewLoan .text-emerald-800,
+#viewLoan .text-emerald-900,
+#viewLoan .text-emerald-950 {
+  color: hsl(var(--primary)) !important;
+}
+
+#viewLoan .border-slate-100,
+#viewLoan .border-slate-200,
+#viewLoan .border-slate-300,
+#viewLoan .border-rose-200,
+#viewLoan .border-rose-300,
+#viewLoan .border-rose-500,
+#viewLoan .border-emerald-200,
+#viewLoan .border-emerald-300,
+#viewLoan .border-sky-200,
+#viewLoan .border-sky-300,
+#viewLoan .border-amber-300,
+#viewLoan .border-l-blue-600,
+#viewLoan .border-l-amber-500 {
+  border-color: hsl(var(--border)) !important;
+}
+
+#viewLoan .border-l-blue-600,
+#viewLoan .border-l-amber-500 {
+  border-left-color: hsl(var(--primary)) !important;
+}
+
+#viewLoan #distressWarningBanner {
+  background: hsl(var(--secondary)) !important;
+  border-color: hsl(var(--primary)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+#viewLoan #distressWarningBanner .bg-white\/95,
+#viewLoan #distressWarningBanner .bg-white\/80 {
+  background: hsl(var(--card)) !important;
+}
+
+#viewLoan #distressWarningBanner .text-white {
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+#viewLoan #distressScoreLevelText,
+#viewLoan #distressScorePill,
+#viewLoan .loan-status-pill,
+#viewLoan .loan-status-pill--paid,
+#viewLoan .loan-status-pill--overdue,
+#viewLoan .loan-status-pill--upcoming {
+  background: hsl(var(--secondary)) !important;
+  border-color: hsl(var(--border)) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+#viewLoan #distressMeterBar,
+#viewLoan #loanPaidProgressBar,
+#viewLoan #loanLeftProgressBar {
+  background: hsl(var(--primary)) !important;
+}
+
+#viewLoan .loan-row--overdue {
+  background: hsl(var(--secondary)) !important;
+}
+
+#viewLoan input[type="range"],
+#viewLoan input[type="checkbox"] {
+  accent-color: hsl(var(--primary));
+}
+
+#viewLoan .loan-checklist-banner {
+  background: hsl(var(--secondary)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+#viewLoan .loan-summary-panel > :first-child {
+  background: hsl(var(--primary)) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+#viewLoan .loan-summary-panel > :first-child .text-amber-300 {
+  color: hsl(var(--secondary)) !important;
+}
+
+#viewLoan .loan-summary-panel > :first-child .text-slate-300,
+#viewLoan .loan-summary-panel > :first-child .text-slate-400,
+#viewLoan .loan-summary-panel > :first-child .text-emerald-400 {
+  color: hsl(var(--secondary)) !important;
+}
+
+#viewLoan .loan-summary-panel > :first-child .bg-emerald-500 {
+  background: hsl(var(--secondary)) !important;
+  color: hsl(var(--primary)) !important;
+}
+
 :root[data-theme="dark"] .border-slate-100,
 :root[data-theme="dark"] .border-slate-200,
 :root[data-theme="dark"] .border-slate-300 {

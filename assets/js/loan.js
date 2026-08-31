@@ -72,14 +72,14 @@ export function calculateDistressScore(rainForecastMm = 0, mandiPrice = 2425, ms
     if (rain <= 2.0) {
       rootCauses.push({
         id: 'drought',
-        icon: '🌧️',
+        icon: '•',
         title: 'Severe Rainfall Deficit (Drought Stress)',
         desc: `3-day rainfall forecast is critically low at ${rain.toFixed(1)} mm, causing acute crop moisture stress and potential yield loss.`
       });
     } else {
       rootCauses.push({
         id: 'excess_rain',
-        icon: '🌊',
+        icon: '•',
         title: 'Excessive Rainfall & Inundation Hazard',
         desc: `Forecast of ${rain.toFixed(1)} mm rainfall over 3 days poses severe waterlogging and root aeration danger.`
       });
@@ -90,7 +90,7 @@ export function calculateDistressScore(rainForecastMm = 0, mandiPrice = 2425, ms
     const deficitPct = Math.round(((msp - mPrice) / msp) * 100);
     rootCauses.push({
       id: 'price_crash',
-      icon: '📉',
+      icon: '•',
       title: 'Mandi Realization Below MSP',
       desc: `Effective market rate of ₹${Math.round(mPrice).toLocaleString('en-IN')}/Qtl is ${deficitPct}% below Government MSP (₹${Math.round(msp).toLocaleString('en-IN')}/Qtl), impacting repayment capacity.`
     });
@@ -99,7 +99,7 @@ export function calculateDistressScore(rainForecastMm = 0, mandiPrice = 2425, ms
   if (sLoan >= 65) {
     rootCauses.push({
       id: 'loan_due',
-      icon: '⏳',
+      icon: '•',
       title: 'Imminent Loan Repayment Due Date',
       desc: `Only ${days} days remaining until the next KCC / bank installment due date with tight liquidity buffer.`
     });
@@ -221,4 +221,3 @@ export function generateSchedule(principal, annualRate, months, startDate = new 
 }
 
 export const generateLoanSchedule = generateSchedule;
-
