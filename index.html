@@ -342,10 +342,10 @@
       <p id="mandiHelp"></p>
 
       <div class="mandi-farm-context" aria-label="Current field and crop profile">
-        <div><span>State</span><strong id="mandiStateValue">—</strong></div>
-        <div><span>District</span><strong id="mandiDistrictValue">—</strong></div>
-        <div><span>Soil</span><strong id="mandiSoilValue">—</strong></div>
-        <div><span>Land area</span><strong id="mandiAreaValue">—</strong></div>
+        <div><span id="mandiStateLabel">State</span><strong id="mandiStateValue">—</strong></div>
+        <div><span id="mandiDistrictLabel">District</span><strong id="mandiDistrictValue">—</strong></div>
+        <div><span id="mandiSoilLabel">Soil</span><strong id="mandiSoilValue">—</strong></div>
+        <div><span id="mandiAreaLabel">Land area</span><strong id="mandiAreaValue">—</strong></div>
       </div>
 
       <form id="mandiQtyForm" class="mandi-qty-row" novalidate>
@@ -757,7 +757,7 @@
     </nav>
   </main>
 
-  <section class="language-gate" id="languageGate" aria-labelledby="languageTitle" role="dialog" aria-modal="true">
+  <section class="language-gate" id="languageGate" aria-labelledby="languageTitle" role="dialog" aria-modal="true" hidden>
     <div class="language-gate__content">
       <span class="eyebrow">Kisan Saathi</span>
       <h1 id="languageTitle">Choose your language</h1>

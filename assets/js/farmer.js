@@ -134,8 +134,8 @@ function applyTheme() {
   if (meta) meta.content = theme === 'dark' ? '#142016' : '#31572c';
   const value = $('profileThemeVal');
   const button = $('themeToggleBtn');
-  if (value) value.textContent = theme === 'dark' ? 'Dark mode' : 'Light mode';
-  if (button) button.textContent = theme === 'dark' ? 'Use light mode' : 'Use dark mode';
+  if (value) value.textContent = theme === 'dark' ? t('profile.darkMode') : t('profile.lightMode');
+  if (button) button.textContent = theme === 'dark' ? t('profile.useLightMode') : t('profile.useDarkMode');
 }
 
 function toggleTheme() {
@@ -170,7 +170,7 @@ function renderLanguageTiles() {
     choose.className = 'language-tile__choice';
     choose.type = 'button';
     choose.dataset.language = language.code;
-    choose.setAttribute('aria-label', `Choose ${language.label}`);
+    choose.setAttribute('aria-label', `${t('gate.choose')} ${language.label}`);
 
     const name = document.createElement('span');
     name.className = 'language-tile__name';
@@ -180,8 +180,8 @@ function renderLanguageTiles() {
     listen.className = 'language-tile__listen';
     listen.type = 'button';
     listen.innerHTML = icons.speaker(16);
-    listen.title = `Listen to ${language.label}`;
-    listen.setAttribute('aria-label', `Listen to ${language.label}`);
+    listen.title = `${language.label}`;
+    listen.setAttribute('aria-label', `${language.label}`);
     listen.addEventListener('click', () => speak(language));
 
     choose.append(name);
@@ -333,6 +333,10 @@ function applyCopy() {
   $('lblMandiCrop').textContent = t('mandi.cropLabel');
   $('lblMandiQty').textContent = t('mandi.qtyLabel');
   $('mandiQtyInput').placeholder = t('mandi.qtyPh');
+  $('mandiStateLabel').textContent = t('loc.state');
+  $('mandiDistrictLabel').textContent = t('loc.district');
+  $('mandiSoilLabel').textContent = t('land.soil');
+  $('mandiAreaLabel').textContent = t('land.title');
   mandiCropSelect.setPlaceholder(t('ph.select'));
   $('mandiRecalcBtn').textContent = t('mandi.recalc');
   $('mandiResultsLabel').textContent = t('mandi.bestNetTag');
@@ -1160,7 +1164,7 @@ async function onSubmitProfile(event) {
 
   const email = $('profileEmailInput').value.trim();
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errNode.textContent = 'Enter a valid email address or leave it blank.';
+    errNode.textContent = t('profile.emailError');
     errNode.hidden = false;
     return;
   }
@@ -1235,12 +1239,12 @@ function renderCropPhenology(draft) {
       <div class="phenology-header">
         <div class="phenology-title-wrap">
           <span class="phenology-eyebrow">
-            ${icons.sprout(16)} Growth Tracker
+            ${icons.sprout(16)} ${escapeHtml(t('pheno.title'))}
           </span>
           <h2 class="phenology-crop-name">${escapeHtml(pheno.cropName)} &mdash; ${escapeHtml(pheno.stageName)}</h2>
           <p class="phenology-sub">${escapeHtml(t('pheno.dayOf', { elapsed: pheno.daysElapsed, total: pheno.totalDuration, date: pheno.expectedHarvestDate }))}</p>
         </div>
-        <span class="phenology-badge">${pheno.progressPct}% Season Progress</span>
+        <span class="phenology-badge">${escapeHtml(t('pheno.seasonProgress', { pct: pheno.progressPct }))}</span>
       </div>
 
       <div class="phenology-bar-container">
@@ -1269,15 +1273,15 @@ function renderCropPhenology(draft) {
         </div>
         <div class="phenology-meta-item">
           <span class="phenology-meta-label">${escapeHtml(t('pheno.gdd'))}</span>
-          <span class="phenology-meta-val">${pheno.gddAccrued} &deg;C-days</span>
+          <span class="phenology-meta-val">${pheno.gddAccrued} \u00b0C-days</span>
         </div>
         <div class="phenology-meta-item">
           <span class="phenology-meta-label">${escapeHtml(t('pheno.stageDuration'))}</span>
-          <span class="phenology-meta-val">${pheno.daysInStage} / ${pheno.stageDuration} days</span>
+          <span class="phenology-meta-val">${pheno.daysInStage} / ${pheno.stageDuration}</span>
         </div>
         <div class="phenology-meta-item">
           <span class="phenology-meta-label">${escapeHtml(t('pheno.daysToHarvest'))}</span>
-          <span class="phenology-meta-val">${daysRemaining} days</span>
+          <span class="phenology-meta-val">${daysRemaining}</span>
         </div>
       </div>
     </div>
@@ -1326,12 +1330,12 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
   const area = parseFloat(draft?.areaAcres) || 1.0;
   const waterDemand = calculateCropWaterDemand(et0, draft?.crop || 'wheat', stageIdx, area);
 
-  const uvLevel = uv < 3 ? 'Low' : uv < 6 ? 'Moderate' : uv < 8 ? 'High' : 'Very High';
+  const uvLevel = uv < 3 ? t('tele.hydration.dry') : uv < 6 ? t('tele.hydration.moderate') : uv < 8 ? t('tele.hydration.good') : t('tele.hydration.saturated');
 
   mount.innerHTML = `
     <div class="telemetry-header">
       <span class="telemetry-eyebrow">
-        ${icons.gauge(16)} Live Weather
+        ${icons.gauge(16)} ${escapeHtml(t('tele.title'))}
       </span>
     </div>
     <div class="telemetry-grid">
@@ -1374,7 +1378,7 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
           <span class="telemetry-card__icon">${icons.droplet(18)}</span>
         </div>
         <div class="telemetry-card__val">${et0.toFixed(1)} mm/day</div>
-        <div class="telemetry-card__sub">${Math.round(waterDemand.litersPerAcre).toLocaleString('en-IN')} L/Acre Demand</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.litersPerAcre', { liters: Math.round(waterDemand.litersPerAcre).toLocaleString('en-IN') }))}</div>
       </div>
 
       <!-- 5. Humidity -->
@@ -1404,7 +1408,7 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
           <span class="telemetry-card__icon">${icons.sun(18)}</span>
         </div>
         <div class="telemetry-card__val">${uv.toFixed(1)}</div>
-        <div class="telemetry-card__sub">${uvLevel} Solar Load</div>
+        <div class="telemetry-card__sub">${escapeHtml(t('tele.solarLoad', { level: uvLevel }))}</div>
       </div>
 
       <!-- 8. Surface Pressure -->
@@ -1437,13 +1441,13 @@ function renderSprayWindow(weather) {
   const hourlyOrDaily = weather.forecast7d || weather.forecast || [];
   const spray = evaluateSprayWindow(weather.current, hourlyOrDaily);
 
-  const statusLabel = spray.status === 'optimal' ? 'Optimal Window'
-    : spray.status === 'caution' ? 'Caution Window' : 'Unsafe to Spray';
+  const statusLabel = spray.status === 'optimal' ? t('spray.optimal')
+    : spray.status === 'caution' ? t('spray.caution') : t('spray.unsafe');
 
   const defaultSlots = spray.status === 'optimal'
-    ? [{ start: '06:00 AM', end: '09:30 AM', period: 'Morning Calm' }, { start: '05:00 PM', end: '07:00 PM', period: 'Dusk' }]
+    ? [{ start: '06:00 AM', end: '09:30 AM', period: t('spray.morningCalm') }, { start: '05:00 PM', end: '07:00 PM', period: t('spray.dusk') }]
     : spray.status === 'caution'
-      ? [{ start: '06:00 AM', end: '08:00 AM', period: 'Early Window Only' }]
+      ? [{ start: '06:00 AM', end: '08:00 AM', period: t('spray.earlyOnly') }]
       : [];
 
   const slots = (spray.recommendedSlots && spray.recommendedSlots.length) ? spray.recommendedSlots : defaultSlots;
@@ -1453,7 +1457,7 @@ function renderSprayWindow(weather) {
       <div class="spray-header">
         <div class="phenology-title-wrap">
           <span class="phenology-eyebrow">
-            ${icons.sprayer(16)} Safe to Spray
+            ${icons.sprayer(16)} ${escapeHtml(t('spray.title'))}
           </span>
           <h2 class="phenology-crop-name">${escapeHtml(t('spray.conditions'))}</h2>
         </div>
@@ -1519,7 +1523,7 @@ function renderTomorrowActionPlan(draft, weather, pheno) {
       <div class="phenology-header">
         <div class="phenology-title-wrap">
           <span class="phenology-eyebrow">
-            ${icons.activity(16)} Tomorrow's Action Plan
+            ${icons.activity(16)} ${escapeHtml(t('tomorrow.title'))}
           </span>
           <h2 class="phenology-crop-name">${escapeHtml(t('tomorrow.directive'))}</h2>
         </div>
@@ -1539,7 +1543,7 @@ function renderTomorrowActionPlan(draft, weather, pheno) {
             </span>
           </div>
           <div class="action-directive-quant">
-            ${Math.round(plan.irrigationDirective.quantityLitersPerAcre).toLocaleString('en-IN')} Liters / Acre
+            ${escapeHtml(t('tomorrow.litersPerAcre', { liters: Math.round(plan.irrigationDirective.quantityLitersPerAcre).toLocaleString('en-IN') }))}
           </div>
           <div class="action-directive-rationale">
             ${escapeHtml(plan.irrigationDirective.rationale)}
@@ -1846,7 +1850,7 @@ async function renderMandi(overrideQty) {
   $('mandiStateValue').textContent = eff.stateName ?? '—';
   $('mandiDistrictValue').textContent = eff.districtName ?? '—';
   $('mandiSoilValue').textContent = eff.soilType ? t(`soil.${eff.soilType}`) : '—';
-  $('mandiAreaValue').textContent = eff.areaAcres ? `${eff.areaAcres} acres` : '—';
+  $('mandiAreaValue').textContent = eff.areaAcres ? `${eff.areaAcres} ${t('unit.acres')}` : '—';
 
   if (overrideQty !== undefined) {
     mandiQty = overrideQty;
@@ -1959,7 +1963,7 @@ function renderHelp() {
   const district = meCache?.profile?.district_name ?? draft.districtName ?? officer.district;
 
   $('officerName').textContent = officer.name;
-  $('officerDistrict').textContent = `${district} · Maharashtra`;
+  $('officerDistrict').textContent = `${district} · ${t('help.state') || 'Maharashtra'}`;
   $('officerCallBtn').href = `tel:${officer.phone}`;
   $('kccCallBtn').href = 'tel:18001801551';
   $('disasterCallBtn').href = 'tel:18001208040';
@@ -2311,8 +2315,8 @@ function renderProfile() {
   const masked = session?.masked ?? `••• ${(session?.phone ?? draft.phone ?? '1234567890').slice(-3)}`;
   $('profileNameDisplay').textContent = name;
   $('profilePhoneDisplay').textContent = `${t('profile.phoneLabel')}: ${masked}`;
-  $('profileEmailVal').textContent = draft.email || 'Not added';
-  $('profileContactVal').textContent = ({ call: 'Phone call', sms: 'SMS', whatsapp: 'WhatsApp' })[draft.contactPreference] || 'Phone call';
+  $('profileEmailVal').textContent = draft.email || t('profile.notAdded');
+  $('profileContactVal').textContent = ({ call: t('profile.phone'), sms: 'SMS', whatsapp: 'WhatsApp' })[draft.contactPreference] || t('profile.phone');
 
   const isMasked = name.includes('•');
   $('profileAvatar').textContent = isMasked
@@ -2693,7 +2697,7 @@ function wire() {
     $('displayNameInput').focus();
   });
   $('clearAllDataBtn').addEventListener('click', () => {
-    if (!window.confirm('Clear your Kisan Saathi profile, loan plan, visits, and saved preferences from this device?')) return;
+    if (!window.confirm(t('loan.clearDataConfirm'))) return;
     storage.clearAllData();
     meCache = null;
     window.location.hash = '#/welcome';
@@ -2751,7 +2755,11 @@ function boot() {
   applyTheme();
   const saved = storage.getLanguage();
   const validSaved = saved && getLanguageByCode(saved);
-  if (validSaved) setLang(saved);
+  if (validSaved) {
+    setLang(saved);
+    languageGate.hidden = true;
+    openPickerBtn.hidden = false;
+  }
 
   renderLanguageTiles();
   wire();
