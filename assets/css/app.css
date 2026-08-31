@@ -2945,6 +2945,58 @@ textarea.input { display: block; max-width: 100%; min-width: 0; resize: vertical
   color: hsl(var(--primary)) !important;
 }
 
+/* Keep score changes from changing the geometry of the risk explorer. The
+   warning rail keeps its footprint at every score, while the detailed copy is
+   available only in the compact critical state. */
+
+#viewLoan #distressWarningBanner {
+  display: block !important;
+  height: 56px;
+  min-height: 56px;
+  margin: 16px 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  visibility: visible;
+}
+
+#viewLoan #distressWarningBanner.hidden {
+  visibility: hidden;
+}
+
+#viewLoan #distressWarningBanner > .flex {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+#viewLoan #distressWarningBanner .distress-warning-description,
+#viewLoan #distressWarningBanner .distress-warning-analysis,
+#viewLoan #distressWarningBanner .distress-warning-actions {
+  display: none;
+}
+
+#viewLoan #distressPlannerCard > .grid > div {
+  min-height: 228px;
+}
+
+#viewLoan .distress-meter-card {
+  min-height: 94px;
+}
+
+#viewLoan .distress-meter-track {
+  display: block !important;
+  height: 10px !important;
+  position: relative;
+}
+
+#viewLoan #distressMeterBar {
+  display: block;
+  min-width: 0;
+  height: 100%;
+  transition: width .22s ease;
+}
+
 :root[data-theme="dark"] .border-slate-100,
 :root[data-theme="dark"] .border-slate-200,
 :root[data-theme="dark"] .border-slate-300 {
