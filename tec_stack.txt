@@ -1,0 +1,124 @@
+KISAN SAATHI — TECHNICAL STACK
+Presentation-ready implementation inventory
+============================================================
+
+PRODUCT
+Kisan Saathi is a low-bandwidth, multilingual farmer application for crop
+advisory, weather-aware early warnings, mandi comparison, loan planning, and
+officer-assisted distress response. The farmer experience and officer workflow
+are kept separate so private risk assessments are not exposed publicly.
+
+SYSTEM FLOW
+Farmer profile and crop inputs
+  -> provider adapters and deterministic offline data
+  -> FastAPI account/API service and SQLite local persistence
+  -> advisory, crop-stage, weather, mandi, loan, and distress engines
+  -> responsive farmer screens, voice playback, official help links,
+     and officer triage actions
+
+FRONTEND
+- HTML5: single-page application shell in index.html.
+- CSS3: hand-written responsive CSS in assets/css/app.css.
+- JavaScript: browser-native ES modules with no frontend build step.
+- UI approach: custom lightweight controls, including a shadcn/ui-inspired
+  searchable select component implemented in assets/js/components/select.js.
+- Routing: hash-based client-side routing in assets/js/router.js.
+- Responsive design: CSS Grid, Flexbox, accessible form controls, mobile-first
+  layouts, dark mode, reduced-motion support, and low-bandwidth-safe assets.
+- Icon system: inline SVG icon functions in assets/js/icons.js; no icon CDN.
+- Voice: browser SpeechSynthesis / SpeechSynthesisUtterance through
+  assets/js/voice.js. It works without a paid voice service when the device
+  provides a suitable voice.
+- Localization: hand-curated catalogue in assets/js/i18n.js for English,
+  Hindi, Marathi, Bengali, Tamil, and Telugu. UI language state is persisted in
+  browser storage; missing specialist wording safely falls back to English.
+
+BACKEND
+- Python 3.14-compatible codebase.
+- FastAPI 0.141+: REST API and generated OpenAPI documentation.
+- Uvicorn 0.52+: local ASGI server.
+- Pydantic: request and response validation through FastAPI models.
+- PyJWT 2.13+: signed JWT session tokens for farmer and officer roles.
+- Python standard library sqlite3: zero-setup local relational persistence.
+- FastAPI CORSMiddleware: controlled frontend-to-backend access.
+- Backend entry point: backend/app/main.py.
+- Dependency manifest: backend/requirements.txt.
+
+AUTHENTICATION AND PRIVACY
+- Farmer sign-in: phone number plus OTP; development mode uses a safe stub OTP.
+- Officer sign-in: staff ID plus password, with role-protected JWT sessions.
+- Profile contract: account -> farmer profile -> farm -> crop cycle.
+- Client demo fallback stores only namespaced demo state in localStorage.
+- No Gmail password is collected and no secret API key is required by the
+  farmer-facing interface.
+
+DATA SOURCES AND PROVIDER ADAPTERS
+- Weather live source: Open-Meteo forecast and geocoding APIs, free and keyless.
+- Weather offline source: deterministic seasonal simulator in
+  assets/js/services/simWeather.js.
+- Mandi live source: data.gov.in AGMARKNET resource through the backend adapter.
+- Mandi offline source: deterministic simulated market data in
+  assets/js/services/simPrices.js.
+- Indic geography translation: optional Sarvam.ai Translate API adapter in
+  assets/js/services/sarvam.js; the app remains usable without a key.
+- Government schemes: curated official portal URLs and helpline links in the
+  project data catalogue.
+- Phone actions: tel: links for farmer helplines and assigned officers.
+- Provider boundary: screens call repository interfaces; they do not call
+  external services directly. Demo and API repositories share the same shapes.
+
+DOMAIN ENGINES
+- Advisory engine: pure JavaScript rules for crop stage, irrigation, heat,
+  waterlogging, spray windows, fungal watch, and rainfed stress.
+- Agronomy calculations: FAO-56 reference ET0 data from Open-Meteo, soil
+  moisture hydration tiers, crop phenology, and localized advisory templates.
+- Mandi intelligence: net take-home ranking using modal price, quantity,
+  freight, mandi fee, distance, trend, and MSP comparison.
+- Loan engine: EMI calculation, amortisation schedule, principal/interest split,
+  due-date handling, paid instalments, rollover arrears, and remaining balance.
+- Distress planner: transparent three-factor planning simulation using rain,
+  mandi-price pressure versus MSP, and days to the next EMI. Slider changes are
+  client-side planning only and do not overwrite the officer assessment.
+
+STORAGE AND DELIVERY
+- Primary local database: SQLite file under backend/data/ (runtime-only; not
+  committed to source control).
+- Browser persistence: localStorage for demo session, draft profile, language,
+  theme, mandi preferences, loan plan, and visit request fallback.
+- Local frontend delivery: Python http.server or any static HTTP server.
+- Local API delivery: Uvicorn serving FastAPI on port 8001.
+- Source control and delivery: Git and GitHub repository
+  https://github.com/SIH-TryHards/SIH26
+
+TESTING AND QUALITY CHECKS
+- Python compile check for backend modules.
+- Browser smoke verification for language switching, routing, forms, custom
+  selects, slider recalculation, responsive tables, phone links, theme toggle,
+  and offline fallback behavior.
+- Git diff --check for whitespace and patch integrity.
+- No external test framework or frontend package manager is currently required;
+  the application is intentionally runnable from a clean Python environment.
+
+CURRENTLY USED DEPENDENCIES
+- fastapi
+- uvicorn
+- PyJWT
+- pydantic (FastAPI dependency)
+- SQLite / sqlite3
+- Open-Meteo API
+- data.gov.in AGMARKNET API adapter
+- Optional Sarvam.ai Translate API adapter
+- Browser Web Speech API
+
+NOT CURRENTLY USED — DO NOT CLAIM AS IMPLEMENTED
+The reference presentation lists React.js, Node.js/Express, PostgreSQL,
+TensorFlow, scikit-learn, AWS, Firebase, Twilio, and MSG91. Those are not the
+current runtime stack in this repository. PostgreSQL/SQLAlchemy and production
+SMS/voice providers are future deployment options; ML services and cloud
+hosting should be added only when they are actually wired, tested, and secured.
+
+WHY THIS STACK FITS THE DEMO
+The implementation keeps the farmer UI small, readable, multilingual, and
+offline-safe while preserving clean interfaces for live weather, market feeds,
+production persistence, and future notifications. A judge can run the demo
+locally without cloud credentials and still see the production boundaries.

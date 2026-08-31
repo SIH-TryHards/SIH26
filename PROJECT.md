@@ -1,107 +1,57 @@
-# Project: Kisan Saathi Precision Agronomy
+# Project: Kisan Saathi UI Restoration & 5-Language I18N Localization
 
 ## Architecture
-- **Platform**: Vanilla JavaScript (ES Modules), HTML5, CSS3 Single-Page Application (SPA).
-- **Core Modules & Boundaries**:
-  - `assets/js/services/weather.js`: Live Open-Meteo telemetry fetcher with complete precision agronomy parameters.
-  - `assets/js/services/simWeather.js`: Offline & simulated telemetry generator with full schema parity.
-  - `assets/js/advisory.js`: Pure mathematical & agronomic calculation engines (12-crop phenology, FAO-56 evapotranspiration/crop water demand, soil hydrology classification, multi-variable spray window feasibility, and Tomorrow's Action Plan).
-  - `assets/js/icons.js`: Semantic, vector SVG icons replacing all emojis.
-  - `assets/css/app.css`: HSL tokenized design system styles for agronomy telemetry grids, phenology progress tracker, spray advisory cards, and action plan checklist.
-  - `index.html`: Semantic DOM mounting points (`#cropPhenologySection`, `#agronomyTelemetrySection`, `#sprayWindowSection`, `#tomorrowActionPlanSection`).
-  - `assets/js/farmer.js`: Dashboard controller hydrating data, rendering components, and updating real-time DOM states.
-  - `assets/js/repository/demoRepository.js` & `assets/js/i18n.js`: Clean repository profiles and localization with strict zero-emoji compliance.
-  - `tests/`: 4-Tier test suite and zero-emoji compliance audit harness.
+- **Frontend Stack**: Vanilla HTML5, Tailwind CSS, JavaScript (ES6 Modules).
+- **Core Modules**:
+  - `index.html`: Main single-page application shell containing dashboard views, setup wizard, telemetry, distress planner, loan calculator, and government schemes.
+  - `assets/js/i18n.js`: Centralized internationalization dictionary and translation engine (`t(key, params)`, `setLanguage(lang)`, event dispatching).
+  - `assets/js/farmer.js`: Main UI controller handling profile state, language binding (`applyCopy`), telemetry cards, spray windows, phenology, distress risk monitor, and loan schedule.
+  - `assets/js/advisory.js`: Agronomic decision engine generating tomorrow's action plan, spray window safety status, and crop stage advisory with dynamic translation keys.
+  - `assets/js/services/simPrices.js` & `assets/js/mandi.js`: Mandi price simulation, arrival trends, and APMC intelligence.
+  - `assets/js/loan.js`: Reducing balance loan EMI calculator, distress index computations, and installment scheduling.
+  - `assets/js/data.js` & `assets/js/data/locations.js`: Crop phenology baselines, soil types, irrigation methods, government scheme metadata, and district mappings.
 
 ## Feature Inventory
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | Live Open-Meteo Telemetry Expansion | Query current (temp, humidity, apparent temp, UV index, surface pressure, cloud cover, wind speed/dir, precip), hourly soil moisture (0-1cm, 1-3cm, 3-9cm, 9-27cm), daily (ET0 FAO, UV max, temp max/min, precip sum). | M1 | ORIGINAL_REQUEST §1 |
-| 2 | Simulated Weather Parity | Full schema parity in `simWeather.js` for offline & demo modes. | M1 | Codebase Survey |
-| 3 | Soil Hydrology Conversion Engine | Convert $m^3/m^3$ to % VWC and classify into 5 hydration tiers (Saturated, Optimal, Adequate, Depleted, Stress). | M1 | Spec Miner §1 |
-| 4 | FAO-56 ET0 & Crop Water Demand ($ET_c$) | Calculate daily $ET_c = ET_0 \times K_c$ and Acreage volumetric demand in Liters/Acre. | M1 | Spec Miner §1 |
-| 5 | 12-Crop Phenology Model Engine | Lifecycle stages, DAS thresholds, progress percentage, days in stage, expected harvest date for 12 crops. | M1 | ORIGINAL_REQUEST §2, Spec Miner §2 |
-| 6 | Microclimatic Spray Window Evaluator | Multi-variable decision algorithm evaluating wind speed, inversion, drift, rainfastness, Delta T, and temp. | M1 | ORIGINAL_REQUEST §3, Spec Miner §3 |
-| 7 | Tomorrow's Action Plan Generator | Generates weather synopsis, operational stage priority, context-aware irrigation directive, and 3-point field checklist. | M1 | ORIGINAL_REQUEST §3, Spec Miner §3 |
-| 8 | Semantic DOM Mounting & HTML Layout | Restructure `#viewHome` with dedicated semantic containers. | M2 | Codebase Survey |
-| 9 | Precision Agronomy CSS Design System | Responsive card grids, gauge badges, phenology stepper timeline, spray radar card, and action plan layout in `app.css`. | M2 | Codebase Survey |
-| 10 | SVG Icon Library Integration | Implement hand-authored, accessible SVG icons in `icons.js` for all agronomy metrics. | M2 | Strict Rule |
-| 11 | Dashboard UI Controller & Hydration | Render real-time telemetry cards, phenology timeline, spray card, and action plan in `farmer.js`. | M2 | ORIGINAL_REQUEST §1, 2, 3 |
-| 12 | Zero-Emoji Repository & UI Hardening | Eradicate all emojis from `index.html`, `farmer.js`, `i18n.js`, `demoRepository.js`, and test files. | M2 | Strict Rule |
-| 13 | 4-Tier Opaque-Box E2E Testing Suite | Author comprehensive test suite in `tests/` across Tiers 1-4 + Tier 5 Adversarial & Zero-Emoji audit. | E2E-Track | E2E Testing Track |
-| 14 | 100% E2E Verification & Audit Gate | Execute all tests, verify 100% pass, run Challenger verification and Forensic Auditor clean check. | M3 | Project Pattern §Dual Track |
+| 1 | Distress Risk Planner UI | 3-factor distress risk score card (rain, price, loan due proximity), slider simulator, high distress warning banner (>80), root-cause analysis list, emergency helpline buttons. | M1 | R1 |
+| 2 | Loan Schedule & Calculator UI | 2-column loan calculator with preset quick-fill buttons (₹50K, 1 Year, 4% KCC), repayment summary card, countdown urgency badge, and 1st-of-month installment schedule table. | M1 | R1 |
+| 3 | Government Relief Schemes & Real URLs | Dynamic card rendering for 6 official schemes (PM-Kisan, PMFBY, SMAM, KCC/Kisan Rin Portal, PMKSY, e-NAM) with verified `.gov.in` URLs and duplicate static block cleanup. | M1 | R1, R2 |
+| 4 | Setup Wizard Dropdown Localization | Translation of States, Districts, Soil types, Irrigation methods, and Crop options when opened/rendered in any selected language. | M2 | R3 |
+| 5 | Tomorrow's Action Plan Dynamic Keys | Refactoring `advisory.js` to emit translation keys and structured parameters for titles, synopsis, directives, and 3-point checklists. | M2 | R3 |
+| 6 | Live Telemetry & Safe-to-Spray Localization | Dynamic translation keys for 9 telemetry cards, compass directions, units, and 10 spray precedence reason strings. | M2 | R3 |
+| 7 | Mandi Intelligence Table Localization | Translation keys for APMC Mandi table headers, arrival varieties, operating days, and price trend statuses in `simPrices.js` and `mandi.js`. | M2 | R3 |
+| 8 | Restored Components String Extraction | Translation keys for distress planner, loan calculator, payment checklist, and government scheme cards. | M2 | R3 |
+| 9 | 5-Language Dictionary Completion | Complete, high-quality translation dictionaries in `assets/js/i18n.js` for Hindi (`hi`), Marathi (`mr`), Bengali (`bn`), Tamil (`ta`), and Telugu (`te`) replacing all raw English placeholders. | M3 | R4 |
+| 10 | Parameter Interpolation Standard | Standardized `{param}` token replacement across all 5 languages ensuring numbers, crop names, and metrics interpolate cleanly without syntax errors. | M3 | R4 |
+| 11 | E2E & Browser Visual Verification | Multi-tier test verification and automated browser inspection (Hindi, Bengali, Marathi, Tamil, Telugu) verifying DOM translation completeness, dropdowns, and `.gov.in` link destinations. | M4 | AC |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| E2E-Track | E2E Test Suite Creation | Build test harness and 4-tier test cases in `tests/`, produce `TEST_READY.md` | Survey | DONE |
-| M1 | Data & Agronomy Engines | Implement telemetry query, simulated parity, hydrology conversions, 12-crop phenology, spray evaluator, tomorrow action plan in `weather.js`, `simWeather.js`, `advisory.js` | Survey | DONE |
-| M2 | UI Components, Styling & Zero-Emoji Hardening | Build DOM structure, CSS styling, SVG icons, dashboard controller rendering, and clean repo emojis | M1 | DONE |
-| M3 | E2E Integration, Verification & Audit Gate | Execute test suite against complete system, adversarial challenge, and forensic audit | M1, M2, E2E-Track | DONE |
-| M4 | i18n Polish & Full Wiring (Aug 31) | Rewrite all 385 English strings for farmer-friendly plain language (FAO/ICAR-verified terms, grade-6 reading level), add 20+ new keys for phenology/telemetry/spray/tomorrow/distress/loan tables, wire every hard-coded label in `farmer.js` via `t()`, fix missing severity.watch and mandi/loan table headers | M2 | DONE |
+| 1 | M1: UI Components & Real URLs | Restore Distress Planner, Loan Schedule, dynamic Government Schemes with real `.gov.in` URLs; remove duplicate static markup in `index.html`. | none | DONE |
+| 2 | M2: String Extraction & Engine Refactor | Refactor `advisory.js`, `farmer.js`, `simPrices.js`, `loan.js`, and `data.js` to emit translation keys with `{param}` interpolation; replace hardcoded English strings. | M1 | IN_PROGRESS |
+| 3 | M3: 5-Language Translation Dictionary | Populate complete Hindi, Marathi, Bengali, Tamil, Telugu dictionaries in `assets/js/i18n.js` with zero English fallbacks. | M2 | PLANNED |
+| 4 | M4: Final Browser & Visual Verification | Run automated test suites, Chrome browser tests across languages, verify dropdowns, check official links, and pass integrity audit. | M3 | PLANNED |
 
 ## Interface Contracts
-### `assets/js/services/weather.js` ↔ `assets/js/farmer.js`
-- `fetchAgriWeather(lat, lon)`: Returns Promise resolving to:
-  ```javascript
-  {
-    current: {
-      temperature: Number,
-      apparentTemperature: Number,
-      humidity: Number,
-      windSpeed: Number,
-      windDirection: Number,
-      precipitation: Number,
-      cloudCover: Number,
-      surfacePressure: Number,
-      uvIndex: Number,
-      weatherCode: Number
-    },
-    soil: {
-      currentMoistureVwc: Number, // percentage (0-100)
-      topsoilMoistureVwc: Number,
-      subsoilMoistureVwc: Number,
-      deepMoistureVwc: Number,
-      soilTemp: Number,
-      hydrationStatus: String, // 'saturated'|'optimal'|'adequate'|'depleted'|'stress'
-      hydrationLabel: String
-    },
-    daily: {
-      et0: Number, // mm/day
-      tempMax: Number,
-      tempMin: Number,
-      precipSum: Number,
-      uvIndexMax: Number,
-      windSpeedMax: Number
-    },
-    forecast: Array // 7-day daily forecast objects
-  }
-  ```
+### `i18n.js` ↔ `farmer.js`, `advisory.js`, `loan.js`
+- `t(key, params)`: Takes string key (e.g. `'advisory.spray.wind_high'`) and optional params object `{ speed: 18 }`. Returns localized string. If key missing, returns fallback English or key.
+- `setLanguage(lang)`: Sets current language in state and `localStorage`, updates DOM elements with `data-i18n`, and dispatches `'languageChanged'` custom event.
 
-### `assets/js/advisory.js` Pure Functions
-- `calculateCropPhenology(cropType, sowingDate, currentDate)`:
-  - Returns: `{ crop, sowingDate, daysElapsed, totalDuration, stageIndex, stageKey, stageName, progressPct, daysInStage, stageDuration, expectedHarvestDate, kc, gddAccrued }`
-- `evaluateSprayWindow(currentWeather, hourlyForecast)`:
-  - Returns: `{ status: 'optimal'|'caution'|'unsafe', score: Number, reason: String, deltaT: Number, recommendedSlots: Array, constraints: Object }`
-- `buildTomorrowActionPlan(profile, tomorrowWeather, phenologyStage, soilHydration)`:
-  - Returns: `{ synopsis: String, operationalPriority: String, irrigationDirective: { action: 'APPLY'|'SUSPEND'|'POSTPONE'|'CONSERVE'|'DRAIN', quantityLitersPerAcre: Number, rationale: String }, checklist: Array<String> }`
+### `advisory.js` ↔ `farmer.js`
+- `evaluateSprayWindow(weather)`: Returns object `{ status: 'SAFE'|'CAUTION'|'UNSAFE', reasonKey: string, reasonParams: object }`.
+- `buildTomorrowActionPlan(profile, weather, phenology)`: Returns object `{ stageKey: string, synopsisKey: string, synopsisParams: object, directiveKey: string, directiveParams: object, checklist: Array<{ itemKey: string, itemParams: object }> }`.
+
+### `loan.js` ↔ `farmer.js`
+- `calculateDistressScore(rainForecastMm, mandiPrice, mspPrice, daysUntilDue)`: Returns `{ score: number, level: string, breakdown: Array<{ factorKey: string, impact: string, noteKey: string, noteParams: object }> }`.
+- `generateLoanSchedule(principal, rate, tenureMonths, startDate)`: Returns `{ monthlyEmi: number, totalInterest: number, totalPayable: number, installments: Array<{ number: number, dueDate: string, principal: number, interest: number, remaining: number, statusKey: string }> }`.
 
 ## Code Layout
-- Implementation Files:
-  - `assets/js/services/weather.js`
-  - `assets/js/services/simWeather.js`
-  - `assets/js/advisory.js`
-  - `assets/js/icons.js`
-  - `assets/js/farmer.js`
-  - `assets/js/i18n.js`
-  - `assets/js/repository/demoRepository.js`
-  - `assets/css/app.css`
-  - `index.html`
-- Test Files:
-  - `tests/test_runner.js`
-  - `tests/tier1_features.test.js`
-  - `tests/tier2_boundary.test.js`
-  - `tests/tier3_combinations.test.js`
-  - `tests/tier4_real_world.test.js`
-  - `tests/tier5_adversarial.test.js`
-  - `tests/zero_emoji_audit.test.js`
+- `index.html`: UI Shell & View containers
+- `assets/js/i18n.js`: Localization dictionary & helper
+- `assets/js/farmer.js`: Dashboard & Profile coordinator
+- `assets/js/advisory.js`: Agronomic decision rules
+- `assets/js/loan.js`: Loan & distress algorithms
+- `assets/js/services/simPrices.js`: Price simulation
+- `assets/js/data.js`: Agronomic baseline constants & government schemes data

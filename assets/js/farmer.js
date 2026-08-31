@@ -12,7 +12,7 @@
    names translate live via Sarvam when a key is configured.
    ============================================================ */
 
-import { LANGUAGES, t, getLang, setLang } from './i18n.js';
+import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260831-2';
 import * as storage from './storage.js';
 import { repository, getAuth } from './repository/index.js';
 import * as router from './router.js';
@@ -30,7 +30,7 @@ import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
 import * as voice from './voice.js';
 import * as icons from './icons.js';
-import { generateSchedule } from './loan.js';
+import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from './loan.js';
 
 const _el = (id) => document.getElementById(id);
 const $ = (id) => {
@@ -226,6 +226,16 @@ function applyCopy() {
 
   const lang = getLanguageByCode(getLang());
   selectedLabel.textContent = lang ? lang.nativeName : 'English';
+
+  /* Translate leaf nodes declared in index.html as well as dynamic screens.
+     Nodes with nested markup keep their structure and are updated by their
+     screen-specific renderers below. */
+  document.querySelectorAll('[data-i18n]').forEach((node) => {
+    if (node.children.length > 0) return;
+    const key = node.dataset.i18n;
+    const value = t(key);
+    if (value !== key) node.textContent = value;
+  });
 
   $('taglineText').textContent = t('brand.tagline');
 
@@ -1882,13 +1892,13 @@ async function renderMandi(overrideQty) {
       <table class="mandi-table">
         <thead>
           <tr>
-            <th>APMC Mandi Yard & Location</th>
-            <th>Today's Modal Rate</th>
+            <th>${escapeHtml(t('mandi.table.location'))}</th>
+            <th>${escapeHtml(t('mandi.table.modalRate'))}</th>
             <th>${escapeHtml(t('mandi.table.ratePerKg'))}</th>
             <th>${escapeHtml(t('mandi.table.dailyRange'))}</th>
             <th>${escapeHtml(t('mandi.table.trend'))}</th>
             <th>${escapeHtml(t('mandi.table.mspStatus'))}</th>
-            <th>Arrival & Variety</th>
+            <th>${escapeHtml(t('mandi.table.arrival'))}</th>
             <th>${escapeHtml(t('mandi.table.takeHome'))}</th>
           </tr>
         </thead>
@@ -1902,14 +1912,14 @@ async function renderMandi(overrideQty) {
             const diffMsp = r.price - r.msp;
             const mspColor = diffMsp >= 0 ? 'hsl(120 40% 30%)' : 'hsl(0 60% 40%)';
             const mspBg = diffMsp >= 0 ? 'hsl(120 40% 95%)' : 'hsl(0 60% 95%)';
-            const mspText = diffMsp >= 0 ? `+₹${diffMsp} (Above MSP)` : `-₹${Math.abs(diffMsp)} (Below MSP)`;
+            const mspText = t(diffMsp >= 0 ? 'mandi.aboveMsp' : 'mandi.belowMsp', { amount: Math.abs(diffMsp).toLocaleString('en-IN') });
             
             return `
               <tr class="${isBest ? 'best-net-row' : ''}">
                 <td>
                   <div style="font-weight:700; color:hsl(var(--foreground)); font-size:13px;">${escapeHtml(r.name)}</div>
                   <div style="font-size:11px; color:hsl(var(--muted-foreground)); margin-top:2px;">
-                    ${isBest ? `<span style="color:hsl(var(--primary)); font-weight:600;">${icons.check(12)} Best Net (${r.distanceKm} km)</span>` : `${r.distanceKm} km away · ${r.operatingDays}`}
+                    ${isBest ? `<span style="color:hsl(var(--primary)); font-weight:600;">${icons.check(12)} ${escapeHtml(t('mandi.bestNet'))} (${r.distanceKm} km)</span>` : escapeHtml(t('mandi.away', { distance: r.distanceKm, days: r.operatingDays }))}
                   </div>
                 </td>
                 <td style="font-weight:800; font-size:14px;">₹${r.price.toLocaleString('en-IN')}/Qtl</td>
@@ -1932,7 +1942,7 @@ async function renderMandi(overrideQty) {
                 </td>
                 <td>
                   <div style="font-weight:800; font-size:14px; color:hsl(var(--primary));">₹${r.net.toLocaleString('en-IN')}</div>
-                  <div style="font-size:10px; color:hsl(var(--muted-foreground));">Total Net (${r.distanceKm}km)</div>
+                  <div style="font-size:10px; color:hsl(var(--muted-foreground));">${escapeHtml(t('mandi.totalNet', { distance: r.distanceKm }))}</div>
                 </td>
               </tr>
             `;
@@ -2053,15 +2063,200 @@ function updateVisitReasonCount() {
   $('visitReasonCount').classList.toggle('field-meta--valid', count >= 50);
 }
 
-/* ---------- Module 5: My Loan ---------- */
+/* ---------- Module 5: Distress Risk Planner & Agricultural Loan ---------- */
 
+let distressSimRain = 0;
+let distressSimPriceDrop = 0;
+let distressSimLoanDays = 15;
+let tenureUnit = 'years';
+
+function renderDistressPlanner() {
+  const card = $('distressPlannerCard');
+  if (!card) return;
+
+  const rainSlider = $('sliderRainSimMm');
+  const priceSlider = $('sliderPriceDropPct');
+  const loanSlider = $('sliderLoanDueDays');
+
+  const rainVal = rainSlider ? Number(rainSlider.value) : distressSimRain;
+  const priceDropPct = priceSlider ? Number(priceSlider.value) : distressSimPriceDrop;
+  const loanDaysVal = loanSlider ? Number(loanSlider.value) : distressSimLoanDays;
+
+  // Derive crop MSP and mandi baseline
+  const draft = storage.getDraftProfile() ?? {};
+  const crop = draft.crop || 'cotton';
+  const mspBaseline = {
+    cotton: 7121,
+    onion: 1650,
+    soybean: 4892,
+    chilli: 7500,
+    tomato: 1800,
+    wheat: 2425,
+    rice: 2320,
+    groundnut: 6783
+  }[crop] || 2425;
+
+  const baseMandiPrice = Math.round(mspBaseline * 1.08);
+  const effectivePrice = Math.max(0, Math.round(baseMandiPrice * (1 - priceDropPct / 100)));
+  const diffMsp = effectivePrice - mspBaseline;
+
+  // Pure functional calculation
+  const distress = calculateDistressScore(rainVal, effectivePrice, mspBaseline, loanDaysVal);
+  const score = distress.score;
+  const level = distress.level;
+
+  // 1. Header & Live Score Pill
+  const pill = $('distressScorePill');
+  if (pill) {
+    if (level === 'critical') {
+      pill.className = 'text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs bg-rose-100 text-rose-900 border-rose-300';
+      pill.textContent = t('distress.pillCritical', { score });
+    } else if (level === 'watch') {
+      pill.className = 'text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs bg-amber-100 text-amber-900 border-amber-300';
+      pill.textContent = t('distress.pillWatch', { score });
+    } else {
+      pill.className = 'text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs bg-emerald-100 text-emerald-900 border-emerald-300';
+      pill.textContent = t('distress.pillSafe', { score });
+    }
+  }
+
+  // 2. High Distress Warning Banner (>80)
+  const warningBanner = $('distressWarningBanner');
+  const spikeReasonsList = $('spikeReasonsList');
+  if (warningBanner) {
+    if (score > 80) {
+      warningBanner.classList.remove('hidden');
+      if (spikeReasonsList) {
+        spikeReasonsList.innerHTML = distress.rootCauses.length > 0
+          ? distress.rootCauses.map(rc => `
+              <div class="flex items-start gap-2 text-rose-950">
+                <span class="text-sm mt-0.5">${rc.icon}</span>
+                <div>
+                  <strong class="font-bold">${escapeHtml(rc.title)}:</strong>
+                  <span class="text-rose-900/90 ml-1">${escapeHtml(rc.desc)}</span>
+                </div>
+              </div>
+            `).join('')
+          : `<div class="text-rose-900">${escapeHtml(t('distress.compound'))}</div>`;
+      }
+    } else {
+      warningBanner.classList.add('hidden');
+    }
+  }
+
+  // 3. Factor 1 Card (Rain)
+  const f1Val = $('factor1RainVal');
+  const f1Summary = $('factor1RainSummary');
+  const f1Badge = $('factor1RiskBadge');
+  const f1SliderDisplay = $('sliderRainValDisplay');
+  if (f1Val) f1Val.textContent = `${rainVal.toFixed(1)} mm`;
+  if (f1SliderDisplay) f1SliderDisplay.textContent = `${rainVal} mm`;
+  if (f1Summary) {
+    f1Summary.textContent = rainVal <= 2.0
+      ? t('distress.rainDrought')
+      : rainVal >= 60.0
+      ? t('distress.rainFlood')
+      : t('distress.rainNormal');
+  }
+  if (f1Badge) {
+    if (rainVal <= 2.0) {
+      f1Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200';
+      f1Badge.textContent = t('distress.rainDroughtBadge');
+    } else if (rainVal >= 60.0) {
+      f1Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200';
+      f1Badge.textContent = t('distress.rainFloodBadge');
+    } else {
+      f1Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+      f1Badge.textContent = t('distress.normalBadge');
+    }
+  }
+
+  // 4. Factor 2 Card (Price vs MSP)
+  const f2Val = $('factor2PriceVal');
+  const f2MspComp = $('factor2MspComparison');
+  const f2Badge = $('factor2RiskBadge');
+  const f2SliderDisplay = $('sliderPriceDropDisplay');
+  if (f2Val) f2Val.textContent = `₹${effectivePrice.toLocaleString('en-IN')} / Qtl`;
+  if (f2SliderDisplay) f2SliderDisplay.textContent = `${priceDropPct}%`;
+  if (f2MspComp) {
+    f2MspComp.textContent = t(diffMsp >= 0 ? 'distress.mspAbove' : 'distress.mspBelow', {
+      msp: mspBaseline.toLocaleString('en-IN'),
+      amount: Math.abs(diffMsp).toLocaleString('en-IN'),
+    });
+  }
+  if (f2Badge) {
+    if (diffMsp < 0) {
+      f2Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200';
+      f2Badge.textContent = t('distress.mspBelowBadge');
+    } else if (diffMsp <= mspBaseline * 0.04) {
+      f2Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200';
+      f2Badge.textContent = t('distress.mspAtMargin');
+    } else {
+      f2Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+      f2Badge.textContent = t('distress.mspProfitable');
+    }
+  }
+
+  // 5. Factor 3 Card (Loan Due Date)
+  const f3Val = $('factor3LoanDaysVal');
+  const f3Summary = $('factor3LoanSummary');
+  const f3Badge = $('factor3RiskBadge');
+  const f3SliderDisplay = $('sliderLoanDaysDisplay');
+  if (f3Val) f3Val.textContent = `${loanDaysVal} ${loanDaysVal === 1 ? t('loan.day') : t('loan.days')} ${t('loan.remainingLabel').toLowerCase()}`;
+  if (f3SliderDisplay) f3SliderDisplay.textContent = `${loanDaysVal} ${t('loan.days')}`;
+  if (f3Summary) {
+    f3Summary.textContent = loanDaysVal <= 7
+      ? t('distress.loanUrgent')
+      : loanDaysVal <= 30
+      ? t('distress.loanUpcoming')
+      : t('distress.loanSafe');
+  }
+  if (f3Badge) {
+    if (loanDaysVal <= 7) {
+      f3Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200';
+      f3Badge.textContent = t('distress.badgeImminent');
+    } else if (loanDaysVal <= 30) {
+      f3Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200';
+      f3Badge.textContent = t('distress.badgeUpcoming');
+    } else {
+      f3Badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+      f3Badge.textContent = t('distress.badgeSafe');
+    }
+  }
+
+  // 6. Composite Score Gauge Bar
+  const scoreNum = $('distressScoreNumDisplay');
+  const levelText = $('distressScoreLevelText');
+  const meterBar = $('distressMeterBar');
+  if (scoreNum) scoreNum.textContent = `${score} / 100`;
+  if (meterBar) {
+    meterBar.style.width = `${score}%`;
+    meterBar.style.backgroundColor = score > 80
+      ? 'hsl(0 75% 55%)'
+      : score >= 51
+      ? 'hsl(38 92% 50%)'
+      : 'hsl(142 60% 42%)';
+  }
+  if (levelText) {
+    if (score > 80) {
+      levelText.className = 'text-xs font-bold text-rose-700 bg-rose-100/90 px-2.5 py-0.5 rounded-md';
+      levelText.textContent = t('distress.levelCritical');
+    } else if (score >= 51) {
+      levelText.className = 'text-xs font-bold text-amber-800 bg-amber-100/90 px-2.5 py-0.5 rounded-md';
+      levelText.textContent = t('distress.levelWatch');
+    } else {
+      levelText.className = 'text-xs font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-md';
+      levelText.textContent = t('distress.levelStable');
+    }
+  }
+}
 
 function renderDistressMonitor() {
   const mount = $('distressMonitorMount');
   if (!mount) return;
 
   mount.innerHTML = `
-    <div class="distress-card">
+    <div class="distress-card" hidden>
       <div class="distress-header">
         <div class="distress-title-wrap">
           <span class="distress-icon">${icons.activity(17)}</span>
@@ -2116,23 +2311,25 @@ function renderDistressMonitor() {
   const progressNode = $('distressScoreProgress');
   const progressTrack = mount.querySelector('.distress-score-progress');
   const update = () => {
-    const rain = Number(inputs.rain.value);
-    const price = Number(inputs.price.value);
-    const days = Number(inputs.loan.value);
+    const rain = Number(inputs.rain?.value || 0);
+    const price = Number(inputs.price?.value || 0);
+    const days = Number(inputs.loan?.value || 0);
     const score = Math.max(0, Math.min(100, Math.round(
       rain * 0.4 + price * 0.8 + Math.max(0, 30 - days) * 0.45
     )));
     const band = score >= 80 ? t('distress.critical') : score >= 60 ? t('distress.high') : score >= 35 ? t('distress.watch') : t('distress.low');
-    outputs.rain.textContent = `${rain} mm`;
-    outputs.price.textContent = `${price}%`;
-    outputs.loan.textContent = `${days} ${days === 1 ? 'day' : 'days'}`;
-    scoreNode.textContent = `${score}/100`;
-    bandNode.textContent = band;
-    bandNode.dataset.band = score >= 80 ? 'critical' : score >= 60 ? 'high' : score >= 35 ? 'watch' : 'low';
-    progressNode.style.width = `${score}%`;
-    progressTrack.setAttribute('aria-valuenow', String(score));
+    if (outputs.rain) outputs.rain.textContent = `${rain} mm`;
+    if (outputs.price) outputs.price.textContent = `${price}%`;
+    if (outputs.loan) outputs.loan.textContent = `${days} ${days === 1 ? 'day' : 'days'}`;
+    if (scoreNode) scoreNode.textContent = `${score}/100`;
+    if (bandNode) {
+      bandNode.textContent = band;
+      bandNode.dataset.band = score >= 80 ? 'critical' : score >= 60 ? 'high' : score >= 35 ? 'watch' : 'low';
+    }
+    if (progressNode) progressNode.style.width = `${score}%`;
+    if (progressTrack) progressTrack.setAttribute('aria-valuenow', String(score));
   };
-  Object.values(inputs).forEach((input) => input.addEventListener('input', update));
+  Object.values(inputs).forEach((input) => input?.addEventListener('input', update));
   update();
 }
 
@@ -2154,36 +2351,37 @@ function renderLoanSchedule(result) {
         <table class="mandi-table loan-schedule-table">
           <thead>
             <tr>
-              <th>Paid on 1st?</th>
+              <th>${escapeHtml(t('loan.schedule.paidOnFirst'))}</th>
               <th>${escapeHtml(t('loan.schedule.dueDateFull'))}</th>
               <th>${escapeHtml(t('loan.schedule.baseEmi'))}</th>
               <th>${escapeHtml(t('loan.schedule.rolloverArrears'))}</th>
               <th>${escapeHtml(t('loan.schedule.totalDueMonth'))}</th>
-              <th>Principal</th>
-              <th>Interest</th>
-              <th>Status</th>
+              <th>${escapeHtml(t('loan.schedule.principal'))}</th>
+              <th>${escapeHtml(t('loan.schedule.interest'))}</th>
+              <th>${escapeHtml(t('loan.schedule.status'))}</th>
               <th>${escapeHtml(t('loan.schedule.remainingPrincipal'))}</th>
             </tr>
           </thead>
           <tbody>
             ${result.schedule.map(s => {
               const isPaid = Boolean(s.isPaid);
-              const status = s.status || (isPaid ? 'Paid' : 'Upcoming');
-              const rowState = isPaid ? 'paid' : status.startsWith('Overdue') ? 'overdue' : 'upcoming';
+              const statusKey = s.statusKey || (isPaid ? 'paid' : s.status?.startsWith('Overdue') ? (s.status.includes('rolled') ? 'overdueRolled' : 'overdue') : 'upcoming');
+              const status = t(`loan.status.${statusKey}`);
+              const rowState = isPaid ? 'paid' : statusKey.startsWith('overdue') ? 'overdue' : 'upcoming';
               const arrears = Number(s.rolloverArrears) || 0;
               const totalDue = Number(s.totalDue) || (isPaid ? 0 : Number(s.emi) || 0);
               return `
                 <tr class="loan-row--${rowState}">
-                  <td data-label="Paid on 1st?" class="loan-paid-cell">
-                    <input type="checkbox" data-loan-paid-month="${s.month}" ${isPaid ? 'checked' : ''} aria-label="Mark month ${s.month} as paid">
+                  <td data-label="${escapeHtml(t('loan.schedule.paidOnFirst'))}" class="loan-paid-cell">
+                    <input type="checkbox" data-loan-paid-month="${s.month}" ${isPaid ? 'checked' : ''} aria-label="${escapeHtml(t('loan.schedule.paidOnFirst'))}">
                   </td>
                   <td data-label="Due Date" class="loan-date-cell">${new Date(s.date).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</td>
                   <td data-label="Base EMI">₹${Math.round(s.emi).toLocaleString('en-IN')}</td>
                   <td data-label="Rollover Arrears">₹${Math.round(arrears).toLocaleString('en-IN')}</td>
                   <td data-label="Total Due this Month">₹${Math.round(totalDue).toLocaleString('en-IN')}</td>
-                  <td data-label="Principal">₹${Math.round(s.principal).toLocaleString('en-IN')}</td>
-                  <td data-label="Interest">₹${Math.round(s.interest).toLocaleString('en-IN')}</td>
-                  <td data-label="Status"><span class="loan-status-pill loan-status-pill--${rowState}">${status}</span></td>
+                  <td data-label="${escapeHtml(t('loan.schedule.principal'))}">₹${Math.round(s.principal).toLocaleString('en-IN')}</td>
+                  <td data-label="${escapeHtml(t('loan.schedule.interest'))}">₹${Math.round(s.interest).toLocaleString('en-IN')}</td>
+                  <td data-label="${escapeHtml(t('loan.schedule.status'))}"><span class="loan-status-pill loan-status-pill--${rowState}">${escapeHtml(status)}</span></td>
                   <td data-label="Remaining Principal">₹${Math.round(s.balance).toLocaleString('en-IN')}</td>
                 </tr>
               `;
@@ -2192,48 +2390,257 @@ function renderLoanSchedule(result) {
         </table>
       </div>
     `;
-    tableMount.querySelectorAll('[data-loan-paid-month]').forEach((box) => {
-      box.addEventListener('change', (event) => {
-        const data = storage.getLoanData() ?? {};
-        const paidMonths = Number(event.target.dataset.loanPaidMonth);
-        storage.saveLoanData({ ...data, installmentsPaid: event.target.checked ? paidMonths : Math.max(0, paidMonths - 1) });
-        renderLoan();
-      });
-    });
   }
 }
 
+function syncPaidControls(value, months) {
+  const entered = Number($('loanTenureInput')?.value) || 12;
+  const inferredMonths = ($('loanTenureUnit')?.value === 'years' || tenureUnit === 'years') ? entered * 12 : entered;
+  const max = Math.max(1, months || inferredMonths);
+  const paid = Math.max(0, Math.min(max, Number(value) || 0));
+  if ($('loanPaidInput')) $('loanPaidInput').max = String(max);
+  if ($('loanPaidRange')) $('loanPaidRange').max = String(max);
+  if ($('loanPaidInput')) $('loanPaidInput').value = String(paid);
+  if ($('loanPaidRange')) $('loanPaidRange').value = String(paid);
+  if ($('loanPaidSummary')) $('loanPaidSummary').textContent = `${paid} of ${max}`;
+}
+
+function onLoanSubmit(e) {
+  e.preventDefault();
+  saveAndSyncLoan();
+}
+
 function renderLoan() {
-  const data = storage.getLoanData();
-  if (data) {
-    $('loanAmountInput').value = data.amount || '';
-    const unit = $('loanTenureUnit');
-    unit.value = data.tenureUnit || 'months';
-    $('loanTenureInput').value = unit.value === 'years'
-      ? Math.max(1, Math.round((data.tenureMonths || 0) / 12))
-      : data.tenureMonths || '';
-    $('loanRateInput').value = data.rate || '';
-    $('loanFirstInstallmentInput').value = data.firstInstallmentDate || nextMonthDate();
-    syncPaidControls(data.installmentsPaid || 0, data.tenureMonths || 0);
-    
-    if (data.amount > 0 && data.tenureMonths > 0 && data.rate >= 0 && data.rate <= 50) {
-      const result = generateSchedule(data.amount, data.rate, data.tenureMonths, data.firstInstallmentDate || nextMonthDate(), data.installmentsPaid || 0);
-      renderDistressMonitor();
-      renderLoanSchedule(result);
-      $('loanResultBox').hidden = false;
-    } else {
-      $('loanResultBox').hidden = true;
-    }
-  } else {
-    // defaults
-    $('loanAmountInput').value = '50000';
-    $('loanTenureInput').value = '12';
-    $('loanTenureUnit').value = 'months';
-    $('loanRateInput').value = '7.0';
-    $('loanFirstInstallmentInput').value = nextMonthDate();
-    syncPaidControls(0, 12);
-    $('loanResultBox').hidden = true;
+  const data = storage.getLoanData() ?? {};
+  const principal = Number(data.amount) || 100000;
+  const tenureMonths = Number(data.tenureMonths) || 24;
+  tenureUnit = data.tenureUnit || (tenureMonths % 12 === 0 ? 'years' : 'months');
+  const rate = Number(data.rate) !== undefined && !isNaN(Number(data.rate)) ? Number(data.rate) : 4.0;
+  const firstDate = data.firstInstallmentDate || nextMonthDate();
+  const installmentsPaid = Math.max(0, Math.min(tenureMonths, Number(data.installmentsPaid) || 0));
+
+  // Sync inputs
+  const pInput = $('loanAmountInput');
+  if (pInput) pInput.value = String(principal);
+  const pFormatted = $('loanAmountFormatted');
+  if (pFormatted) pFormatted.textContent = `₹${principal.toLocaleString('en-IN')}`;
+
+  const tInput = $('loanTenureInput');
+  if (tInput) {
+    tInput.value = tenureUnit === 'years' ? String(Math.max(1, Math.round(tenureMonths / 12))) : String(tenureMonths);
   }
+  const uSelect = $('loanTenureUnit');
+  if (uSelect) uSelect.value = tenureUnit;
+
+  const btnYears = $('btnTenureYears');
+  const btnMonths = $('btnTenureMonths');
+  if (btnYears && btnMonths) {
+    if (tenureUnit === 'years') {
+      btnYears.className = 'px-2 py-0.5 rounded-md font-bold bg-white text-emerald-800 shadow-2xs';
+      btnMonths.className = 'px-2 py-0.5 rounded-md text-slate-600';
+    } else {
+      btnYears.className = 'px-2 py-0.5 rounded-md text-slate-600';
+      btnMonths.className = 'px-2 py-0.5 rounded-md font-bold bg-white text-emerald-800 shadow-2xs';
+    }
+  }
+
+  const rInput = $('loanRateInput');
+  if (rInput) rInput.value = String(rate);
+
+  const dInput = $('loanFirstInstallmentInput');
+  if (dInput) dInput.value = firstDate;
+  const dFormatted = $('firstInstallmentDateFormatted');
+  if (dFormatted && firstDate) {
+    try {
+      dFormatted.textContent = new Date(firstDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch {
+      dFormatted.textContent = firstDate;
+    }
+  }
+
+  const paidInput = $('loanPaidInput');
+  const paidSlider = $('loanPaidRange');
+  const paidLabel = $('paidMonthsCountLabel');
+  const paidSummary = $('loanPaidSummary');
+  if (paidInput) {
+    paidInput.max = String(tenureMonths);
+    paidInput.value = String(installmentsPaid);
+  }
+  if (paidSlider) {
+    paidSlider.max = String(tenureMonths);
+    paidSlider.value = String(installmentsPaid);
+  }
+  if (paidLabel) {
+    paidLabel.textContent = `${installmentsPaid} / ${tenureMonths} ${t('loan.paidLabel')}`;
+  }
+  if (paidSummary) {
+    paidSummary.textContent = t('loan.paidSummary', { paid: installmentsPaid, total: tenureMonths });
+  }
+
+  // Calculate schedule and summary
+  const result = generateSchedule(principal, rate, tenureMonths, firstDate, installmentsPaid);
+
+  // Spotlight card
+  const emiEl = $('outMonthlyEmi');
+  if (emiEl) emiEl.innerHTML = `₹${Math.round(result.emi).toLocaleString('en-IN')} <span class="text-sm font-normal text-slate-300">/ ${t('loan.monthUnit')}</span>`;
+  const sumTenure = $('summaryTenureText');
+  if (sumTenure) sumTenure.textContent = `${tenureMonths} ${t('loan.months')}`;
+  const sumRate = $('summaryRateText');
+  if (sumRate) sumRate.textContent = `${rate}% p.a.`;
+  const outInt = $('outTotalInterest');
+  if (outInt) outInt.textContent = `₹${Math.round(result.totalInterest).toLocaleString('en-IN')}`;
+  const outPay = $('outTotalPayable');
+  if (outPay) outPay.textContent = `₹${Math.round(result.totalPayment).toLocaleString('en-IN')}`;
+
+  // Metric cards
+  const outPaid = $('outAmountPaid');
+  if (outPaid) outPaid.textContent = `₹${Math.round(result.amountPaid).toLocaleString('en-IN')}`;
+  const outPaidText = $('outInstallmentsPaidText');
+  if (outPaidText) outPaidText.textContent = t('loan.installmentsCompleted', { count: result.paidCount });
+  const outLeft = $('outAmountLeft');
+  if (outLeft) outLeft.textContent = `₹${Math.round(result.amountLeft).toLocaleString('en-IN')}`;
+  const outLeftText = $('outInstallmentsRemainingText');
+  if (outLeftText) outLeftText.textContent = t('loan.installmentsRemaining', { count: tenureMonths - result.paidCount });
+
+  // Next Due countdown card
+  const nextDueEl = $('outNextDueDate');
+  const nextCountEl = $('outNextDueCountdown');
+  if (nextDueEl) {
+    nextDueEl.textContent = result.nextDueDate
+      ? new Date(result.nextDueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+      : t('loan.loanFullyPaid');
+  }
+  if (nextCountEl) {
+    if (result.paidCount === tenureMonths) {
+      nextCountEl.className = 'bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs';
+      nextCountEl.textContent = `✅ ${t('loan.allPaid')}`;
+    } else if (result.nextDueDaysRemaining < 0) {
+      nextCountEl.className = 'bg-rose-100 text-rose-900 border border-rose-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs';
+      nextCountEl.textContent = `🚨 ${t('loan.overdueBy', { days: Math.abs(result.nextDueDaysRemaining) })}`;
+    } else {
+      nextCountEl.className = 'bg-white text-sky-900 border border-sky-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs';
+      nextCountEl.textContent = `⏳ ${t('loan.daysRemaining', { days: result.nextDueDaysRemaining })}`;
+    }
+  }
+
+  // Visual Progress bar
+  const progPct = $('loanProgressPctText');
+  if (progPct) progPct.textContent = `${result.progressPct}% ${t('loan.paidLabel')}`;
+  const barPaid = $('loanPaidProgressBar');
+  if (barPaid) barPaid.style.width = `${result.progressPct}%`;
+  const barLeft = $('loanLeftProgressBar');
+  if (barLeft) barLeft.style.width = `${100 - result.progressPct}%`;
+  const pPaidText = $('progPaidText');
+  if (pPaidText) pPaidText.textContent = `₹${Math.round(result.amountPaid).toLocaleString('en-IN')}`;
+  const pLeftText = $('progLeftText');
+  if (pLeftText) pLeftText.textContent = `₹${Math.round(result.amountLeft).toLocaleString('en-IN')}`;
+
+  // Rollover summary badge
+  const rollBadge = $('rolloverSummaryBadge');
+  if (rollBadge) {
+    rollBadge.textContent = t('loan.unpaidRollovers', {
+      count: result.unpaidRolloversCount,
+      plural: result.unpaidRolloversCount === 1 ? '' : 's',
+    });
+    rollBadge.className = result.unpaidRolloversCount > 0
+      ? 'text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300'
+      : 'text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+  }
+
+  // Render Table rows
+  const tbody = $('loanScheduleTableBody');
+  if (tbody && result.schedule) {
+    tbody.innerHTML = result.schedule.map(s => {
+      const isPaid = Boolean(s.isPaid);
+      const rowState = isPaid ? 'paid' : s.status.startsWith('Overdue') ? 'overdue' : 'upcoming';
+      const arrears = Number(s.rolloverArrears) || 0;
+      const totalDue = Number(s.totalDue) || (isPaid ? 0 : Number(s.emi) || 0);
+      const dueDateFormatted = new Date(s.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      return `
+        <tr class="loan-row--${rowState} border-b border-slate-100 hover:bg-slate-50/80 transition">
+          <td data-label="${escapeHtml(t('loan.schedule.paidOnFirst'))}" class="p-3 text-center loan-paid-cell">
+            <input type="checkbox" data-loan-paid-month="${s.month}" ${isPaid ? 'checked' : ''} aria-label="Mark installment for month ${s.month} as paid" class="w-4 h-4 cursor-pointer accent-emerald-600">
+          </td>
+          <td data-label="${escapeHtml(t('loan.schedule.dueDate'))}" class="p-3 font-semibold text-slate-900 loan-date-cell">${dueDateFormatted}</td>
+          <td data-label="${escapeHtml(t('loan.schedule.baseEmi'))}" class="p-3 text-slate-700">₹${Math.round(s.emi).toLocaleString('en-IN')}</td>
+          <td data-label="${escapeHtml(t('loan.schedule.rolloverArrears'))}" class="p-3 ${arrears > 0 ? 'text-rose-700 font-bold' : 'text-slate-500'}">₹${Math.round(arrears).toLocaleString('en-IN')}</td>
+          <td data-label="${escapeHtml(t('loan.schedule.totalDueMonth'))}" class="p-3 font-bold text-slate-900">₹${Math.round(totalDue).toLocaleString('en-IN')}</td>
+          <td data-label="${escapeHtml(t('loan.schedule.status'))}" class="p-3">
+            <span class="loan-status-pill loan-status-pill--${rowState} px-2 py-0.5 rounded-md text-[11px] font-bold ${isPaid ? 'bg-emerald-100 text-emerald-800' : s.status.startsWith('Overdue') ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700'}">
+              ${escapeHtml(t(`loan.status.${isPaid ? 'paid' : s.status.startsWith('Overdue') ? (s.status.includes('rolled') ? 'overdueRolled' : 'overdue') : 'upcoming'}`))}
+            </span>
+          </td>
+          <td data-label="${escapeHtml(t('loan.schedule.remainingPrincipal'))}" class="p-3 text-slate-700 font-medium">₹${Math.round(s.balance).toLocaleString('en-IN')}</td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.querySelectorAll('[data-loan-paid-month]').forEach(box => {
+      box.addEventListener('change', (e) => {
+        const monthNum = Number(e.target.dataset.loanPaidMonth);
+        const newPaid = e.target.checked ? monthNum : Math.max(0, monthNum - 1);
+        saveAndSyncLoan({ installmentsPaid: newPaid });
+      });
+    });
+  }
+
+  // Update Distress Risk Planner slider proximity
+  if (result.nextDueDaysRemaining !== null && result.nextDueDaysRemaining >= 3) {
+    const loanDaysSlider = $('sliderLoanDueDays');
+    if (loanDaysSlider && document.activeElement !== loanDaysSlider) {
+      loanDaysSlider.value = String(Math.min(120, Math.max(3, result.nextDueDaysRemaining)));
+    }
+  }
+
+  renderDistressPlanner();
+}
+
+function saveAndSyncLoan(patch = {}) {
+  const current = storage.getLoanData() ?? {};
+  const currentUnit = patch.tenureUnit || $('loanTenureUnit')?.value || tenureUnit || (current.tenureUnit || 'years');
+  tenureUnit = currentUnit;
+
+  const rawPrincipal = $('loanAmountInput')?.value;
+  const principal = patch.amount !== undefined
+    ? Number(patch.amount) || 100000
+    : (Number(rawPrincipal) || current.amount || 100000);
+
+  const rawTenure = $('loanTenureInput')?.value;
+  const tenureVal = Number(rawTenure) || 2;
+  const tenureMonths = patch.tenureMonths !== undefined
+    ? Number(patch.tenureMonths) || 24
+    : (tenureUnit === 'years' ? tenureVal * 12 : tenureVal);
+
+  const rawRate = $('loanRateInput')?.value;
+  const rate = patch.rate !== undefined
+    ? Number(patch.rate)
+    : (rawRate !== undefined && rawRate !== '' && !isNaN(Number(rawRate))
+      ? Number(rawRate)
+      : (current.rate !== undefined ? current.rate : 4.0));
+
+  const rawDate = $('loanFirstInstallmentInput')?.value;
+  const firstInstallmentDate = patch.firstInstallmentDate !== undefined
+    ? patch.firstInstallmentDate
+    : (rawDate || current.firstInstallmentDate || nextMonthDate());
+
+  const rawPaid = $('loanPaidInput')?.value;
+  const paidVal = patch.installmentsPaid !== undefined
+    ? patch.installmentsPaid
+    : (Number(rawPaid) !== undefined && !isNaN(Number(rawPaid)) ? Number(rawPaid) : (current.installmentsPaid || 0));
+  const installmentsPaid = Math.max(0, Math.min(tenureMonths, paidVal));
+
+  const updated = {
+    amount: principal,
+    tenureMonths,
+    tenureUnit,
+    rate,
+    firstInstallmentDate,
+    installmentsPaid,
+    ...patch
+  };
+
+  storage.saveLoanData(updated);
+  renderLoan();
 }
 
 function nextMonthDate() {
@@ -2241,38 +2648,6 @@ function nextMonthDate() {
   date.setDate(1);
   date.setMonth(date.getMonth() + 1);
   return date.toISOString().slice(0, 10);
-}
-
-function syncPaidControls(value, months) {
-  const entered = Number($('loanTenureInput').value) || 12;
-  const inferredMonths = $('loanTenureUnit').value === 'years' ? entered * 12 : entered;
-  const max = Math.max(1, months || inferredMonths);
-  const paid = Math.max(0, Math.min(max, Number(value) || 0));
-  $('loanPaidInput').max = String(max);
-  $('loanPaidRange').max = String(max);
-  $('loanPaidInput').value = String(paid);
-  $('loanPaidRange').value = String(paid);
-  $('loanPaidSummary').textContent = `${paid} of ${max}`;
-}
-
-function onLoanSubmit(e) {
-  e.preventDefault();
-  const amt = parseFloat($('loanAmountInput').value);
-  const enteredTenure = parseInt($('loanTenureInput').value, 10);
-  const unit = $('loanTenureUnit').value;
-  const ten = unit === 'years' ? enteredTenure * 12 : enteredTenure;
-  const rate = parseFloat($('loanRateInput').value);
-  const firstInstallmentDate = $('loanFirstInstallmentInput').value || nextMonthDate();
-  const installmentsPaid = Math.max(0, Math.min(ten, parseInt($('loanPaidInput').value, 10) || 0));
-
-  if (amt > 0 && ten > 0 && rate >= 0 && rate <= 50) {
-    $('loanFormError').hidden = true;
-    storage.saveLoanData({ amount: amt, tenureMonths: ten, tenureUnit: unit, rate, firstInstallmentDate, installmentsPaid });
-    renderLoan();
-  } else {
-    $('loanFormError').textContent = 'Enter a loan amount, a valid tenure, and an interest rate from 0% to 50%.';
-    $('loanFormError').hidden = false;
-  }
 }
 
 /* ---------- S11 Profile Overview (pathway.md P8) ---------- */
@@ -2316,7 +2691,11 @@ function renderProfile() {
   $('profileNameDisplay').textContent = name;
   $('profilePhoneDisplay').textContent = `${t('profile.phoneLabel')}: ${masked}`;
   $('profileEmailVal').textContent = draft.email || t('profile.notAdded');
-  $('profileContactVal').textContent = ({ call: t('profile.phone'), sms: 'SMS', whatsapp: 'WhatsApp' })[draft.contactPreference] || t('profile.phone');
+  $('profileContactVal').textContent = ({
+    call: t('profile.phone'),
+    sms: t('profile.sms'),
+    whatsapp: t('profile.whatsapp'),
+  })[draft.contactPreference] || t('profile.phone');
 
   const isMasked = name.includes('•');
   $('profileAvatar').textContent = isMasked
@@ -2324,7 +2703,7 @@ function renderProfile() {
     : (name || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
   $('profileLocVal').textContent = `${eff.village} · ${eff.districtName} · ${eff.stateName}`;
-  $('profileLandVal').textContent = `${eff.areaAcres} acres · ${t('soil.' + eff.soilType)} · ${t('irrig.' + eff.irrigation)}`;
+  $('profileLandVal').textContent = `${eff.areaAcres} ${t('unit.acres')} · ${t('soil.' + eff.soilType)} · ${t('irrig.' + eff.irrigation)}`;
   $('profileCropVal').textContent = `${t('crop.' + eff.crop)} (${eff.variety}) · ${t('stage.' + eff.growthStage)}`;
   $('profileLangVal').textContent = getLanguageByCode(getLang())?.nativeName ?? 'English';
 }
@@ -2637,22 +3016,85 @@ function wire() {
   $('ackBtn').addEventListener('click', onAcknowledge);
   $('advisoryDetailBack').addEventListener('click', () => router.go('home'));
 
-  /* Module 5 My Loan wiring */
-  $('loanForm').addEventListener('submit', onLoanSubmit);
-  document.querySelectorAll('[data-loan-amount]').forEach((button) => {
-    button.addEventListener('click', () => { $('loanAmountInput').value = button.dataset.loanAmount; });
+  /* Module 5 Distress Risk Planner & Loan wiring */
+  $('sliderRainSimMm')?.addEventListener('input', () => renderDistressPlanner());
+  $('sliderPriceDropPct')?.addEventListener('input', () => renderDistressPlanner());
+  $('sliderLoanDueDays')?.addEventListener('input', () => renderDistressPlanner());
+
+  $('loanAmountInput')?.addEventListener('input', () => saveAndSyncLoan());
+  $('loanTenureInput')?.addEventListener('input', () => saveAndSyncLoan());
+  $('loanRateInput')?.addEventListener('input', () => saveAndSyncLoan());
+  $('loanFirstInstallmentInput')?.addEventListener('change', () => saveAndSyncLoan());
+  $('loanPaidInput')?.addEventListener('input', (event) => {
+    const val = Number(event.target.value) || 0;
+    if ($('loanPaidRange')) $('loanPaidRange').value = String(val);
+    saveAndSyncLoan({ installmentsPaid: val });
   });
+  $('loanPaidRange')?.addEventListener('input', (event) => {
+    const val = Number(event.target.value) || 0;
+    if ($('loanPaidInput')) $('loanPaidInput').value = String(val);
+    saveAndSyncLoan({ installmentsPaid: val });
+  });
+  $('loanTenureUnit')?.addEventListener('change', (event) => {
+    tenureUnit = event.target.value;
+    saveAndSyncLoan({ tenureUnit });
+  });
+
+  $('btnTenureYears')?.addEventListener('click', () => {
+    if (tenureUnit !== 'years') {
+      tenureUnit = 'years';
+      const curr = Number($('loanTenureInput')?.value) || 24;
+      const input = $('loanTenureInput');
+      if (input) input.value = String(Math.max(1, Math.round(curr / 12)));
+      if ($('loanTenureUnit')) $('loanTenureUnit').value = 'years';
+      saveAndSyncLoan({ tenureUnit: 'years' });
+    }
+  });
+
+  $('btnTenureMonths')?.addEventListener('click', () => {
+    if (tenureUnit !== 'months') {
+      tenureUnit = 'months';
+      const curr = Number($('loanTenureInput')?.value) || 2;
+      const input = $('loanTenureInput');
+      if (input) input.value = String(curr * 12);
+      if ($('loanTenureUnit')) $('loanTenureUnit').value = 'months';
+      saveAndSyncLoan({ tenureUnit: 'months' });
+    }
+  });
+
+  document.querySelectorAll('[data-loan-amount]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const amt = Number(button.dataset.loanAmount);
+      const input = $('loanAmountInput');
+      if (input) input.value = String(amt);
+      saveAndSyncLoan({ amount: amt });
+    });
+  });
+
   document.querySelectorAll('[data-loan-tenure]').forEach((button) => {
     button.addEventListener('click', () => {
       const months = Number(button.dataset.loanTenure);
-      $('loanTenureUnit').value = 'years';
-      $('loanTenureInput').value = String(months / 12);
-      syncPaidControls($('loanPaidInput').value, months);
+      const input = $('loanTenureInput');
+      if (input) {
+        if (tenureUnit === 'years') {
+          input.value = String(months / 12);
+        } else {
+          input.value = String(months);
+        }
+      }
+      saveAndSyncLoan({ tenureMonths: months });
     });
   });
+
   document.querySelectorAll('[data-loan-rate]').forEach((button) => {
-    button.addEventListener('click', () => { $('loanRateInput').value = button.dataset.loanRate; });
+    button.addEventListener('click', () => {
+      const rate = Number(button.dataset.loanRate);
+      const input = $('loanRateInput');
+      if (input) input.value = String(rate);
+      saveAndSyncLoan({ rate });
+    });
   });
+
   document.querySelectorAll('[data-loan-date]').forEach((button) => {
     button.addEventListener('click', () => {
       const date = new Date();
@@ -2660,16 +3102,21 @@ function wire() {
       if (button.dataset.loanDate === 'today') date.setDate(date.getDate());
       if (button.dataset.loanDate === 'october') date.setMonth(9, 1);
       if (button.dataset.loanDate === 'january') date.setMonth(0, 1);
-      $('loanFirstInstallmentInput').value = date.toISOString().slice(0, 10);
+      const iso = date.toISOString().slice(0, 10);
+      const input = $('loanFirstInstallmentInput');
+      if (input) input.value = iso;
+      saveAndSyncLoan({ firstInstallmentDate: iso });
     });
   });
-  $('loanPaidInput').addEventListener('input', (event) => syncPaidControls(event.target.value));
-  $('loanPaidRange').addEventListener('input', (event) => syncPaidControls(event.target.value));
-  $('loanTenureUnit').addEventListener('change', () => {
-    const input = $('loanTenureInput');
-    const months = Number(input.value) || 0;
-    input.value = $('loanTenureUnit').value === 'years' ? Math.max(1, Math.round(months / 12)) : months * 12 || '';
-    syncPaidControls($('loanPaidInput').value);
+
+  $('btnMarkAllPaid')?.addEventListener('click', () => {
+    const data = storage.getLoanData() ?? {};
+    const tenureMonths = data.tenureMonths || 24;
+    saveAndSyncLoan({ installmentsPaid: tenureMonths });
+  });
+
+  $('btnResetChecklist')?.addEventListener('click', () => {
+    saveAndSyncLoan({ installmentsPaid: 0 });
   });
 
   /* S9 Mandi and S10 Help wiring */
