@@ -2664,9 +2664,139 @@ textarea.input { display: block; max-width: 100%; min-width: 0; resize: vertical
   color: hsl(var(--muted-foreground));
 }
 
+/* ============================================================================
+   Loan view cleanup
+   Keep the calculator readable at a glance: one surface per task, restrained
+   accents, and a real hidden utility for stateful warning/mount elements.
+   ============================================================================ */
+
+.hidden { display: none !important; }
+
+#viewLoan {
+  max-width: 1040px;
+  padding: clamp(22px, 3.6vw, 36px);
+}
+
+#viewLoan > #loanTitle {
+  margin-bottom: 8px;
+}
+
+#viewLoan > #loanHelp {
+  margin-bottom: 24px;
+}
+
+#viewLoan .desi-card {
+  box-shadow: none;
+}
+
+#viewLoan .loan-calculator-intro {
+  margin-bottom: 18px !important;
+  padding: 0 2px 18px !important;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid hsl(var(--border));
+  border-radius: 0;
+}
+
+#viewLoan .loan-calculator-intro h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+#viewLoan .loan-calculator-intro p {
+  margin: 4px 0 0;
+}
+
+#viewLoan .loan-input-panel,
+#viewLoan .loan-summary-panel > * {
+  border-color: hsl(var(--border));
+}
+
+#viewLoan .loan-input-panel {
+  align-self: start;
+}
+
+#viewLoan .loan-summary-panel {
+  min-width: 0;
+}
+
+#viewLoan .loan-summary-panel > * {
+  box-shadow: none;
+}
+
+#viewLoan .loan-summary-panel > :first-child {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+#viewLoan .loan-summary-panel > :first-child .text-slate-300 {
+  color: hsl(var(--secondary));
+}
+
+#viewLoan .loan-summary-panel > :first-child .text-amber-300 {
+  color: hsl(var(--ring));
+}
+
+#viewLoan .loan-checklist-banner {
+  background: hsl(var(--ring) / .11);
+  border-color: hsl(var(--ring) / .42);
+}
+
+#viewLoan .loan-schedule-card {
+  overflow: hidden;
+}
+
+#viewLoan .loan-schedule-table-wrapper {
+  margin-top: 18px;
+  border-radius: calc(var(--radius) - 2px);
+  box-shadow: none;
+}
+
+#viewLoan .loan-schedule-table {
+  min-width: 900px;
+  table-layout: fixed;
+}
+
+#viewLoan .loan-schedule-table th,
+#viewLoan .loan-schedule-table td {
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+#viewLoan .loan-schedule-table th {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+#viewLoan .loan-schedule-table th:nth-child(1) { width: 10%; }
+#viewLoan .loan-schedule-table th:nth-child(2) { width: 17%; }
+#viewLoan .loan-schedule-table th:nth-child(3) { width: 12%; }
+#viewLoan .loan-schedule-table th:nth-child(4) { width: 13%; }
+#viewLoan .loan-schedule-table th:nth-child(5) { width: 15%; }
+#viewLoan .loan-schedule-table th:nth-child(6) { width: 17%; }
+#viewLoan .loan-schedule-table th:nth-child(7) { width: 16%; }
+
+#viewLoan .loan-status-pill {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+@media (max-width: 760px) {
+  #viewLoan {
+    padding: 22px 16px 30px;
+  }
+
+  #viewLoan .loan-calculator-intro {
+    padding-bottom: 14px !important;
+  }
+
+  #viewLoan .loan-schedule-table {
+    min-width: 900px;
+  }
+}
+
 :root[data-theme="dark"] .border-slate-100,
 :root[data-theme="dark"] .border-slate-200,
 :root[data-theme="dark"] .border-slate-300 {
   border-color: hsl(var(--border));
 }
-
