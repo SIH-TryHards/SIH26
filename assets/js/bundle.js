@@ -1,5 +1,5 @@
 (() => {
-  // D:/SIH26-TryHards/assets/js/i18n.js
+  // assets/js/i18n.js
   var LANGUAGES = [
     { code: "en", nativeName: "English", label: "English", locale: "en-IN" },
     { code: "hi", nativeName: "\u0939\u093F\u0902\u0926\u0940", label: "Hindi", locale: "hi-IN" },
@@ -2365,7 +2365,7 @@
     return template.replace(/\{(\w+)\}/g, (_, name) => params[name] === void 0 || params[name] === null ? "" : String(params[name]));
   }
 
-  // D:/SIH26-TryHards/assets/js/storage.js
+  // assets/js/storage.js
   var PREFIX = "kisan-saathi";
   var KEYS = {
     language: `${PREFIX}.language`,
@@ -2544,7 +2544,7 @@
     }
   }
 
-  // D:/SIH26-TryHards/assets/js/data/locations.js
+  // assets/js/data/locations.js
   var LOCATION_TREE = [
     { code: "AP", name: "Andhra Pradesh", districts: [
       { code: "AS", name: "Alluri Sitharama Raju", villages: [] },
@@ -3382,7 +3382,7 @@
     ] }
   ];
 
-  // D:/SIH26-TryHards/assets/js/data.js
+  // assets/js/data.js
   var SOIL_TYPES = [
     { value: "black", key: "soil.black" },
     { value: "red", key: "soil.red" },
@@ -3475,7 +3475,7 @@
     }
   ];
 
-  // D:/SIH26-TryHards/assets/js/services/simWeather.js
+  // assets/js/services/simWeather.js
   function hashCode(str) {
     let h = 7;
     for (let i = 0; i < str.length; i += 1) {
@@ -3660,7 +3660,7 @@
     };
   }
 
-  // D:/SIH26-TryHards/assets/js/services/simPrices.js
+  // assets/js/services/simPrices.js
   function hashCode2(str) {
     let h = 7;
     for (let i = 0; i < str.length; i += 1) {
@@ -3715,7 +3715,7 @@
     return { crop, avg3mo, current: current2, quotes };
   }
 
-  // D:/SIH26-TryHards/assets/js/advisory.js
+  // assets/js/advisory.js
   var DAY_MS = 864e5;
   var STAGE_KEYS = [
     "sowing",
@@ -4431,7 +4431,7 @@
     return out.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]).slice(0, 2);
   }
 
-  // D:/SIH26-TryHards/assets/js/mandi.js
+  // assets/js/mandi.js
   var round = (n) => Math.round(n);
   function rankMandis({ mandis, prices, quintals, freightPerKm, feePct }) {
     const q = Math.max(0, Number(quintals) || 0);
@@ -4473,7 +4473,7 @@
     return { rows, bestNet, bestPrice, inversion };
   }
 
-  // D:/SIH26-TryHards/assets/js/repository/demoRepository.js
+  // assets/js/repository/demoRepository.js
   var demoAccounts = /* @__PURE__ */ new Map();
   var demoRepository = {
     mode: "demo",
@@ -4692,7 +4692,7 @@
     }
   };
 
-  // D:/SIH26-TryHards/assets/js/config.js
+  // assets/js/config.js
   function getSarvamKey() {
     try {
       const stored = localStorage.getItem("sarvam_api_key");
@@ -4711,9 +4711,9 @@
     ta: "ta-IN",
     te: "te-IN"
   };
-  var API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:8001/api/v1" : "";
+  var API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:8001/api/v1" : "https://api-not-deployed-yet.localhost/api/v1";
 
-  // D:/SIH26-TryHards/assets/js/services/weather.js
+  // assets/js/services/weather.js
   var GEO_CACHE = /* @__PURE__ */ new Map();
   var OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
   var GEOCODING_BASE_URL = "https://geocoding-api.open-meteo.com/v1/search";
@@ -4965,7 +4965,7 @@
     };
   }
 
-  // D:/SIH26-TryHards/assets/js/repository/apiRepository.js
+  // assets/js/repository/apiRepository.js
   async function request(path, { method = "POST", body, token } = {}) {
     let res;
     try {
@@ -5095,7 +5095,7 @@
     }
   };
 
-  // D:/SIH26-TryHards/assets/js/repository/index.js
+  // assets/js/repository/index.js
   var resolvedRepo = null;
   async function resolveRepository() {
     if (resolvedRepo)
@@ -5117,7 +5117,7 @@
     return authPromise;
   }
 
-  // D:/SIH26-TryHards/assets/js/router.js
+  // assets/js/router.js
   var routes = /* @__PURE__ */ new Map();
   var fallbackRoute = "welcome";
   function register(name, handler) {
@@ -5146,7 +5146,7 @@
       handler(name);
   }
 
-  // D:/SIH26-TryHards/assets/js/components/select.js
+  // assets/js/components/select.js
   var CHEVRON = `<svg class="select__chevron" width="16" height="16" viewBox="0 0 24 24"
   fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
   stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;
@@ -5415,7 +5415,7 @@
     };
   }
 
-  // D:/SIH26-TryHards/assets/js/services/sarvam.js
+  // assets/js/services/sarvam.js
   var ENDPOINT = "https://api.sarvam.ai/translate";
   function sarvamEnabled() {
     return Boolean(SARVAM_API_KEY);
@@ -5476,7 +5476,7 @@
     return result;
   }
 
-  // D:/SIH26-TryHards/assets/js/voice.js
+  // assets/js/voice.js
   var synth = typeof window !== "undefined" ? window.speechSynthesis : null;
   var cachedVoices = [];
   function loadVoices() {
@@ -5521,7 +5521,7 @@
     return Boolean(synth?.speaking);
   }
 
-  // D:/SIH26-TryHards/assets/js/icons.js
+  // assets/js/icons.js
   var svg = (paths, s = 18, cls = "") => `<svg class="icon${cls ? " " + cls : ""}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
   var speaker = (s = 18) => svg(
     `<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M18.5 5.5a9 9 0 010 13"/>`,
@@ -5631,7 +5631,7 @@
     return xCircle(s);
   }
 
-  // D:/SIH26-TryHards/assets/js/loan.js
+  // assets/js/loan.js
   function calculateEMI(principal, annualRate, months) {
     if (months <= 0 || principal <= 0)
       return 0;
@@ -5692,7 +5692,7 @@
     };
   }
 
-  // D:/SIH26-TryHards/assets/js/farmer.js
+  // assets/js/farmer.js
   var _el = (id) => document.getElementById(id);
   var $ = (id) => {
     const el = _el(id);
