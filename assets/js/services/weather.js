@@ -8,6 +8,9 @@
 import { simulateAgriWeather } from './simWeather.js';
 
 const GEO_CACHE = new Map();
+const WEATHER_CACHE = new Map();
+const WEATHER_CACHE_TTL_MS = 10 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 7000;
 
 const OPEN_METEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 const GEOCODING_BASE_URL = 'https://geocoding-api.open-meteo.com/v1/search';
@@ -42,6 +45,16 @@ const DAILY_PARAMS = [
   'uv_index_max',
   'wind_speed_10m_max'
 ].join(',');
+
+async function fetchWithTimeout(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 /**
  * Build fully parameterized Open-Meteo URL conforming to Precision Agronomy standards.
@@ -118,7 +131,7 @@ export async function geocodeDistrict(districtName) {
   if (GEO_CACHE.has(key)) return GEO_CACHE.get(key);
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${GEOCODING_BASE_URL}?name=${encodeURIComponent(districtName)}&count=1&language=en&format=json`
     );
     const data = await res.json();
@@ -255,7 +268,7 @@ export async function fetchAgriWeather(lat, lon) {
     }
 
     const url = buildOpenMeteoUrl(lat, lon);
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url);
     if (!res.ok) {
       throw new Error(`Open-Meteo HTTP ${res.status}: ${res.statusText}`);
     }
@@ -276,6 +289,9 @@ export async function fetchAgriWeather(lat, lon) {
  */
 export async function fetchWeather(districtName, today = new Date()) {
   const dateKey = today.toISOString().slice(0, 10);
+  const cacheKey = `${(districtName || 'Nashik').trim().toLowerCase()}|${dateKey}`;
+  const cached = WEATHER_CACHE.get(cacheKey);
+  if (cached && Date.now() - cached.savedAt < WEATHER_CACHE_TTL_MS) return cached.value;
   const { lat, lon } = await geocodeDistrict(districtName);
 
   let agriData;
@@ -294,7 +310,7 @@ export async function fetchWeather(districtName, today = new Date()) {
 
   const dailyEt0 = forecast7d.map(d => d.et0 ?? 4.0);
 
-  return {
+  const result = {
     districtCode: (districtName || 'NS').slice(0, 2).toUpperCase(),
     dateKey,
     tempMaxC: forecast7d[0]?.tmax ?? agriData.daily?.tempMax ?? 30,
@@ -324,4 +340,6 @@ export async function fetchWeather(districtName, today = new Date()) {
     forecast: forecast7d,
     agri: agriData
   };
+  WEATHER_CACHE.set(cacheKey, { savedAt: Date.now(), value: result });
+  return result;
 }

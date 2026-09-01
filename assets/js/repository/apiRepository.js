@@ -16,8 +16,12 @@ import { getMandisForDistrict, getPrices } from '../services/simPrices.js';
 import { rankMandis } from '../mandi.js';
 import { FREIGHT_PER_KM, MANDI_FEE_PCT, GOVERNMENT_SCHEMES } from '../data.js';
 
+const REQUEST_TIMEOUT_MS = 6000;
+
 async function request(path, { method = 'POST', body, token } = {}) {
   let res;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
     res = await fetch(`${API_BASE_URL}${path}`, {
       method,
@@ -26,9 +30,12 @@ async function request(path, { method = 'POST', body, token } = {}) {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: body === undefined ? undefined : JSON.stringify(body),
+      signal: controller.signal,
     });
   } catch {
     throw { code: 'NETWORK', message: 'Service unreachable.' };
+  } finally {
+    clearTimeout(timeout);
   }
 
   const payload = await res.json().catch(() => ({}));

@@ -12,7 +12,7 @@
    names translate live via Sarvam when a key is configured.
    ============================================================ */
 
-import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260901-1';
+import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260901-2';
 import * as storage from './storage.js';
 import { repository, getAuth } from './repository/index.js';
 import * as router from './router.js';

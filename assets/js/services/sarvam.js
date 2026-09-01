@@ -18,6 +18,7 @@ import { SARVAM_API_KEY, SARVAM_LOCALES } from '../config.js';
 import { getTranslationCache, saveTranslationCache } from '../storage.js';
 
 const ENDPOINT = 'https://api.sarvam.ai/translate';
+const TRANSLATION_TIMEOUT_MS = 5000;
 
 export function sarvamEnabled() {
   return Boolean(SARVAM_API_KEY);
@@ -35,24 +36,31 @@ function storeInCache(locale, pairs) {
 }
 
 async function translateOne(text, locale) {
-  const response = await fetch(ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'api-subscription-key': SARVAM_API_KEY,
-    },
-    body: JSON.stringify({
-      input: text,
-      source_language_code: 'en-IN',
-      target_language_code: locale,
-      mode: 'formal',
-    }),
-  });
-  if (!response.ok) throw new Error(`sarvam ${response.status}`);
-  const data = await response.json();
-  const out = data.translated_text ?? data.output ?? null;
-  if (!out) throw new Error('sarvam: empty response');
-  return out;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TRANSLATION_TIMEOUT_MS);
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-subscription-key': SARVAM_API_KEY,
+      },
+      body: JSON.stringify({
+        input: text,
+        source_language_code: 'en-IN',
+        target_language_code: locale,
+        mode: 'formal',
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`sarvam ${response.status}`);
+    const data = await response.json();
+    const out = data.translated_text ?? data.output ?? null;
+    if (!out) throw new Error('sarvam: empty response');
+    return out;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /**
