@@ -12,7 +12,7 @@
    names translate live via Sarvam when a key is configured.
    ============================================================ */
 
-import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260831-8';
+import { LANGUAGES, t, getLang, setLang } from './i18n.js?v=20260901-1';
 import * as storage from './storage.js';
 import { repository, getAuth } from './repository/index.js';
 import * as router from './router.js';
@@ -30,7 +30,7 @@ import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
 import * as voice from './voice.js';
 import * as icons from './icons.js';
-import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from './loan.js?v=20260831-8';
+import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from './loan.js?v=20260901-1';
 
 const _el = (id) => document.getElementById(id);
 const $ = (id) => {
@@ -132,6 +132,12 @@ function applyTheme() {
   document.documentElement.dataset.theme = theme;
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = theme === 'dark' ? '#142016' : '#31572c';
+  const globalButton = $('globalThemeToggleBtn');
+  if (globalButton) {
+    const label = theme === 'dark' ? t('profile.useLightMode') : t('profile.useDarkMode');
+    globalButton.setAttribute('aria-label', label);
+    globalButton.setAttribute('title', label);
+  }
   const value = $('profileThemeVal');
   const button = $('themeToggleBtn');
   if (value) value.textContent = theme === 'dark' ? t('profile.darkMode') : t('profile.lightMode');
@@ -1282,10 +1288,6 @@ function renderCropPhenology(draft) {
           <span class="phenology-meta-val">${pheno.kc.toFixed(2)}</span>
         </div>
         <div class="phenology-meta-item">
-          <span class="phenology-meta-label">${escapeHtml(t('pheno.gdd'))}</span>
-          <span class="phenology-meta-val">${pheno.gddAccrued} \u00b0C-days</span>
-        </div>
-        <div class="phenology-meta-item">
           <span class="phenology-meta-label">${escapeHtml(t('pheno.stageDuration'))}</span>
           <span class="phenology-meta-val">${pheno.daysInStage} / ${pheno.stageDuration}</span>
         </div>
@@ -1307,8 +1309,8 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
   const current = weather.current || {};
   const temp = typeof current.temperature_2m === 'number' ? current.temperature_2m
     : (typeof current.temperature === 'number' ? current.temperature : 28.0);
-  const feelsLike = typeof current.apparent_temperature === 'number' ? current.apparent_temperature
-    : (typeof current.apparentTemperature === 'number' ? current.apparentTemperature : temp);
+  const precipitation = typeof current.precipitation === 'number' ? current.precipitation
+    : (typeof current.precip_mm === 'number' ? current.precip_mm : 0);
   const rh = typeof current.relative_humidity_2m === 'number' ? current.relative_humidity_2m
     : (typeof current.humidity === 'number' ? current.humidity : 60);
   const windSpd = typeof current.wind_speed_10m === 'number' ? current.wind_speed_10m
@@ -1344,9 +1346,15 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
 
   mount.innerHTML = `
     <div class="telemetry-header">
-      <span class="telemetry-eyebrow">
-        ${icons.gauge(16)} ${escapeHtml(t('tele.title'))}
-      </span>
+      <div class="telemetry-title-wrap">
+        <span class="telemetry-eyebrow">
+          ${icons.gauge(16)} ${escapeHtml(t('tele.title'))}
+        </span>
+        <span class="context-help">
+          <button class="context-help__button" id="fieldConditionsHelp" type="button" aria-expanded="false" aria-controls="fieldConditionsHelpTip" aria-label="${escapeHtml(t('tele.helpButton'))}" title="${escapeHtml(t('tele.helpButton'))}">?</button>
+          <span class="context-help__tip" id="fieldConditionsHelpTip" role="tooltip" hidden>${escapeHtml(t('tele.contextHelp'))}</span>
+        </span>
+      </div>
     </div>
     <div class="telemetry-grid">
       <!-- 1. Temperature -->
@@ -1359,13 +1367,13 @@ function renderAgronomyTelemetry(weather, draft, pheno) {
         <div class="telemetry-card__sub">${escapeHtml(t('tele.maxMin', { max: weather.tempMaxC ?? 32, min: weather.daily?.tempMin ?? 22 }))}</div>
       </div>
 
-      <!-- 2. Apparent Temperature -->
+      <!-- 2. Live Precipitation -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
           <span class="telemetry-card__label">${escapeHtml(t('tele.feelsLike'))}</span>
-          <span class="telemetry-card__icon">${icons.thermometer(18)}</span>
+          <span class="telemetry-card__icon">${icons.cloud(18)}</span>
         </div>
-        <div class="telemetry-card__val">${feelsLike.toFixed(1)} &deg;C</div>
+        <div class="telemetry-card__val">${precipitation.toFixed(1)} mm</div>
         <div class="telemetry-card__sub">${escapeHtml(t('tele.thermalComfort'))}</div>
       </div>
 
@@ -1600,15 +1608,12 @@ async function renderHome() {
   }
   homeAdvisories = advisories;
 
-  /* ACCOUNT §3.5: name when known, masked phone otherwise — never the raw number */
-  const masked = session?.masked ?? `••• ${(session?.phone ?? '').slice(-3)}`;
+  /* The home greeting is for the farmer's name only. Never use a phone number
+     as a visible identity fallback; the profile page owns phone display. */
   const name = session?.role === 'officer' ? (session.name ?? session.id)
-    : session?.role === 'farmer' ? (session.name ?? masked)
+    : session?.role === 'farmer' ? (session.name ?? draft.name ?? meCache?.profile?.display_name ?? 'Farmer')
       : 'Guest';
-  const isMasked = name.includes('•');
-  $('homeAvatar').textContent = isMasked
-    ? (name.match(/\d{3}$/)?.[0] ?? '•••')
-    : (name || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  $('homeAvatar').textContent = (name || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   $('homeTitle').textContent = t('home.hello', { name: name || '' });
   $('homeFarmLine').textContent = [eff.village, eff.districtName, eff.stateName]
     .filter(Boolean).join(' · ');
@@ -3129,6 +3134,24 @@ function wire() {
   $('btnEditLang').addEventListener('click', () => openPickerBtn.click());
   $('profileSignoutBtn').addEventListener('click', onSignout);
   $('themeToggleBtn').addEventListener('click', toggleTheme);
+  $('globalThemeToggleBtn').addEventListener('click', toggleTheme);
+  $('agronomyTelemetryMount').addEventListener('click', (event) => {
+    const button = event.target.closest('#fieldConditionsHelp');
+    if (!button) return;
+    const tip = $('fieldConditionsHelpTip');
+    const isOpen = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!isOpen));
+    if (tip) tip.hidden = isOpen;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const button = $('fieldConditionsHelp');
+    const tip = $('fieldConditionsHelpTip');
+    if (button && tip) {
+      button.setAttribute('aria-expanded', 'false');
+      tip.hidden = true;
+    }
+  });
   $('btnEditProfileContact').addEventListener('click', () => {
     $('profileFormSection').hidden = false;
     $('profileOverviewSection').hidden = true;
