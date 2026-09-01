@@ -1,0 +1,15 @@
+D:\SIH26-TryHards\tests\math_oracle\bin\Debug\net10.0\math_oracle.exe
+D:\SIH26-TryHards\tests\math_oracle\bin\Debug\net10.0\math_oracle.deps.json
+D:\SIH26-TryHards\tests\math_oracle\bin\Debug\net10.0\math_oracle.runtimeconfig.json
+D:\SIH26-TryHards\tests\math_oracle\bin\Debug\net10.0\math_oracle.dll
+D:\SIH26-TryHards\tests\math_oracle\bin\Debug\net10.0\math_oracle.pdb
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.GeneratedMSBuildEditorConfig.editorconfig
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.AssemblyInfoInputs.cache
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.AssemblyInfo.cs
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.csproj.CoreCompileInputs.cache
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.sourcelink.json
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.dll
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\refint\math_oracle.dll
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.pdb
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\math_oracle.genruntimeconfig.cache
+D:\SIH26-TryHards\tests\math_oracle\obj\Debug\net10.0\ref\math_oracle.dll

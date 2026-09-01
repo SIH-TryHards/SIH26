@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Empirical Math & Amortization Challenge Harness</title>
+</head>
+<body>
+<div id="output">Running empirical tests...</div>
+<script type="module">
+import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from '../assets/js/loan.js';
+
+const log = [];
+function print(str) {
+  console.log(str);
+  log.push(str);
+}
+
+let totalTests = 0;
+let passedTests = 0;
+let failedTests = 0;
+
+function assert(condition, message) {
+  totalTests++;
+  if (!condition) {
+    failedTests++;
+    const err = `[ASSERTION FAILED]: ${message}`;
+    print(err);
+    throw new Error(err);
+  }
+  passedTests++;
+}
+
+assert.equal = function(actual, expected, message) {
+  totalTests++;
+  if (actual !== expected) {
+    failedTests++;
+    const err = `[ASSERTION FAILED]: ${message || ''} (Expected: ${expected}, Actual: ${actual})`;
+    print(err);
+    throw new Error(err);
+  }
+  passedTests++;
+};
+
+assert.ok = function(val, message) {
+  totalTests++;
+  if (!val) {
+    failedTests++;
+    const err = `[ASSERTION FAILED]: ${message || 'Value is falsy'}`;
+    print(err);
+    throw new Error(err);
+  }
+  passedTests++;
+};
+
+function createSeededRandom(seed = 123456789) {
+  let s = seed;
+  return function() {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+
+async function runTestSuite() {
+  const startTime = performance.now();
+  print('======================================================================');
+  print('  CHALLENGER 1: EMPIRICAL MATHEMATICAL ORACLE & STRESS HARNESS');
+  print('======================================================================\n');
+
+  // SUITE 1: EMI REDUCING BALANCE CLOSED-FORM ORACLE (1,000 randomized cases)
+  try {
+    print('>> Suite 1: EMI Closed-Form Formula Oracle (1,000 randomized cases)...');
+    const rng = createSeededRandom(42);
+    for (let i = 0; i < 1000; i++) {
+      const p = Math.round(1000 + rng() * 50000000); // 1,000 to 5 Crore
+      const r = +(rng() * 60.0).toFixed(4);          // 0.00% to 60.00%
+      const m = Math.floor(1 + rng() * 360);          // 1 to 360 months (30 years)
+
+      const emi = calculateEMI(p, r, m);
+      assert.ok(Number.isFinite(emi), `EMI must be finite for P=${p}, r=${r}, m=${m}`);
+      assert.ok(emi > 0, `EMI must be positive for P=${p}, r=${r}, m=${m}`);
+
+      let theoreticalEMI;
+      if (r === 0) {
+        theoreticalEMI = p / m;
+      } else {
+        const iRate = r / 12 / 100;
+        const compound = Math.pow(1 + iRate, m);
+        theoreticalEMI = (p * iRate * compound) / (compound - 1);
+      }
+
+      const relErr = Math.abs(emi - theoreticalEMI) / theoreticalEMI;
+      assert.ok(relErr < 1e-6, `Rel error ${relErr} exceeds 1e-6 for P=${p}, r=${r}, m=${m}`);
+    }
+    print('   [PASS] Suite 1: 1,000/1,000 EMI randomized test cases passed with relErr < 1e-6.\n');
+  } catch (e) {
+    print(`   [FAIL] Suite 1: ${e.message}\n`);
+  }
+
+  // SUITE 2: AMORTIZATION SCHEDULE CONSERVATION & INVARIANTS (500 randomized cases)
+  try {
+    print('>> Suite 2: Amortization Invariants (500 randomized loan schedules)...');
+    const rng = createSeededRandom(101);
+    for (let i = 0; i < 500; i++) {
+      const p = Math.round(5000 + rng() * 10000000);
+      const r = +(rng() * 45.0).toFixed(2);
+      const m = Math.floor(1 + rng() * 120);
+      const paid = Math.floor(rng() * (m + 2));
+
+      const sched = generateSchedule(p, r, m, '2026-09-01', paid);
+
+      // Invariant 1: Schedule length == months
+      assert.equal(sched.schedule.length, m, `Schedule length mismatch`);
+
+      // Invariant 2: Sum of principal portions == Principal
+      const sumPrincipal = sched.schedule.reduce((acc, row) => acc + row.principal, 0);
+      assert.ok(Math.abs(sumPrincipal - p) < 1e-4, `Principal conservation failed: Sum=${sumPrincipal}, P=${p}`);
+
+      // Invariant 3: Final remaining balance == 0
+      const lastRow = sched.schedule[sched.schedule.length - 1];
+      assert.equal(lastRow.balance, 0, `Final balance must be 0, got ${lastRow.balance}`);
+
+      // Invariant 4: totalPayment == p + totalInterest
+      assert.ok(Math.abs(sched.totalPayment - (p + sched.totalInterest)) < 1e-4, `Total payment identity failed`);
+
+      // Invariant 5: amountPaid + amountLeft == totalPayment
+      assert.ok(Math.abs(sched.amountPaid + sched.amountLeft - sched.totalPayment) < 1e-4, `Amount balance failed`);
+
+      // Invariant 6: Interest portions monotonically non-increasing
+      if (r > 0) {
+        for (let j = 1; j < sched.schedule.length; j++) {
+          assert.ok(sched.schedule[j].interest <= sched.schedule[j-1].interest + 1e-7, `Interest not monotonically decreasing at month ${j+1}`);
+        }
+      }
+
+      // Invariant 7: Progress percentage in [0, 100]
+      assert.ok(sched.progressPct >= 0 && sched.progressPct <= 100, `Progress pct out of bounds: ${sched.progressPct}`);
+    }
+    print('   [PASS] Suite 2: 500/500 Amortization invariant test cases passed.\n');
+  } catch (e) {
+    print(`   [FAIL] Suite 2: ${e.message}\n`);
+  }
+
+  // SUITE 3: DISTRESS SCORE BOUNDS & 3-FACTOR WEIGHT FORMULA (2,000 randomized cases)
+  try {
+    print('>> Suite 3: Distress Score Bounds, Monotonicity & Clamping (2,000 randomized cases)...');
+    const rng = createSeededRandom(202);
+    for (let i = 0; i < 2000; i++) {
+      const rain = -500 + rng() * 2000;
+      const mandi = -5000 + rng() * 50000;
+      const msp = -2000 + rng() * 40000;
+      const days = -100 + rng() * 1000;
+
+      const res = calculateDistressScore(rain, mandi, msp, days);
+
+      // Clamping check
+      assert.ok(Number.isInteger(res.score), `Distress score must be integer`);
+      assert.ok(res.score >= 0 && res.score <= 100, `Distress score ${res.score} out of [0, 100]`);
+
+      // Subscore checks
+      assert.ok(res.sRain >= 0 && res.sRain <= 100, `sRain ${res.sRain} out of [0, 100]`);
+      assert.ok(res.sPrice >= 0 && res.sPrice <= 100, `sPrice ${res.sPrice} out of [0, 100]`);
+      assert.ok(res.sLoan >= 0 && res.sLoan <= 100, `sLoan ${res.sLoan} out of [0, 100]`);
+
+      // Formula exactness
+      const expectedScore = Math.max(0, Math.min(100, Math.round(
+        0.35 * res.sRain + 0.35 * res.sPrice + 0.30 * res.sLoan
+      )));
+      assert.equal(res.score, expectedScore, `Composite formula mismatch`);
+
+      // Level classification consistency
+      if (res.score > 80) assert.equal(res.level, 'critical');
+      else if (res.score >= 51) assert.equal(res.level, 'watch');
+      else assert.equal(res.level, 'low');
+    }
+    print('   [PASS] Suite 3: 2,000/2,000 Distress score test cases passed.\n');
+  } catch (e) {
+    print(`   [FAIL] Suite 3: ${e.message}\n`);
+  }
+
+  // SUITE 4: EXTREME BOUNDARY, DEGENERATE & ZERO CONDITIONS
+  try {
+    print('>> Suite 4: Extreme Boundaries, Degenerate Inputs & Edge Cases...');
+    
+    // Test calculateEMI degenerates
+    assert.equal(calculateEMI(0, 5, 12), 0, 'Zero principal must yield 0');
+    assert.equal(calculateEMI(-50000, 5, 12), 0, 'Negative principal must yield 0');
+    assert.equal(calculateEMI(50000, -5, 12), 50000 / 12, 'Negative rate clamped to 0 -> linear division');
+    assert.equal(calculateEMI(50000, 0, 12), 50000 / 12, '0% rate -> linear division');
+    assert.equal(calculateEMI(50000, 5, 0), 0, '0 months -> 0');
+    assert.equal(calculateEMI(50000, 5, -12), 0, 'Negative months -> 0');
+    assert.equal(calculateEMI(NaN, NaN, NaN), 0, 'NaN inputs -> 0');
+    assert.equal(calculateEMI(null, undefined, false), 0, 'Falsy inputs -> 0');
+
+    // Test calculateDistressScore boundaries
+    const d0 = calculateDistressScore(0, 0, 0, 0);
+    assert.ok(d0.score >= 0 && d0.score <= 100, 'All zero distress inputs safe');
+    assert.equal(d0.sRain, 100, '0mm rain -> sRain 100');
+    assert.equal(d0.sLoan, 98, '0 days due -> sLoan 98');
+
+    // Drought edge cases
+    assert.equal(calculateDistressScore(2.0, 3000, 2400, 90).sRain, 85, '2.0mm rain -> sRain 85');
+    assert.equal(calculateDistressScore(1.0, 3000, 2400, 90).sRain, 93, '1.0mm rain -> sRain 93');
+    assert.equal(calculateDistressScore(0.0, 3000, 2400, 90).sRain, 100, '0.0mm rain -> sRain 100');
+    
+    // Flood edge cases
+    assert.equal(calculateDistressScore(60.0, 3000, 2400, 90).sRain, 75, '60.0mm rain -> sRain 75');
+    assert.equal(calculateDistressScore(91.25, 3000, 2400, 90).sRain, 100, '91.25mm rain -> sRain 100');
+    assert.equal(calculateDistressScore(200.0, 3000, 2400, 90).sRain, 100, '200.0mm rain -> sRain 100');
+
+    // Optimal benign rain window (10 to 60mm)
+    assert.equal(calculateDistressScore(10.0, 3000, 2400, 90).sRain, 10, '10.0mm rain -> sRain 10');
+    assert.equal(calculateDistressScore(35.0, 3000, 2400, 90).sRain, 10, '35.0mm rain -> sRain 10');
+    assert.equal(calculateDistressScore(59.9, 3000, 2400, 90).sRain, 10, '59.9mm rain -> sRain 10');
+
+    // Loan proximity step function
+    assert.equal(calculateDistressScore(30, 2500, 2400, 0).sLoan, 98, '0 days -> 98');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 7).sLoan, 98, '7 days -> 98');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 8).sLoan, 85, '8 days -> 85');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 15).sLoan, 85, '15 days -> 85');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 16).sLoan, 65, '16 days -> 65');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 30).sLoan, 65, '30 days -> 65');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 31).sLoan, 38, '31 days -> 38');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 60).sLoan, 38, '60 days -> 38');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 61).sLoan, 10, '61 days -> 10');
+    assert.equal(calculateDistressScore(30, 2500, 2400, 180).sLoan, 10, '180 days -> 10');
+
+    // Price realization subscore
+    assert.equal(calculateDistressScore(30, 2400, 2400, 90).sPrice, 25, 'MSP exact -> 25');
+    assert.equal(calculateDistressScore(30, 2496, 2400, 90).sPrice, 25, 'MSP + 4% -> 25');
+    assert.equal(calculateDistressScore(30, 2497, 2400, 90).sPrice, 10, 'MSP + 4.04% -> 10');
+    assert.equal(calculateDistressScore(30, 1200, 2400, 90).sPrice, 100, '50% below MSP -> 100');
+
+    // Alias export
+    assert.equal(generateLoanSchedule, generateSchedule, 'generateLoanSchedule alias verified');
+
+    print('   [PASS] Suite 4: All boundary, step-function & degenerate edge cases passed.\n');
+  } catch (e) {
+    print(`   [FAIL] Suite 4: ${e.message}\n`);
+  }
+
+  const duration = performance.now() - startTime;
+  print('======================================================================');
+  print('  CHALLENGER 1 VERIFICATION COMPLETE');
+  print('======================================================================');
+  print(`  Total Assertions Checked : ${totalTests}`);
+  print(`  Passed Assertions        : ${passedTests}`);
+  print(`  Failed Assertions        : ${failedTests}`);
+  print(`  Elapsed Duration         : ${duration.toFixed(2)} ms`);
+  print(`  Verdict                  : ${failedTests === 0 ? 'APPROVE' : 'REJECT'}`);
+  print('======================================================================\n');
+
+  const container = document.getElementById('output');
+  container.innerHTML = `<pre id="test-report">${log.join('\n')}</pre>`;
+  document.title = failedTests === 0 ? 'ALL TESTS PASSED - APPROVE' : 'TESTS FAILED - REJECT';
+}
+
+runTestSuite();
+</script>
+</body>
+</html>
