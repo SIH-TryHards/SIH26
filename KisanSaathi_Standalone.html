@@ -23,9 +23,21 @@
           <small id="taglineText">Crop advisory &amp; early warning</small>
         </span>
       </a>
-      <div style="display:flex; gap:12px; align-items:center;">
+      <div class="topbar-actions">
         <button class="btn btn--outline btn--sm" id="headerOfficerBtn" type="button" style="padding: 4px 12px; min-height: 40px; border-radius: 20px;">
           <span id="headerOfficerLabel">Officer Sign In</span>
+        </button>
+        <button class="theme-toggle" id="globalThemeToggleBtn" type="button" aria-label="Use dark mode" title="Use dark mode">
+          <span class="theme-toggle__icon theme-toggle__sun" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+          </span>
+          <span class="theme-toggle__icon theme-toggle__moon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8z"/>
+            </svg>
+          </span>
         </button>
         <button class="language-button" id="openLanguagePicker" type="button" aria-label="Change language" hidden>
           <span aria-hidden="true">
@@ -441,7 +453,9 @@
 
       <div class="help-quick-actions" aria-label="Quick help actions">
         <a class="btn btn--primary" id="helpKccQuickCall" href="tel:18001801551"></a>
-        <a class="btn btn--outline" id="helpPmkisanPortal" href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer"></a>
+        <a class="btn btn--outline" id="helpPmkisanPortal" href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer">PM-Kisan Portal ↗</a>
+        <a class="btn btn--outline" id="helpPmfbyPortal" href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer">PMFBY Portal ↗</a>
+        <a class="btn btn--outline" id="helpEnamPortal" href="https://enam.gov.in/" target="_blank" rel="noopener noreferrer">e-NAM Portal ↗</a>
       </div>
 
       <div class="section-head schemes-heading">
@@ -626,88 +640,468 @@
       </div>
     </section>
 
-    <!-- Module 5: My Loan -->
-    <section class="starter-card" id="viewLoan" aria-labelledby="loanTitle" hidden>
+    <!-- Module 5: Farmer Agricultural Loan & Distress Risk Planner -->
+    <section class="starter-card loan-view-card" id="viewLoan" aria-labelledby="loanTitle" hidden>
       <span class="eyebrow" id="loanStepLabel"></span>
       <h1 id="loanTitle"></h1>
       <p id="loanHelp" class="field-note" style="margin-top: 4px;"></p>
 
-      <form id="loanForm" novalidate style="margin-top: 16px;">
-        <div class="field">
-          <label for="loanAmountInput" id="lblLoanAmount"></label>
-          <input class="input" id="loanAmountInput" type="number" min="0" step="5000">
-          <div class="quick-choice-row" aria-label="Loan amount presets">
-            <button type="button" class="quick-choice" data-loan-amount="50000">₹50K</button>
-            <button type="button" class="quick-choice" data-loan-amount="100000">₹1 Lakh</button>
-            <button type="button" class="quick-choice" data-loan-amount="200000">₹2 Lakh</button>
-            <button type="button" class="quick-choice" data-loan-amount="300000">₹3 Lakh</button>
-            <button type="button" class="quick-choice" data-loan-amount="500000">₹5 Lakh</button>
-          </div>
-        </div>
-        <div class="field">
-          <label for="loanTenureInput" id="lblLoanTenure">Time Period</label>
-          <div class="loan-tenure-row">
-            <input class="input" id="loanTenureInput" type="number" min="1" step="1">
-            <select class="input" id="loanTenureUnit" aria-label="Tenure unit">
-              <option value="months">Months</option>
-              <option value="years">Years</option>
-            </select>
-          </div>
-          <div class="quick-choice-row" aria-label="Tenure presets">
-            <button type="button" class="quick-choice" data-loan-tenure="12">1 Year</button>
-            <button type="button" class="quick-choice" data-loan-tenure="24">2 Years</button>
-            <button type="button" class="quick-choice" data-loan-tenure="36">3 Years</button>
-            <button type="button" class="quick-choice" data-loan-tenure="60">5 Years</button>
-          </div>
-        </div>
-        <div class="field">
-          <label for="loanRateInput" id="lblLoanRate"></label>
-          <input class="input" id="loanRateInput" type="number" min="0" max="50" step="0.1">
-          <div class="quick-choice-row" aria-label="Interest rate presets">
-            <button type="button" class="quick-choice" data-loan-rate="4">4% KCC</button>
-            <button type="button" class="quick-choice" data-loan-rate="7">7% KCC base</button>
-            <button type="button" class="quick-choice" data-loan-rate="8.5">8.5% Tractor</button>
-            <button type="button" class="quick-choice" data-loan-rate="11">11% Commercial</button>
-          </div>
-        </div>
-        <div class="loan-form-grid">
-          <div class="field">
-            <label for="loanFirstInstallmentInput">First installment date</label>
-            <input class="input" id="loanFirstInstallmentInput" type="date">
-            <div class="quick-choice-row">
-              <button type="button" class="quick-choice" data-loan-date="next">Next month</button>
-              <button type="button" class="quick-choice" data-loan-date="today">Today</button>
-              <button type="button" class="quick-choice" data-loan-date="october">1 Oct</button>
-              <button type="button" class="quick-choice" data-loan-date="january">1 Jan</button>
+      <!-- 1. COMPOSITE DISTRESS RISK & EARLY WARNING MONITOR -->
+      <div class="desi-card p-5 mb-6 bg-white border border-slate-200 shadow-sm" id="distressPlannerCard">
+        <!-- Card Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold text-xl shadow-xs">
+                <span class="distress-icon-mount" aria-hidden="true">!</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-lg font-bold text-slate-900 font-desi-heading" id="distressPlannerTitle" data-i18n="distress.title">Predictive Distress Risk &amp; Early Warning Monitor</h2>
+                <span id="distressLiveBadge" class="bg-rose-50 text-rose-800 border border-rose-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full" data-i18n="distress.algorithmBadge">
+                  3-Factor Algorithm: Rain + Price + Loan
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5" id="distressPlannerSubtitle" data-i18n="distress.subtitle">Real-time distress index calculated from 3-day rainfall forecast, crop mandi price vs MSP, and loan due date proximity</p>
             </div>
           </div>
-          <div class="field">
-            <label for="loanPaidInput">Installments paid so far</label>
-            <input class="input" id="loanPaidInput" type="number" min="0" step="1" value="0">
-            <input class="loan-range" id="loanPaidRange" type="range" min="0" max="12" step="1" value="0" aria-label="Installments paid so far">
-            <div class="field-meta"><span>0 paid</span><span id="loanPaidSummary">0 of 12</span></div>
+          <div class="flex items-center gap-2">
+            <span id="distressScorePill" class="text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs">
+              <!-- Score Badge e.g. "Safe: 42/100" -->
+            </span>
           </div>
         </div>
-        <p class="form-error" id="loanFormError" role="alert" hidden></p>
-        <div class="btn-row" style="margin-top: 16px;">
-          <button class="btn btn--primary" id="loanCalcBtn" type="submit"></button>
-        </div>
-      </form>
 
-      <div id="loanResultBox" style="margin-top: 24px;" hidden>
-        <div class="section-head">
-          <span class="eyebrow" id="loanResultTitle"></span>
-          <span class="section-rule"></span>
+        <!-- Dynamic High Distress Warning (>80) Banner (Hidden by default) -->
+        <div id="distressWarningBanner" class="hidden p-4 sm:p-5 rounded-2xl border-2 border-rose-500 bg-rose-50/90 text-rose-950 mb-5 shadow-md">
+          <div class="flex items-start gap-3.5">
+            <span class="text-3xl animate-bounce mt-0.5" aria-hidden="true">!</span>
+            <div class="flex-grow">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <h3 class="font-extrabold text-sm sm:text-base text-rose-900 uppercase tracking-wide flex items-center gap-2">
+                  <span data-i18n="distress.warningTitle">HIGH DISTRESS RISK WARNING</span>
+                  <span class="bg-rose-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">Score &gt; 80</span>
+                </h3>
+                <span class="text-xs font-bold text-rose-800 bg-white/80 px-2.5 py-1 rounded-lg border border-rose-300" data-i18n="distress.thresholdExceeded">
+                  Critical Intervention Threshold Exceeded
+                </span>
+              </div>
+              <p class="text-xs sm:text-sm font-semibold text-rose-900 leading-relaxed mb-3 distress-warning-description" data-i18n="distress.warningDesc">
+                The composite distress risk score has spiked past the critical danger threshold of 80. Immediate proactive assistance and debt relief measures are recommended.
+              </p>
+
+              <!-- Explicit Spike Root-Cause Breakdown -->
+              <div class="bg-white/95 rounded-xl p-3.5 border border-rose-300 shadow-2xs distress-warning-analysis">
+                <div class="text-xs font-extrabold text-rose-900 mb-2 flex items-center gap-1.5">
+                  <span aria-hidden="true">+</span> <span data-i18n="distress.rootCauseTitle">Root-Cause Analysis for Score Spike:</span>
+                </div>
+                <div id="spikeReasonsList" class="space-y-2 text-xs">
+                  <!-- Dynamically populated via JS -->
+                </div>
+              </div>
+
+              <!-- Emergency Action Escalation Support -->
+              <div class="mt-3.5 flex flex-wrap items-center gap-2.5 pt-2 border-t border-rose-200 text-xs distress-warning-actions">
+                <a href="tel:18001801551" class="inline-flex items-center gap-1.5 bg-rose-700 hover:bg-rose-800 text-white font-bold px-3.5 py-2 rounded-xl shadow-xs transition">
+                  <span data-i18n="distress.callHelpline">Call Kisan Emergency Desk (1800-180-1551)</span>
+                </a>
+                <a href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-white hover:bg-rose-100 text-rose-900 border border-rose-300 font-bold px-3.5 py-2 rounded-xl shadow-xs transition">
+                  <span data-i18n="distress.claimInsurance">PMFBY Crop Insurance Claim Portal ↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
+        <!-- 3 Distress Factor Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+          
+          <!-- Factor 1: 3-Day Rainfall Forecast -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span aria-hidden="true">•</span> <span data-i18n="distress.factor1Title">Factor 1: 3-Day Rain Forecast</span>
+                </span>
+                <span id="factor1RiskBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                  Checking...
+                </span>
+              </div>
+              <div class="text-xl font-extrabold text-slate-900 mt-1" id="factor1RainVal">0.0 mm</div>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="factor1RainSummary">Predicted rainfall over next 3 days via weather telemetry</p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200/80">
+              <div class="flex justify-between text-[11px] text-slate-600 mb-1">
+                <span data-i18n="distress.simRain">Simulate 3-Day Rain (mm):</span>
+                <span id="sliderRainValDisplay" class="font-bold text-slate-900">0 mm</span>
+              </div>
+              <input type="range" id="sliderRainSimMm" min="0" max="100" value="0" step="2" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" aria-label="Simulate 3-Day Rain in mm">
+              <div class="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                <span data-i18n="distress.rainDrought">0mm (Drought)</span>
+                <span data-i18n="distress.rainNormal">30mm (Normal)</span>
+                <span data-i18n="distress.rainFlood">100mm (Flood)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Factor 2: Crop Price vs MSP Realization -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span aria-hidden="true">•</span> <span data-i18n="distress.factor2Title">Factor 2: Mandi Price vs MSP</span>
+                </span>
+                <span id="factor2RiskBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                  Checking...
+                </span>
+              </div>
+              <div class="text-xl font-extrabold text-slate-900 mt-1" id="factor2PriceVal">₹2,620 / Qtl</div>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="factor2MspComparison">Govt MSP: ₹2,425 / Qtl (+₹195 above MSP)</p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200/80">
+              <div class="flex justify-between text-[11px] text-slate-600 mb-1">
+                <span data-i18n="distress.simPrice">Simulate Price Drop vs MSP:</span>
+                <span id="sliderPriceDropDisplay" class="font-bold text-slate-900">0%</span>
+              </div>
+              <input type="range" id="sliderPriceDropPct" min="0" max="50" value="0" step="2" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" aria-label="Simulate Price Drop percentage">
+              <div class="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                <span data-i18n="distress.priceFull">0% (Full Price)</span>
+                <span data-i18n="distress.priceDrop">25% (Drop)</span>
+                <span data-i18n="distress.priceCrash">50% (Crash)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Factor 3: Loan Due Date Proximity -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span aria-hidden="true">•</span> <span data-i18n="distress.factor3Title">Factor 3: Loan Due Date</span>
+                </span>
+                <span id="factor3RiskBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                  Checking...
+                </span>
+              </div>
+              <div class="text-xl font-extrabold text-slate-900 mt-1" id="factor3LoanDaysVal">15 Days Remaining</div>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="factor3LoanSummary">Proximity to next KCC / EMI payment due date</p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200/80">
+              <div class="flex justify-between text-[11px] text-slate-600 mb-1">
+                <span data-i18n="distress.simLoan">Days Until Due Date:</span>
+                <span id="sliderLoanDaysDisplay" class="font-bold text-slate-900">15 Days</span>
+              </div>
+              <input type="range" id="sliderLoanDueDays" min="3" max="120" value="15" step="1" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" aria-label="Simulate Loan Due Days">
+              <div class="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                <span data-i18n="distress.loanUrgent">3 Days (Urgent)</span>
+                <span data-i18n="distress.loanMonth">30 Days</span>
+                <span data-i18n="distress.loanSafe">120 Days (Safe)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Composite Score Visual Gauge Bar -->
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 distress-meter-card">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-800" data-i18n="distress.meterTitle">Composite Distress Risk Meter:</span>
+              <span id="distressScoreNumDisplay" class="text-lg font-black text-slate-900">42 / 100</span>
+            </div>
+            <div id="distressScoreLevelText" class="text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-md">
+              Normal &amp; Stable (Score &le; 50)
+            </div>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-3.5 overflow-hidden distress-meter-track">
+            <div id="distressMeterBar" class="h-full transition-all duration-300 rounded-full bg-emerald-500" style="width: 42%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
+            <span data-i18n="distress.legendLow">0 - 50: Safe (Normal)</span>
+            <span data-i18n="distress.legendWatch">51 - 80: Moderate Watch</span>
+            <span class="text-rose-600 font-bold" data-i18n="distress.legendCritical">81 - 100: Critical Distress Alert (Warning Triggered)</span>
+          </div>
+        </div>
+
+        <!-- Mount point for programmatic distress monitor -->
         <div id="distressMonitorMount"></div>
-        <div id="loanStatusCards" class="loan-status-grid"></div>
+      </div>
 
-        <div class="loan-note">
-          <p id="loanKccNote"></p>
+      <!-- 2. FARMER AGRICULTURAL LOAN & EMI CALCULATOR -->
+      <div class="desi-card p-5 mb-6 bg-white border border-slate-200 loan-calculator-intro">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl shadow-xs">
+              ₹
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 font-desi-heading" id="lblLoanTitle" data-i18n="loan.title">Farmer Agricultural Loan &amp; EMI Calculator</h2>
+              <p class="text-xs text-slate-500" id="lblLoanSubtitle" data-i18n="loan.subtitle">Calculate Kisan Credit Card (KCC), tractor, crop, and equipment loan installments, total amount paid, and outstanding balance</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs">
+              Central Govt KCC Subvention: 4% Effective Rate
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loan Calculator 2-Column Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        
+        <!-- Left Column: Inputs (5 Cols) -->
+        <div class="lg:col-span-5 desi-card p-5 bg-white space-y-4 loan-input-panel">
+          <h3 class="text-base font-bold text-slate-900 font-desi-heading flex items-center gap-2 pb-2 border-b border-slate-100">
+            <span aria-hidden="true">•</span> <span data-i18n="loan.inputsHeader">Loan Inputs</span>
+          </h3>
+
+          <!-- 1. Principal Loan Amount -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between" for="loanAmountInput">
+              <span id="lblLoanAmount" data-i18n="loan.lblPrincipal">Initial Loan Amount (₹)</span>
+              <span id="loanAmountFormatted" class="text-emerald-700 font-extrabold text-xs">₹1,00,000</span>
+            </label>
+            <input type="number" id="loanAmountInput" value="100000" min="1000" step="5000" class="input w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+            <div class="flex flex-wrap gap-1.5 mt-2 quick-choice-row">
+              <button type="button" class="quick-choice" data-loan-amount="50000">₹50K</button>
+              <button type="button" class="quick-choice" data-loan-amount="100000">₹1 Lakh</button>
+              <button type="button" class="quick-choice" data-loan-amount="200000">₹2 Lakh</button>
+              <button type="button" class="quick-choice" data-loan-amount="300000">₹3 Lakh (KCC Limit)</button>
+              <button type="button" class="quick-choice" data-loan-amount="500000">₹5 Lakh</button>
+            </div>
+          </div>
+
+          <!-- 2. Loan Tenure / Time Period -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-800" for="loanTenureInput" id="lblLoanTenure" data-i18n="loan.lblTenure">Time Period / Tenure</label>
+              <div class="inline-flex rounded-lg p-0.5 bg-slate-100 border border-slate-200 text-[11px]">
+                <button type="button" id="btnTenureYears" class="px-2 py-0.5 rounded-md font-bold bg-white text-emerald-800 shadow-2xs">Years</button>
+                <button type="button" id="btnTenureMonths" class="px-2 py-0.5 rounded-md text-slate-600">Months</button>
+              </div>
+            </div>
+            <div class="loan-tenure-row flex gap-2">
+              <input type="number" id="loanTenureInput" value="2" min="1" max="360" step="1" class="input w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+              <select class="input hidden" id="loanTenureUnit" aria-label="Tenure unit">
+                <option value="years" selected>Years</option>
+                <option value="months">Months</option>
+              </select>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-2 quick-choice-row">
+              <button type="button" class="quick-choice" data-loan-tenure="12">1 Year (12 Mon)</button>
+              <button type="button" class="quick-choice" data-loan-tenure="24">2 Years (24 Mon)</button>
+              <button type="button" class="quick-choice" data-loan-tenure="36">3 Years (36 Mon)</button>
+              <button type="button" class="quick-choice" data-loan-tenure="60">5 Years (60 Mon)</button>
+            </div>
+          </div>
+
+          <!-- 3. Annual Rate of Interest -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5" for="loanRateInput" id="lblLoanRate" data-i18n="loan.lblRate">Annual Rate of Interest (%)</label>
+            <div class="relative">
+              <input type="number" id="loanRateInput" value="4.0" min="0.1" max="50" step="0.1" class="input w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px] pr-8">
+              <span class="absolute right-3 top-2.5 font-bold text-slate-400 text-sm">%</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-2 quick-choice-row">
+              <button type="button" class="quick-choice" data-loan-rate="4.0">4% (KCC Subvention)</button>
+              <button type="button" class="quick-choice" data-loan-rate="7.0">7% (KCC Base)</button>
+              <button type="button" class="quick-choice" data-loan-rate="8.5">8.5% (Tractor Loan)</button>
+              <button type="button" class="quick-choice" data-loan-rate="11.0">11% (Commercial)</button>
+            </div>
+          </div>
+
+          <!-- 4. Date of First Installment -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between" for="loanFirstInstallmentInput">
+              <span data-i18n="loan.lblFirstDate">Date of First Installment</span>
+              <span id="firstInstallmentDateFormatted" class="text-emerald-700 font-extrabold text-xs">01 Sep 2026</span>
+            </label>
+            <input type="date" id="loanFirstInstallmentInput" class="input w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px] cursor-pointer shadow-2xs">
+            <div class="flex flex-wrap gap-1.5 mt-2 quick-choice-row">
+              <button type="button" class="quick-choice" data-loan-date="next">1st Next Month</button>
+              <button type="button" class="quick-choice" data-loan-date="today">Today</button>
+              <button type="button" class="quick-choice" data-loan-date="october">1st Oct (Kharif)</button>
+              <button type="button" class="quick-choice" data-loan-date="january">1st Jan (Rabi)</button>
+            </div>
+          </div>
+
+          <!-- 5. Installments Already Paid -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between" for="loanPaidInput">
+              <span data-i18n="loan.lblPaidCount">Installments Paid So Far</span>
+              <span id="paidMonthsCountLabel" class="text-blue-700 font-extrabold text-xs">0 / 24 Paid</span>
+            </label>
+            <input type="number" id="loanPaidInput" value="0" min="0" max="360" step="1" class="input w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none min-h-[44px]">
+            <input type="range" id="loanPaidRange" min="0" max="24" value="0" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer mt-2" aria-label="Installments paid slider">
+            <div class="field-meta mt-1"><span id="loanPaidSummary" class="text-xs text-slate-500">0 of 24</span></div>
+          </div>
+
         </div>
 
-        <div id="loanScheduleMount" class="loan-schedule-mount"></div>
+        <!-- Right Column: Outputs & Summary Cards (7 Cols) -->
+        <div class="lg:col-span-7 space-y-5 loan-summary-panel">
+          
+          <!-- Primary Spotlight Card: Monthly Repayment -->
+          <div class="bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-900 text-white p-6 rounded-2xl border border-emerald-500/40 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-1.5 bg-emerald-500 text-slate-950 text-[11px] font-bold uppercase px-3 py-0.5 rounded-full mb-2">
+                <span>Monthly Repayment</span>
+              </div>
+              <div class="text-xs text-slate-300 font-medium" data-i18n="loan.emiMonthlyLabel">Installment Per Month:</div>
+              <div class="text-3xl sm:text-4xl font-extrabold text-amber-300 font-desi-heading mt-1" id="outMonthlyEmi">
+                ₹4,342 <span class="text-sm font-normal text-slate-300">/ month</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-2">
+                Based on <span id="summaryTenureText" class="font-bold text-white">24 months</span> at <span id="summaryRateText" class="font-bold text-white">4% p.a.</span>
+              </p>
+            </div>
+            <div class="bg-slate-800/90 p-4 rounded-xl border border-slate-700 w-full sm:w-auto min-w-[200px] text-left sm:text-right">
+              <div class="text-xs text-slate-400 font-medium" data-i18n="loan.totalInterestLabel">Total Interest:</div>
+              <div class="text-xl font-bold text-emerald-400" id="outTotalInterest">₹4,208</div>
+              <div class="text-xs text-slate-400 font-medium mt-2" data-i18n="loan.totalPayableLabel">Total Payable:</div>
+              <div class="text-lg font-extrabold text-white" id="outTotalPayable">₹1,04,208</div>
+            </div>
+          </div>
+
+          <!-- 2 Key Metric Cards: Amount Paid & Amount Left -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Amount Paid Card -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-blue-600 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-slate-500 tracking-wider" data-i18n="loan.amountPaidLabel">Amount Paid</span>
+                <span class="p-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm" aria-hidden="true">+</span>
+              </div>
+              <div class="text-2xl font-extrabold text-blue-700 mt-2" id="outAmountPaid">₹0</div>
+              <div class="text-xs text-slate-500 mt-1" id="outInstallmentsPaidText">0 installments completed</div>
+            </div>
+
+            <!-- Amount Left Card -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-amber-500 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-slate-500 tracking-wider" data-i18n="loan.amountLeftLabel">Amount Left</span>
+                <span class="p-1.5 bg-amber-50 text-amber-700 rounded-lg text-sm" aria-hidden="true">−</span>
+              </div>
+              <div class="text-2xl font-extrabold text-amber-700 mt-2" id="outAmountLeft">₹1,04,208</div>
+              <div class="text-xs text-slate-500 mt-1" id="outInstallmentsRemainingText">24 installments remaining</div>
+            </div>
+
+          </div>
+
+          <!-- Next Installment Due Date & Countdown Card -->
+          <div class="bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-lg">
+                01
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-sky-900" data-i18n="loan.nextDueLabel">Next Installment Due Date:</div>
+                <div class="text-base font-extrabold text-slate-900 mt-0.5" id="outNextDueDate">01 Sep 2026</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="outNextDueCountdown" class="bg-white text-sky-900 border border-sky-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs">
+                3 Days Remaining
+              </span>
+            </div>
+          </div>
+
+          <!-- Visual Progress Bar -->
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center text-xs font-bold mb-2">
+              <span class="text-slate-700" data-i18n="loan.progressLabel">Loan Repayment Progress:</span>
+              <span id="loanProgressPctText" class="text-emerald-700 font-extrabold">0% Paid</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden border border-slate-200 flex">
+              <div id="loanPaidProgressBar" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
+              <div id="loanLeftProgressBar" class="bg-amber-400 h-full transition-all duration-300" style="width: 100%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-500 mt-2">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Paid: <strong id="progPaidText">₹0</strong></span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Remaining: <strong id="progLeftText">₹1,04,208</strong></span>
+            </div>
+          </div>
+
+          <!-- Govt Interest Subvention Guidance Card -->
+          <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-950 flex items-start gap-3">
+            <span class="text-xl" aria-hidden="true">₹</span>
+            <div>
+              <div class="font-bold text-emerald-900 mb-0.5" data-i18n="loan.subventionTitle">Central Government KCC 3% Prompt Repayment Benefit:</div>
+              <p class="text-emerald-800/90 leading-relaxed" id="loanKccNote" data-i18n="loan.subventionDesc">
+                Under the Central Govt Interest Subvention Scheme (ISS), agriculture loans up to ₹3,00,000 carry a base rate of 7%. Farmers who repay their installments on time receive an extra <strong>3% prompt repayment subvention</strong>, making the net effective interest rate only <strong>4% per annum</strong>.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Result Box and Mount containers -->
+      <div id="loanResultBox">
+        <div id="loanStatusCards" class="loan-status-grid hidden"></div>
+        <div id="loanScheduleMount" class="loan-schedule-mount hidden"></div>
+      </div>
+
+      <!-- 1st of the Month Repayment Due Tracker Banner -->
+      <div class="desi-card p-4.5 mb-6 bg-amber-50/70 border border-amber-300 rounded-2xl loan-checklist-banner">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl" aria-hidden="true">01</span>
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 font-desi-heading" data-i18n="loan.rolloverTrackerTitle">
+                1st of Month Payment Checklist &amp; Overdue Rollover Engine
+              </h4>
+              <p class="text-xs text-slate-600" data-i18n="loan.rolloverTrackerDesc">
+                Mark each installment as paid on the <strong>1st date of the month</strong>. If unpaid, that amount is automatically rolled over and added to the next month's installment.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btnMarkAllPaid" class="text-xs font-semibold bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-lg transition shadow-2xs" data-i18n="loan.btnMarkAllPaid">
+              Mark All Due Paid
+            </button>
+            <button type="button" id="btnResetChecklist" class="text-xs font-semibold bg-white hover:bg-rose-50 text-rose-800 border border-rose-300 px-3 py-1.5 rounded-lg transition shadow-2xs" data-i18n="loan.btnResetChecklist">
+              Reset Checklist
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Installment Checklist & Schedule Table -->
+      <div class="desi-card p-5 bg-white border border-slate-200 loan-schedule-card">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 font-desi-heading flex items-center gap-2">
+              <span aria-hidden="true">01</span> <span data-i18n="loan.scheduleTableTitle">Monthly Installment Checklist &amp; Schedule</span>
+            </h3>
+            <p class="text-xs text-slate-500" data-i18n="loan.scheduleTableSub">Check the box on the 1st of each month to record payment. Unchecked amounts roll over to the next month.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="rolloverSummaryBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              0 Unpaid Rollovers
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-96 overflow-y-auto mandi-table-wrapper loan-schedule-table-wrapper">
+          <table class="w-full text-left text-xs border-collapse mandi-table loan-schedule-table">
+            <thead class="sticky top-0 bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3 text-center" data-i18n="loan.colPaid">Paid on 1st?</th>
+                <th class="p-3" data-i18n="loan.colDueDate">Due Date (1st of Month)</th>
+                <th class="p-3" data-i18n="loan.colBaseEmi">Base EMI</th>
+                <th class="p-3" data-i18n="loan.colArrears">Rollover Arrears</th>
+                <th class="p-3" data-i18n="loan.colTotalDue">Total Due this Month</th>
+                <th class="p-3" data-i18n="loan.colStatus">Status</th>
+                <th class="p-3" data-i18n="loan.colRemaining">Remaining Principal</th>
+              </tr>
+            </thead>
+            <tbody id="loanScheduleTableBody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -738,14 +1132,13 @@
         <span class="farmer-nav__label" id="navLoanLabel">Loans</span>
       </button>
       <button class="farmer-nav__btn" data-route="help" type="button">
-        <span class="farmer-nav__icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M9.8 9.2a2.3 2.3 0 114.1 1.5c-.7.9-1.9 1.2-1.9 2.5M12 17h.01"/>
-          </svg>
-        </span>
-        <span class="farmer-nav__label" id="navHelpLabel">Help</span>
-      </button>
+          <span class="farmer-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </span>
+          <span class="farmer-nav__label" id="navHelpLabel">Need help</span>
+        </button>
       <button class="farmer-nav__btn" data-route="profile" type="button">
         <span class="farmer-nav__icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

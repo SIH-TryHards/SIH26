@@ -1,5 +1,5 @@
 (() => {
-  // assets/js/i18n.js
+  // assets/js/i18n.js?v=20260901-1
   var LANGUAGES = [
     { code: "en", nativeName: "English", label: "English", locale: "en-IN" },
     { code: "hi", nativeName: "\u0939\u093F\u0902\u0926\u0940", label: "Hindi", locale: "hi-IN" },
@@ -291,9 +291,9 @@
     "pheno.title": "Growth tracker",
     "pheno.seasonProgress": "{pct}% of season",
     "pheno.dayOf": "Day {elapsed} of {total} \xB7 Harvest: {date}",
-    "pheno.kc": "Crop factor (Kc)",
+    "pheno.kc": "Crop water need",
     "pheno.gdd": "Heat units (GDD)",
-    "pheno.stageDuration": "Stage progress",
+    "pheno.stageDuration": "Growth progress",
     "pheno.daysToHarvest": "Days to harvest",
     "pheno.sowing": "Sowing",
     "pheno.vegetative": "Vegetative",
@@ -302,17 +302,19 @@
     "pheno.maturity": "Maturity",
     "pheno.harvest": "Harvest",
     "tele.title": "Live field conditions",
+    "tele.helpButton": "About these conditions",
+    "tele.contextHelp": "This section combines crop growth, soil moisture, and live weather.",
     "tele.temp": "Temperature",
-    "tele.feelsLike": "Feels like",
+    "tele.feelsLike": "Precipitation",
     "tele.soilMoisture": "Soil moisture",
-    "tele.et0": "Evapotranspiration",
+    "tele.et0": "Water needed",
     "tele.humidity": "Humidity",
     "tele.wind": "Wind",
     "tele.uv": "UV index",
     "tele.pressure": "Pressure",
     "tele.cloud": "Cloud cover",
     "tele.maxMin": "Max {max}\xB0C \xB7 Min {min}\xB0C",
-    "tele.thermalComfort": "Thermal comfort",
+    "tele.thermalComfort": "Rain right now",
     "tele.vwc": "{val}% VWC",
     "tele.litersPerAcre": "{val} L/acre needed",
     "tele.atmosMoisture": "Air moisture",
@@ -400,9 +402,65 @@
     "profile.useDarkMode": "Use dark mode",
     "profile.notAdded": "Not added",
     "profile.phone": "Phone call",
+    "profile.sms": "SMS",
+    "profile.whatsapp": "WhatsApp",
     "profile.emailError": "Enter a valid email address or leave it blank.",
     "unit.acres": "acres",
-    "help.state": "Maharashtra"
+    "help.state": "Maharashtra",
+    "mandi.table.location": "APMC mandi yard & location",
+    "mandi.table.modalRate": "Today's modal rate",
+    "mandi.table.arrival": "Arrival & variety",
+    "mandi.bestNet": "Best net",
+    "mandi.away": "{distance} km away \xB7 {days}",
+    "mandi.govtMsp": "Govt MSP",
+    "mandi.totalNet": "Total net ({distance} km)",
+    "mandi.aboveMsp": "+\u20B9{amount} (above MSP)",
+    "mandi.belowMsp": "-\u20B9{amount} (below MSP)",
+    "loan.schedule.paidOnFirst": "Paid on 1st?",
+    "loan.schedule.principal": "Principal",
+    "loan.schedule.interest": "Interest",
+    "loan.schedule.status": "Status",
+    "loan.status.paid": "Paid",
+    "loan.status.overdue": "Overdue",
+    "loan.status.upcoming": "Upcoming",
+    "loan.status.overdueRolled": "Overdue (rolled)",
+    "loan.day": "day",
+    "loan.days": "days",
+    "loan.monthUnit": "month",
+    "loan.months": "months",
+    "loan.loanFullyPaid": "Loan fully paid",
+    "loan.allPaid": "All instalments paid",
+    "loan.overdueBy": "Overdue by {days} days",
+    "loan.daysRemaining": "{days} days remaining",
+    "loan.installmentsCompleted": "{count} instalments completed",
+    "loan.installmentsRemaining": "{count} instalments remaining",
+    "loan.paidLabel": "Paid",
+    "loan.remainingLabel": "Remaining",
+    "loan.unpaidRollovers": "{count} unpaid rollover{plural}",
+    "distress.pillCritical": "Critical: {score}/100",
+    "distress.pillWatch": "Moderate: {score}/100",
+    "distress.pillSafe": "Safe: {score}/100",
+    "distress.compound": "High compound stress across weather, commodity prices, and credit obligations.",
+    "distress.rainDrought": "Critical drought stress: Standing crop at high wilting risk.",
+    "distress.rainFlood": "Inundation risk: Excessive rain may trigger waterlogging.",
+    "distress.rainNormal": "Adequate moisture: Rainfall within normal crop absorption band.",
+    "distress.rainDroughtBadge": "Drought deficit",
+    "distress.rainFloodBadge": "Flood danger",
+    "distress.normalBadge": "Normal",
+    "distress.mspAbove": "Govt MSP: \u20B9{msp}/Qtl (+\u20B9{amount} above MSP)",
+    "distress.mspBelow": "Govt MSP: \u20B9{msp}/Qtl (-\u20B9{amount} below MSP)",
+    "distress.mspAtMargin": "At MSP margin",
+    "distress.mspProfitable": "Profitable",
+    "distress.mspBelowBadge": "Below MSP",
+    "distress.loanUrgent": "Urgent: Instalment due within a week. High cashflow pressure.",
+    "distress.loanUpcoming": "Upcoming due: Due date within the current monthly billing cycle.",
+    "distress.loanSafe": "Safe buffer: Adequate time for harvest marketing and cash arrangement.",
+    "distress.badgeImminent": "Imminent due",
+    "distress.badgeUpcoming": "Upcoming due",
+    "distress.badgeSafe": "Safe buffer",
+    "distress.levelCritical": "Critical distress alert (score > 80)",
+    "distress.levelWatch": "Moderate watch (score 51\u201380)",
+    "distress.levelStable": "Normal & stable (score \u2264 50)"
   };
   var hi = {
     "gate.choose": "\u0905\u092A\u0928\u0940 \u092D\u093E\u0937\u093E \u091A\u0941\u0928\u0947\u0902",
@@ -681,18 +739,18 @@
     "help.disasterSupport": "24/7 emergency line",
     "help.kccQuickCall": "Call Kisan Helpline (Toll Free)",
     "help.pmkisanPortal": "Check PM-KISAN Status",
-    "help.schemesIntro": "Central & State Government Relief Schemes",
-    "profile.emailLabel": "Email (optional)",
-    "profile.contactLabel": "Preferred contact method",
+    "help.schemesIntro": "?????? ?? ????? ????? ?? ???? ???????",
+    "profile.emailLabel": "???? (????????)",
+    "profile.contactLabel": "??????? ?????? ????",
     "profile.securityNote": "Your data is stored on this device only.",
-    "profile.clearData": "Clear all data",
-    "profile.themeLabel": "Display theme",
+    "profile.clearData": "???? ???? ??????",
+    "profile.themeLabel": "???????? ???",
     "pheno.title": "Growth Tracker",
     "pheno.seasonProgress": "{pct}% Season Progress",
     "pheno.dayOf": "Day {current} of {total}",
-    "pheno.kc": "Crop Coefficient (Kc)",
+    "pheno.kc": "Crop water need",
     "pheno.gdd": "Growing Degree Days",
-    "pheno.stageDuration": "Stage Duration",
+    "pheno.stageDuration": "Growth progress",
     "pheno.daysToHarvest": "Days to Harvest",
     "pheno.sowing": "Sowing",
     "pheno.vegetative": "Vegetative",
@@ -701,17 +759,19 @@
     "pheno.maturity": "Maturity",
     "pheno.harvest": "Harvest",
     "tele.title": "Live Weather",
+    "tele.helpButton": "\u0907\u0928 \u0938\u094D\u0925\u093F\u0924\u093F\u092F\u094B\u0902 \u0915\u0947 \u092C\u093E\u0930\u0947 \u092E\u0947\u0902",
+    "tele.contextHelp": "\u092F\u0939 \u092D\u093E\u0917 \u092B\u0938\u0932 \u0915\u0940 \u092C\u0922\u093C\u0924, \u092E\u093F\u091F\u094D\u091F\u0940 \u0915\u0940 \u0928\u092E\u0940 \u0914\u0930 \u0932\u093E\u0907\u0935 \u092E\u094C\u0938\u092E \u0915\u094B \u0938\u093E\u0925 \u0926\u093F\u0916\u093E\u0924\u093E \u0939\u0948\u0964",
     "tele.temp": "Temperature",
-    "tele.feelsLike": "Feels Like",
+    "tele.feelsLike": "Precipitation",
     "tele.soilMoisture": "Soil Moisture",
-    "tele.et0": "ET0 (Evapotranspiration)",
+    "tele.et0": "Water needed",
     "tele.humidity": "Humidity",
     "tele.wind": "Wind Speed",
     "tele.uv": "UV Index",
     "tele.pressure": "Pressure",
     "tele.cloud": "Cloud Cover",
     "tele.maxMin": "Max / Min",
-    "tele.thermalComfort": "Thermal Comfort",
+    "tele.thermalComfort": "Rain right now",
     "tele.vwc": "Volumetric Water",
     "tele.litersPerAcre": "{liters} L/Acre Demand",
     "tele.atmosMoisture": "Atmospheric Moisture",
@@ -744,23 +804,23 @@
     "tomorrow.irrigationDirective": "Irrigation Directive",
     "tomorrow.checklist": "Action Checklist",
     "tomorrow.litersPerAcre": "{liters} Liters / Acre",
-    "distress.title": "Distress Risk Planner",
-    "distress.subtitle": "3-Factor Algorithm: Rain + Price + Loan",
-    "distress.planningNote": "Adjust the sliders to explore risk scenarios for your farm.",
-    "distress.riskScore": "Risk Score: {score}/100",
+    "distress.title": "???????? ???? ????? ?? ????? ??????? ??????",
+    "distress.subtitle": "3-???? ?????????: ????? + ????? + ??",
+    "distress.planningNote": "???? ??? ?? ??? ????? ?????????? ?? ??? ????? ?? ??? ????????? ???????? ?????",
+    "distress.riskScore": "????? ?????: {score}/100",
     "distress.moveSlider": "Move slider to explore",
-    "distress.scaleLow": "Low Risk",
+    "distress.scaleLow": "?? ?????",
     "distress.scaleWatch": "Moderate Watch",
     "distress.scaleHigh": "High Distress",
-    "distress.rainLabel": "3-Day Rain Forecast",
+    "distress.rainLabel": "3-??? ????? ?? ???????????",
     "distress.rainHint": "mm of rain in 3 days",
-    "distress.priceLabel": "Price vs MSP",
+    "distress.priceLabel": "MSP ???? ?????",
     "distress.priceHint": "% below MSP",
-    "distress.loanLabel": "Loan Due Date",
+    "distress.loanLabel": "?? ??? ????",
     "distress.loanHint": "days until due",
-    "distress.critical": "Critical Distress",
+    "distress.critical": "???? ????",
     "distress.high": "High Risk",
-    "distress.watch": "Moderate Watch",
+    "distress.watch": "????? ???????",
     "distress.low": "Normal",
     "loan.scheduleTitle": "Monthly Installment Schedule",
     "loan.firstInstallment": "First installment date",
@@ -780,19 +840,84 @@
     "mandi.mspLabel": "MSP: \u20B9{price}/Qtl",
     "mandi.visitPortal": "Visit eNAM Portal",
     "mandi.helpline": "Mandi Helpline",
-    "loan.status.emi": "Monthly EMI",
+    "loan.status.emi": "????? ?????",
     "loan.status.totalPayable": "Total Payable: \u20B9{amount}",
-    "loan.status.totalInterest": "Total Interest",
-    "loan.schedule.title": "Monthly Installment Schedule",
-    "loan.schedule.dueDate": "Due Date",
-    "loan.schedule.baseEmi": "Base EMI",
+    "loan.status.totalInterest": "??? ?????",
+    "loan.schedule.title": "????? ????? ???????",
+    "loan.schedule.dueDate": "??? ???? (????? ?? 1 ?????)",
+    "loan.schedule.baseEmi": "??? ?????",
     "loan.schedule.arrears": "Rollover Arrears",
     "loan.schedule.totalDue": "Total Due",
-    "loan.schedule.balance": "Balance",
+    "loan.schedule.balance": "?????",
     "loan.schedule.dueDateFull": "Due Date (1st of month)",
-    "loan.schedule.totalDueMonth": "Total Due this Month",
+    "loan.schedule.totalDueMonth": "?? ????? ??? ???",
     "loan.schedule.remainingPrincipal": "Remaining Principal",
-    "loan.schedule.rolloverArrears": "Rollover Arrears"
+    "loan.schedule.rolloverArrears": "?????? ?????",
+    "profile.darkMode": "\u0921\u093E\u0930\u094D\u0915 \u092E\u094B\u0921",
+    "profile.lightMode": "\u0932\u093E\u0907\u091F \u092E\u094B\u0921",
+    "profile.useLightMode": "\u0932\u093E\u0907\u091F \u092E\u094B\u0921 \u0905\u092A\u0928\u093E\u090F\u0901",
+    "profile.useDarkMode": "\u0921\u093E\u0930\u094D\u0915 \u092E\u094B\u0921 \u0905\u092A\u0928\u093E\u090F\u0901",
+    "profile.notAdded": "\u091C\u094B\u0921\u093C\u093E \u0928\u0939\u0940\u0902 \u0917\u092F\u093E",
+    "profile.phone": "\u092B\u094B\u0928 \u0915\u0949\u0932",
+    "profile.sms": "\u090F\u0938\u090F\u092E\u090F\u0938",
+    "profile.whatsapp": "\u0935\u094D\u0939\u093E\u091F\u094D\u0938\u0910\u092A",
+    "profile.emailError": "\u092E\u093E\u0928\u094D\u092F \u0908\u092E\u0947\u0932 \u0926\u0930\u094D\u091C \u0915\u0930\u0947\u0902 \u092F\u093E \u0907\u0938\u0947 \u0916\u093E\u0932\u0940 \u091B\u094B\u0921\u093C\u0947\u0902\u0964",
+    "unit.acres": "\u090F\u0915\u0921\u093C",
+    "help.state": "\u092E\u0939\u093E\u0930\u093E\u0937\u094D\u091F\u094D\u0930",
+    "mandi.table.location": "\u090F\u092A\u0940\u090F\u092E\u0938\u0940 \u092E\u0902\u0921\u0940 \u0914\u0930 \u0938\u094D\u0925\u093E\u0928",
+    "mandi.table.modalRate": "\u0906\u091C \u0915\u093E \u092E\u0949\u0921\u0932 \u092D\u093E\u0935",
+    "mandi.table.arrival": "\u0906\u0935\u0915 \u0914\u0930 \u0915\u093F\u0938\u094D\u092E",
+    "mandi.bestNet": "\u0938\u092C\u0938\u0947 \u0905\u091A\u094D\u091B\u093E \u0936\u0941\u0926\u094D\u0927 \u092D\u093E\u0935",
+    "mandi.away": "{distance} \u0915\u093F\u092E\u0940 \u0926\u0942\u0930 \xB7 {days}",
+    "mandi.govtMsp": "\u0938\u0930\u0915\u093E\u0930\u0940 \u090F\u092E\u090F\u0938\u092A\u0940",
+    "mandi.totalNet": "\u0915\u0941\u0932 \u0936\u0941\u0926\u094D\u0927 ({distance} \u0915\u093F\u092E\u0940)",
+    "mandi.aboveMsp": "+\u20B9{amount} (\u090F\u092E\u090F\u0938\u092A\u0940 \u0938\u0947 \u090A\u092A\u0930)",
+    "mandi.belowMsp": "-\u20B9{amount} (\u090F\u092E\u090F\u0938\u092A\u0940 \u0938\u0947 \u0928\u0940\u091A\u0947)",
+    "loan.schedule.paidOnFirst": "1 \u0924\u093E\u0930\u0940\u0916 \u0915\u094B \u092D\u0941\u0917\u0924\u093E\u0928?",
+    "loan.schedule.principal": "\u092E\u0942\u0932\u0927\u0928",
+    "loan.schedule.interest": "\u092C\u094D\u092F\u093E\u091C",
+    "loan.schedule.status": "\u0938\u094D\u0925\u093F\u0924\u093F",
+    "loan.status.paid": "\u092D\u0941\u0917\u0924\u093E\u0928 \u0939\u0941\u0906",
+    "loan.status.overdue": "\u092C\u0915\u093E\u092F\u093E",
+    "loan.status.upcoming": "\u0906\u0928\u0947 \u0935\u093E\u0932\u093E",
+    "loan.status.overdueRolled": "\u092C\u0915\u093E\u092F\u093E (\u0906\u0917\u0947 \u091C\u0941\u0921\u093C\u093E)",
+    "loan.day": "\u0926\u093F\u0928",
+    "loan.days": "\u0926\u093F\u0928",
+    "loan.loanFullyPaid": "\u090B\u0923 \u092A\u0942\u0930\u093E \u091A\u0941\u0915\u093E\u092F\u093E",
+    "loan.allPaid": "\u0938\u092D\u0940 \u0915\u093F\u0938\u094D\u0924\u094B\u0902 \u0915\u093E \u092D\u0941\u0917\u0924\u093E\u0928 \u0939\u0941\u0906",
+    "loan.overdueBy": "{days} \u0926\u093F\u0928 \u092C\u0915\u093E\u092F\u093E",
+    "loan.daysRemaining": "{days} \u0926\u093F\u0928 \u092C\u093E\u0915\u0940",
+    "loan.monthUnit": "\u092E\u093E\u0939",
+    "loan.months": "\u092E\u0939\u0940\u0928\u0947",
+    "loan.installmentsCompleted": "{count} \u0915\u093F\u0938\u094D\u0924\u0947\u0902 \u092A\u0942\u0930\u0940",
+    "loan.installmentsRemaining": "{count} \u0915\u093F\u0938\u094D\u0924\u0947\u0902 \u092C\u093E\u0915\u0940",
+    "loan.paidLabel": "\u092D\u0941\u0917\u0924\u093E\u0928",
+    "loan.remainingLabel": "\u092C\u093E\u0915\u0940",
+    "loan.unpaidRollovers": "{count} \u092C\u0915\u093E\u092F\u093E \u0906\u0917\u0947 \u091C\u0941\u0921\u093C\u093E{plural}",
+    "distress.pillCritical": "\u0917\u0902\u092D\u0940\u0930: {score}/100",
+    "distress.pillWatch": "\u092E\u0927\u094D\u092F\u092E: {score}/100",
+    "distress.pillSafe": "\u0938\u0941\u0930\u0915\u094D\u0937\u093F\u0924: {score}/100",
+    "distress.compound": "\u092E\u094C\u0938\u092E, \u092B\u0938\u0932 \u092D\u093E\u0935 \u0914\u0930 \u090B\u0923 \u092D\u0941\u0917\u0924\u093E\u0928 \u0938\u0947 \u091C\u0941\u0921\u093C\u093E \u0938\u0902\u092F\u0941\u0915\u094D\u0924 \u0926\u092C\u093E\u0935 \u092C\u0939\u0941\u0924 \u0905\u0927\u093F\u0915 \u0939\u0948\u0964",
+    "distress.rainDrought": "\u0917\u0902\u092D\u0940\u0930 \u0938\u0942\u0916\u093E \u0926\u092C\u093E\u0935: \u0916\u0921\u093C\u0940 \u092B\u0938\u0932 \u0915\u0947 \u092E\u0941\u0930\u091D\u093E\u0928\u0947 \u0915\u093E \u0916\u0924\u0930\u093E \u0905\u0927\u093F\u0915 \u0939\u0948\u0964",
+    "distress.rainFlood": "\u091C\u0932\u092D\u0930\u093E\u0935 \u0915\u093E \u0916\u0924\u0930\u093E: \u0905\u0927\u093F\u0915 \u092C\u093E\u0930\u093F\u0936 \u0938\u0947 \u0916\u0947\u0924 \u092E\u0947\u0902 \u092A\u093E\u0928\u0940 \u0930\u0941\u0915 \u0938\u0915\u0924\u093E \u0939\u0948\u0964",
+    "distress.rainNormal": "\u0928\u092E\u0940 \u092A\u0930\u094D\u092F\u093E\u092A\u094D\u0924 \u0939\u0948: \u092C\u093E\u0930\u093F\u0936 \u092B\u0938\u0932 \u0915\u0940 \u0938\u093E\u092E\u093E\u0928\u094D\u092F \u091C\u0930\u0942\u0930\u0924 \u0915\u0947 \u0905\u0928\u0941\u0938\u093E\u0930 \u0939\u0948\u0964",
+    "distress.rainDroughtBadge": "\u0938\u0942\u0916\u0947 \u0915\u0940 \u0915\u092E\u0940",
+    "distress.rainFloodBadge": "\u092C\u093E\u0922\u093C \u0915\u093E \u0916\u0924\u0930\u093E",
+    "distress.normalBadge": "\u0938\u093E\u092E\u093E\u0928\u094D\u092F",
+    "distress.mspAbove": "\u0938\u0930\u0915\u093E\u0930\u0940 \u090F\u092E\u090F\u0938\u092A\u0940: \u20B9{msp}/\u0915\u094D\u0935\u093F\u0902\u091F\u0932 (+\u20B9{amount} \u090F\u092E\u090F\u0938\u092A\u0940 \u0938\u0947 \u090A\u092A\u0930)",
+    "distress.mspBelow": "\u0938\u0930\u0915\u093E\u0930\u0940 \u090F\u092E\u090F\u0938\u092A\u0940: \u20B9{msp}/\u0915\u094D\u0935\u093F\u0902\u091F\u0932 (-\u20B9{amount} \u090F\u092E\u090F\u0938\u092A\u0940 \u0938\u0947 \u0928\u0940\u091A\u0947)",
+    "distress.mspAtMargin": "\u090F\u092E\u090F\u0938\u092A\u0940 \u0915\u0947 \u092A\u093E\u0938",
+    "distress.mspProfitable": "\u0932\u093E\u092D\u0926\u093E\u092F\u0915",
+    "distress.mspBelowBadge": "\u090F\u092E\u090F\u0938\u092A\u0940 \u0938\u0947 \u0915\u092E",
+    "distress.loanUrgent": "\u0924\u0941\u0930\u0902\u0924 \u0927\u094D\u092F\u093E\u0928 \u0926\u0947\u0902: \u090F\u0915 \u0938\u092A\u094D\u0924\u093E\u0939 \u092E\u0947\u0902 \u0915\u093F\u0938\u094D\u0924 \u0926\u0947\u0928\u0940 \u0939\u0948\u0964 \u0928\u0915\u0926\u0940 \u092A\u0930 \u0905\u0927\u093F\u0915 \u0926\u092C\u093E\u0935 \u0939\u0948\u0964",
+    "distress.loanUpcoming": "\u0915\u093F\u0938\u094D\u0924 \u0906\u0928\u0947 \u0935\u093E\u0932\u0940 \u0939\u0948: \u092D\u0941\u0917\u0924\u093E\u0928 \u0907\u0938 \u092E\u0939\u0940\u0928\u0947 \u0915\u0940 \u0905\u0935\u0927\u093F \u092E\u0947\u0902 \u0939\u0948\u0964",
+    "distress.loanSafe": "\u0938\u0941\u0930\u0915\u094D\u0937\u093F\u0924 \u0905\u0902\u0924\u0930: \u092B\u0938\u0932 \u092C\u0947\u091A\u0928\u0947 \u0914\u0930 \u092A\u0948\u0938\u0947 \u0915\u0940 \u0935\u094D\u092F\u0935\u0938\u094D\u0925\u093E \u0915\u0947 \u0932\u093F\u090F \u092A\u0930\u094D\u092F\u093E\u092A\u094D\u0924 \u0938\u092E\u092F \u0939\u0948\u0964",
+    "distress.badgeImminent": "\u0924\u0941\u0930\u0902\u0924 \u0926\u0947\u092F",
+    "distress.badgeUpcoming": "\u091C\u0932\u094D\u0926 \u0926\u0947\u092F",
+    "distress.badgeSafe": "\u0938\u0941\u0930\u0915\u094D\u0937\u093F\u0924 \u0905\u0902\u0924\u0930",
+    "distress.levelCritical": "\u0917\u0902\u092D\u0940\u0930 \u0938\u0902\u0915\u091F \u091A\u0947\u0924\u093E\u0935\u0928\u0940 (\u0938\u094D\u0915\u094B\u0930 > 80)",
+    "distress.levelWatch": "\u092E\u0927\u094D\u092F\u092E \u0928\u093F\u0917\u0930\u093E\u0928\u0940 (\u0938\u094D\u0915\u094B\u0930 51\u201380)",
+    "distress.levelStable": "\u0938\u093E\u092E\u093E\u0928\u094D\u092F \u0914\u0930 \u0938\u094D\u0925\u093F\u0930 (\u0938\u094D\u0915\u094B\u0930 \u2264 50)"
   };
   var mr = {
     "gate.choose": "\u0924\u0941\u092E\u091A\u0940 \u092D\u093E\u0937\u093E \u0928\u093F\u0935\u0921\u093E",
@@ -1071,18 +1196,18 @@
     "help.disasterSupport": "24/7 emergency line",
     "help.kccQuickCall": "Call Kisan Helpline (Toll Free)",
     "help.pmkisanPortal": "Check PM-KISAN Status",
-    "help.schemesIntro": "Central & State Government Relief Schemes",
-    "profile.emailLabel": "Email (optional)",
-    "profile.contactLabel": "Preferred contact method",
+    "help.schemesIntro": "?????? ??? ????? ????? ??? ?????",
+    "profile.emailLabel": "???? (???????)",
+    "profile.contactLabel": "????????? ??????? ?????",
     "profile.securityNote": "Your data is stored on this device only.",
-    "profile.clearData": "Clear all data",
-    "profile.themeLabel": "Display theme",
+    "profile.clearData": "???? ???? ????",
+    "profile.themeLabel": "???????? ???",
     "pheno.title": "Growth Tracker",
     "pheno.seasonProgress": "{pct}% Season Progress",
     "pheno.dayOf": "Day {current} of {total}",
-    "pheno.kc": "Crop Coefficient (Kc)",
+    "pheno.kc": "Crop water need",
     "pheno.gdd": "Growing Degree Days",
-    "pheno.stageDuration": "Stage Duration",
+    "pheno.stageDuration": "Growth progress",
     "pheno.daysToHarvest": "Days to Harvest",
     "pheno.sowing": "Sowing",
     "pheno.vegetative": "Vegetative",
@@ -1091,17 +1216,19 @@
     "pheno.maturity": "Maturity",
     "pheno.harvest": "Harvest",
     "tele.title": "Live Weather",
+    "tele.helpButton": "\u092F\u093E \u0938\u094D\u0925\u093F\u0924\u0940\u092C\u0926\u094D\u0926\u0932",
+    "tele.contextHelp": "\u0939\u093E \u092D\u093E\u0917 \u092A\u093F\u0915\u093E\u091A\u0940 \u0935\u093E\u0922, \u092E\u093E\u0924\u0940\u0924\u0940\u0932 \u0913\u0932\u093E\u0935\u093E \u0906\u0923\u093F \u0925\u0947\u091F \u0939\u0935\u093E\u092E\u093E\u0928 \u090F\u0915\u0924\u094D\u0930 \u0926\u093E\u0916\u0935\u0924\u094B.",
     "tele.temp": "Temperature",
-    "tele.feelsLike": "Feels Like",
+    "tele.feelsLike": "Precipitation",
     "tele.soilMoisture": "Soil Moisture",
-    "tele.et0": "ET0 (Evapotranspiration)",
+    "tele.et0": "Water needed",
     "tele.humidity": "Humidity",
     "tele.wind": "Wind Speed",
     "tele.uv": "UV Index",
     "tele.pressure": "Pressure",
     "tele.cloud": "Cloud Cover",
     "tele.maxMin": "Max / Min",
-    "tele.thermalComfort": "Thermal Comfort",
+    "tele.thermalComfort": "Rain right now",
     "tele.vwc": "Volumetric Water",
     "tele.litersPerAcre": "{liters} L/Acre Demand",
     "tele.atmosMoisture": "Atmospheric Moisture",
@@ -1134,23 +1261,23 @@
     "tomorrow.irrigationDirective": "Irrigation Directive",
     "tomorrow.checklist": "Action Checklist",
     "tomorrow.litersPerAcre": "{liters} Liters / Acre",
-    "distress.title": "Distress Risk Planner",
-    "distress.subtitle": "3-Factor Algorithm: Rain + Price + Loan",
-    "distress.planningNote": "Adjust the sliders to explore risk scenarios for your farm.",
-    "distress.riskScore": "Risk Score: {score}/100",
+    "distress.title": "??????? ???? ???? ??? ????? ??????? ??????",
+    "distress.subtitle": "3-??? ?????????: ???? + ????? + ????",
+    "distress.planningNote": "??????? ???????? ?????????? ????????? ????????? ?????????? ????????? ???????? ???.",
+    "distress.riskScore": "???? ??????: {score}/100",
     "distress.moveSlider": "Move slider to explore",
-    "distress.scaleLow": "Low Risk",
+    "distress.scaleLow": "??? ????",
     "distress.scaleWatch": "Moderate Watch",
     "distress.scaleHigh": "High Distress",
-    "distress.rainLabel": "3-Day Rain Forecast",
+    "distress.rainLabel": "3-???? ??????? ?????",
     "distress.rainHint": "mm of rain in 3 days",
-    "distress.priceLabel": "Price vs MSP",
+    "distress.priceLabel": "MSP ?? ?????",
     "distress.priceHint": "% below MSP",
-    "distress.loanLabel": "Loan Due Date",
+    "distress.loanLabel": "???? ??? ?????",
     "distress.loanHint": "days until due",
-    "distress.critical": "Critical Distress",
+    "distress.critical": "???? ????",
     "distress.high": "High Risk",
-    "distress.watch": "Moderate Watch",
+    "distress.watch": "????? ????",
     "distress.low": "Normal",
     "loan.scheduleTitle": "Monthly Installment Schedule",
     "loan.firstInstallment": "First installment date",
@@ -1170,19 +1297,84 @@
     "mandi.mspLabel": "MSP: \u20B9{price}/Qtl",
     "mandi.visitPortal": "Visit eNAM Portal",
     "mandi.helpline": "Mandi Helpline",
-    "loan.status.emi": "Monthly EMI",
+    "loan.status.emi": "????? EMI",
     "loan.status.totalPayable": "Total Payable: \u20B9{amount}",
-    "loan.status.totalInterest": "Total Interest",
-    "loan.schedule.title": "Monthly Installment Schedule",
-    "loan.schedule.dueDate": "Due Date",
-    "loan.schedule.baseEmi": "Base EMI",
+    "loan.status.totalInterest": "???? ?????",
+    "loan.schedule.title": "????? ????? ?????????",
+    "loan.schedule.dueDate": "??? ????? (????????? 1 ?????)",
+    "loan.schedule.baseEmi": "??? EMI",
     "loan.schedule.arrears": "Rollover Arrears",
     "loan.schedule.totalDue": "Total Due",
-    "loan.schedule.balance": "Balance",
+    "loan.schedule.balance": "??????",
     "loan.schedule.dueDateFull": "Due Date (1st of month)",
-    "loan.schedule.totalDueMonth": "Total Due this Month",
+    "loan.schedule.totalDueMonth": "?? ???????? ???? ???",
     "loan.schedule.remainingPrincipal": "Remaining Principal",
-    "loan.schedule.rolloverArrears": "Rollover Arrears"
+    "loan.schedule.rolloverArrears": "???????? ??????",
+    "profile.darkMode": "\u0921\u093E\u0930\u094D\u0915 \u092E\u094B\u0921",
+    "profile.lightMode": "\u0932\u093E\u0907\u091F \u092E\u094B\u0921",
+    "profile.useLightMode": "\u0932\u093E\u0907\u091F \u092E\u094B\u0921 \u0935\u093E\u092A\u0930\u093E",
+    "profile.useDarkMode": "\u0921\u093E\u0930\u094D\u0915 \u092E\u094B\u0921 \u0935\u093E\u092A\u0930\u093E",
+    "profile.notAdded": "\u091C\u094B\u0921\u0932\u0947\u0932\u0947 \u0928\u093E\u0939\u0940",
+    "profile.phone": "\u092B\u094B\u0928 \u0915\u0949\u0932",
+    "profile.sms": "\u090F\u0938\u090F\u092E\u090F\u0938",
+    "profile.whatsapp": "\u0935\u094D\u0939\u0949\u091F\u094D\u0938\u0972\u092A",
+    "profile.emailError": "\u0935\u0948\u0927 \u0908\u092E\u0947\u0932 \u0926\u094D\u092F\u093E \u0915\u093F\u0902\u0935\u093E \u0939\u0947 \u0930\u093F\u0915\u093E\u092E\u0947 \u0920\u0947\u0935\u093E.",
+    "unit.acres": "\u090F\u0915\u0930",
+    "help.state": "\u092E\u0939\u093E\u0930\u093E\u0937\u094D\u091F\u094D\u0930",
+    "mandi.table.location": "\u090F\u092A\u0940\u090F\u092E\u0938\u0940 \u092E\u0902\u0921\u0940 \u0906\u0923\u093F \u0920\u093F\u0915\u093E\u0923",
+    "mandi.table.modalRate": "\u0906\u091C\u091A\u093E \u092E\u0949\u0921\u0947\u0932 \u092D\u093E\u0935",
+    "mandi.table.arrival": "\u0906\u0935\u0915 \u0906\u0923\u093F \u0935\u093E\u0923",
+    "mandi.bestNet": "\u0938\u0930\u094D\u0935\u094B\u0924\u094D\u0924\u092E \u0928\u093F\u0935\u094D\u0935\u0933 \u092D\u093E\u0935",
+    "mandi.away": "{distance} \u0915\u093F\u092E\u0940 \u0926\u0942\u0930 \xB7 {days}",
+    "mandi.govtMsp": "\u0938\u0930\u0915\u093E\u0930\u0940 \u090F\u092E\u090F\u0938\u092A\u0940",
+    "mandi.totalNet": "\u090F\u0915\u0942\u0923 \u0928\u093F\u0935\u094D\u0935\u0933 ({distance} \u0915\u093F\u092E\u0940)",
+    "mandi.aboveMsp": "+\u20B9{amount} (\u090F\u092E\u090F\u0938\u092A\u0940\u092A\u0947\u0915\u094D\u0937\u093E \u091C\u093E\u0938\u094D\u0924)",
+    "mandi.belowMsp": "-\u20B9{amount} (\u090F\u092E\u090F\u0938\u092A\u0940\u092A\u0947\u0915\u094D\u0937\u093E \u0915\u092E\u0940)",
+    "loan.schedule.paidOnFirst": "\u0967 \u0924\u093E\u0930\u0916\u0947\u0932\u093E \u092D\u0930\u0932\u0947?",
+    "loan.schedule.principal": "\u092E\u0941\u0926\u094D\u0926\u0932",
+    "loan.schedule.interest": "\u0935\u094D\u092F\u093E\u091C",
+    "loan.schedule.status": "\u0938\u094D\u0925\u093F\u0924\u0940",
+    "loan.status.paid": "\u092D\u0930\u0932\u0947",
+    "loan.status.overdue": "\u0925\u0915\u0940\u0924",
+    "loan.status.upcoming": "\u0906\u0917\u093E\u092E\u0940",
+    "loan.status.overdueRolled": "\u0925\u0915\u0940\u0924 (\u092A\u0941\u0922\u0947 \u091C\u094B\u0921\u0932\u0947)",
+    "loan.day": "\u0926\u093F\u0935\u0938",
+    "loan.days": "\u0926\u093F\u0935\u0938",
+    "loan.loanFullyPaid": "\u0915\u0930\u094D\u091C \u092A\u0942\u0930\u094D\u0923 \u092B\u0947\u0921\u0932\u0947",
+    "loan.allPaid": "\u0938\u0930\u094D\u0935 \u0939\u092A\u094D\u0924\u0947 \u092D\u0930\u0932\u0947",
+    "loan.overdueBy": "{days} \u0926\u093F\u0935\u0938 \u0925\u0915\u0940\u0924",
+    "loan.daysRemaining": "{days} \u0926\u093F\u0935\u0938 \u092C\u093E\u0915\u0940",
+    "loan.monthUnit": "\u092E\u0939\u093F\u0928\u093E",
+    "loan.months": "\u092E\u0939\u093F\u0928\u0947",
+    "loan.installmentsCompleted": "{count} \u0939\u092A\u094D\u0924\u0947 \u092A\u0942\u0930\u094D\u0923",
+    "loan.installmentsRemaining": "{count} \u0939\u092A\u094D\u0924\u0947 \u092C\u093E\u0915\u0940",
+    "loan.paidLabel": "\u092D\u0930\u0932\u0947",
+    "loan.remainingLabel": "\u092C\u093E\u0915\u0940",
+    "loan.unpaidRollovers": "{count} \u0925\u0915\u0940\u0924 \u0939\u092A\u094D\u0924\u093E \u092A\u0941\u0922\u0947 \u091C\u094B\u0921\u0932\u093E{plural}",
+    "distress.pillCritical": "\u0917\u0902\u092D\u0940\u0930: {score}/100",
+    "distress.pillWatch": "\u092E\u0927\u094D\u092F\u092E: {score}/100",
+    "distress.pillSafe": "\u0938\u0941\u0930\u0915\u094D\u0937\u093F\u0924: {score}/100",
+    "distress.compound": "\u0939\u0935\u093E\u092E\u093E\u0928, \u092A\u093F\u0915\u093E\u091A\u0947 \u092D\u093E\u0935 \u0906\u0923\u093F \u0915\u0930\u094D\u091C\u093E\u091A\u094D\u092F\u093E \u0926\u0947\u092F\u0915\u093E\u0902\u092E\u0941\u0933\u0947 \u090F\u0915\u0924\u094D\u0930\u093F\u0924 \u0924\u093E\u0923 \u091C\u093E\u0938\u094D\u0924 \u0906\u0939\u0947.",
+    "distress.rainDrought": "\u0917\u0902\u092D\u0940\u0930 \u0926\u0941\u0937\u094D\u0915\u093E\u0933\u093E\u091A\u093E \u0924\u093E\u0923: \u0909\u092D\u0947 \u092A\u0940\u0915 \u0915\u094B\u092E\u0947\u091C\u0923\u094D\u092F\u093E\u091A\u093E \u0927\u094B\u0915\u093E \u091C\u093E\u0938\u094D\u0924 \u0906\u0939\u0947.",
+    "distress.rainFlood": "\u091C\u0932\u092D\u0930\u093E\u0935\u093E\u091A\u093E \u0927\u094B\u0915\u093E: \u0905\u0924\u093F\u0935\u0943\u0937\u094D\u091F\u0940\u092E\u0941\u0933\u0947 \u0936\u0947\u0924\u093E\u0924 \u092A\u093E\u0923\u0940 \u0938\u093E\u091A\u0942 \u0936\u0915\u0924\u0947.",
+    "distress.rainNormal": "\u0913\u0932\u093E\u0935\u093E \u092A\u0941\u0930\u0947\u0938\u093E \u0906\u0939\u0947: \u092A\u093E\u090A\u0938 \u092A\u093F\u0915\u093E\u091A\u094D\u092F\u093E \u0938\u093E\u092E\u093E\u0928\u094D\u092F \u0917\u0930\u091C\u0947\u0928\u0941\u0938\u093E\u0930 \u0906\u0939\u0947.",
+    "distress.rainDroughtBadge": "\u0926\u0941\u0937\u094D\u0915\u093E\u0933\u093E\u091A\u0940 \u0915\u092E\u0924\u0930\u0924\u093E",
+    "distress.rainFloodBadge": "\u092A\u0941\u0930\u093E\u091A\u093E \u0927\u094B\u0915\u093E",
+    "distress.normalBadge": "\u0938\u093E\u092E\u093E\u0928\u094D\u092F",
+    "distress.mspAbove": "\u0938\u0930\u0915\u093E\u0930\u0940 \u090F\u092E\u090F\u0938\u092A\u0940: \u20B9{msp}/\u0915\u094D\u0935\u093F\u0902\u091F\u0932 (+\u20B9{amount} \u090F\u092E\u090F\u0938\u092A\u0940\u092A\u0947\u0915\u094D\u0937\u093E \u091C\u093E\u0938\u094D\u0924)",
+    "distress.mspBelow": "\u0938\u0930\u0915\u093E\u0930\u0940 \u090F\u092E\u090F\u0938\u092A\u0940: \u20B9{msp}/\u0915\u094D\u0935\u093F\u0902\u091F\u0932 (-\u20B9{amount} \u090F\u092E\u090F\u0938\u092A\u0940\u092A\u0947\u0915\u094D\u0937\u093E \u0915\u092E\u0940)",
+    "distress.mspAtMargin": "\u090F\u092E\u090F\u0938\u092A\u0940\u091C\u0935\u0933",
+    "distress.mspProfitable": "\u092B\u093E\u092F\u0926\u094D\u092F\u093E\u091A\u0947",
+    "distress.mspBelowBadge": "\u090F\u092E\u090F\u0938\u092A\u0940\u092A\u0947\u0915\u094D\u0937\u093E \u0915\u092E\u0940",
+    "distress.loanUrgent": "\u0924\u093E\u0924\u0921\u0940\u091A\u0947: \u090F\u0915\u093E \u0906\u0920\u0935\u0921\u094D\u092F\u093E\u0924 \u0939\u092A\u094D\u0924\u093E \u0926\u0947\u092F \u0906\u0939\u0947. \u0930\u094B\u0916 \u092A\u094D\u0930\u0935\u093E\u0939\u093E\u0935\u0930 \u092E\u094B\u0920\u093E \u0924\u093E\u0923 \u0906\u0939\u0947.",
+    "distress.loanUpcoming": "\u0926\u0947\u092F\u0915 \u091C\u0935\u0933 \u0906\u0932\u0947: \u0939\u092A\u094D\u0924\u093E \u091A\u093E\u0932\u0942 \u092E\u093E\u0938\u093F\u0915 \u0915\u093E\u0932\u093E\u0935\u0927\u0940\u0924 \u0926\u0947\u092F \u0906\u0939\u0947.",
+    "distress.loanSafe": "\u0938\u0941\u0930\u0915\u094D\u0937\u093F\u0924 \u0905\u0902\u0924\u0930: \u092A\u0940\u0915 \u0935\u093F\u0915\u094D\u0930\u0940 \u0906\u0923\u093F \u092A\u0948\u0936\u093E\u0902\u091A\u0940 \u0935\u094D\u092F\u0935\u0938\u094D\u0925\u093E \u0915\u0930\u0923\u094D\u092F\u093E\u0938\u093E\u0920\u0940 \u092A\u0941\u0930\u0947\u0938\u093E \u0935\u0947\u0933 \u0906\u0939\u0947.",
+    "distress.badgeImminent": "\u0924\u093E\u0924\u0921\u0940\u091A\u0947 \u0926\u0947\u092F",
+    "distress.badgeUpcoming": "\u0932\u0935\u0915\u0930 \u0926\u0947\u092F",
+    "distress.badgeSafe": "\u0938\u0941\u0930\u0915\u094D\u0937\u093F\u0924 \u0905\u0902\u0924\u0930",
+    "distress.levelCritical": "\u0917\u0902\u092D\u0940\u0930 \u0938\u0902\u0915\u091F \u0907\u0936\u093E\u0930\u093E (\u0938\u094D\u0915\u094B\u0905\u0930 > 80)",
+    "distress.levelWatch": "\u092E\u0927\u094D\u092F\u092E \u0928\u093F\u0930\u0940\u0915\u094D\u0937\u0923 (\u0938\u094D\u0915\u094B\u0905\u0930 51\u201380)",
+    "distress.levelStable": "\u0938\u093E\u092E\u093E\u0928\u094D\u092F \u0906\u0923\u093F \u0938\u094D\u0925\u093F\u0930 (\u0938\u094D\u0915\u094B\u0905\u0930 \u2264 50)"
   };
   var bn = {
     "gate.choose": "\u0986\u09AA\u09A8\u09BE\u09B0 \u09AD\u09BE\u09B7\u09BE \u09AC\u09C7\u099B\u09C7 \u09A8\u09BF\u09A8",
@@ -1461,18 +1653,18 @@
     "help.disasterSupport": "24/7 emergency line",
     "help.kccQuickCall": "Call Kisan Helpline (Toll Free)",
     "help.pmkisanPortal": "Check PM-KISAN Status",
-    "help.schemesIntro": "Central & State Government Relief Schemes",
-    "profile.emailLabel": "Email (optional)",
-    "profile.contactLabel": "Preferred contact method",
+    "help.schemesIntro": "??????? ? ????? ??????? ????? ???????",
+    "profile.emailLabel": "???? (??????)",
+    "profile.contactLabel": "??????? ????????? ??????",
     "profile.securityNote": "Your data is stored on this device only.",
-    "profile.clearData": "Clear all data",
-    "profile.themeLabel": "Display theme",
+    "profile.clearData": "?? ???? ?????",
+    "profile.themeLabel": "??????? ???",
     "pheno.title": "Growth Tracker",
     "pheno.seasonProgress": "{pct}% Season Progress",
     "pheno.dayOf": "Day {current} of {total}",
-    "pheno.kc": "Crop Coefficient (Kc)",
+    "pheno.kc": "Crop water need",
     "pheno.gdd": "Growing Degree Days",
-    "pheno.stageDuration": "Stage Duration",
+    "pheno.stageDuration": "Growth progress",
     "pheno.daysToHarvest": "Days to Harvest",
     "pheno.sowing": "Sowing",
     "pheno.vegetative": "Vegetative",
@@ -1481,17 +1673,19 @@
     "pheno.maturity": "Maturity",
     "pheno.harvest": "Harvest",
     "tele.title": "Live Weather",
+    "tele.helpButton": "\u098F\u0987 \u09AA\u09B0\u09BF\u09B8\u09CD\u09A5\u09BF\u09A4\u09BF \u09B8\u09AE\u09CD\u09AA\u09B0\u09CD\u0995\u09C7",
+    "tele.contextHelp": "\u098F\u0987 \u0985\u0982\u09B6\u09C7 \u09AB\u09B8\u09B2\u09C7\u09B0 \u09AC\u09C3\u09A6\u09CD\u09A7\u09BF, \u09AE\u09BE\u099F\u09BF\u09B0 \u0986\u09B0\u09CD\u09A6\u09CD\u09B0\u09A4\u09BE \u0993 \u09B8\u09B0\u09BE\u09B8\u09B0\u09BF \u0986\u09AC\u09B9\u09BE\u0993\u09AF\u09BC\u09BE \u098F\u0995\u09B8\u0999\u09CD\u0997\u09C7 \u09A6\u09C7\u0996\u09BE\u09A8\u09CB \u09B9\u09AF\u09BC\u0964",
     "tele.temp": "Temperature",
-    "tele.feelsLike": "Feels Like",
+    "tele.feelsLike": "Precipitation",
     "tele.soilMoisture": "Soil Moisture",
-    "tele.et0": "ET0 (Evapotranspiration)",
+    "tele.et0": "Water needed",
     "tele.humidity": "Humidity",
     "tele.wind": "Wind Speed",
     "tele.uv": "UV Index",
     "tele.pressure": "Pressure",
     "tele.cloud": "Cloud Cover",
     "tele.maxMin": "Max / Min",
-    "tele.thermalComfort": "Thermal Comfort",
+    "tele.thermalComfort": "Rain right now",
     "tele.vwc": "Volumetric Water",
     "tele.litersPerAcre": "{liters} L/Acre Demand",
     "tele.atmosMoisture": "Atmospheric Moisture",
@@ -1524,23 +1718,23 @@
     "tomorrow.irrigationDirective": "Irrigation Directive",
     "tomorrow.checklist": "Action Checklist",
     "tomorrow.litersPerAcre": "{liters} Liters / Acre",
-    "distress.title": "Distress Risk Planner",
-    "distress.subtitle": "3-Factor Algorithm: Rain + Price + Loan",
-    "distress.planningNote": "Adjust the sliders to explore risk scenarios for your farm.",
-    "distress.riskScore": "Risk Score: {score}/100",
+    "distress.title": "???????? ???? ????? ??? ???? ??????? ?????",
+    "distress.subtitle": "3-???????? ??????????: ?????? + ??? + ??",
+    "distress.planningNote": "????? ??????? ???? ?????? ????????? ??????? ???? ???????????? ????????? ?????",
+    "distress.riskScore": "????? ?????: {score}/100",
     "distress.moveSlider": "Move slider to explore",
-    "distress.scaleLow": "Low Risk",
+    "distress.scaleLow": "?? ?????",
     "distress.scaleWatch": "Moderate Watch",
     "distress.scaleHigh": "High Distress",
-    "distress.rainLabel": "3-Day Rain Forecast",
+    "distress.rainLabel": "3-????? ??????? ?????????",
     "distress.rainHint": "mm of rain in 3 days",
-    "distress.priceLabel": "Price vs MSP",
+    "distress.priceLabel": "MSP ???? ???",
     "distress.priceHint": "% below MSP",
-    "distress.loanLabel": "Loan Due Date",
+    "distress.loanLabel": "?? ???????? ?????",
     "distress.loanHint": "days until due",
-    "distress.critical": "Critical Distress",
+    "distress.critical": "???? ????",
     "distress.high": "High Risk",
-    "distress.watch": "Moderate Watch",
+    "distress.watch": "?????? ???????",
     "distress.low": "Normal",
     "loan.scheduleTitle": "Monthly Installment Schedule",
     "loan.firstInstallment": "First installment date",
@@ -1560,19 +1754,84 @@
     "mandi.mspLabel": "MSP: \u20B9{price}/Qtl",
     "mandi.visitPortal": "Visit eNAM Portal",
     "mandi.helpline": "Mandi Helpline",
-    "loan.status.emi": "Monthly EMI",
+    "loan.status.emi": "????? EMI",
     "loan.status.totalPayable": "Total Payable: \u20B9{amount}",
-    "loan.status.totalInterest": "Total Interest",
-    "loan.schedule.title": "Monthly Installment Schedule",
-    "loan.schedule.dueDate": "Due Date",
-    "loan.schedule.baseEmi": "Base EMI",
+    "loan.status.totalInterest": "??? ???",
+    "loan.schedule.title": "????? ??????? ????????",
+    "loan.schedule.dueDate": "???????? ????? (????? 1 ?????)",
+    "loan.schedule.baseEmi": "??? EMI",
     "loan.schedule.arrears": "Rollover Arrears",
     "loan.schedule.totalDue": "Total Due",
-    "loan.schedule.balance": "Balance",
+    "loan.schedule.balance": "???",
     "loan.schedule.dueDateFull": "Due Date (1st of month)",
-    "loan.schedule.totalDueMonth": "Total Due this Month",
+    "loan.schedule.totalDueMonth": "?? ???? ??? ???????",
     "loan.schedule.remainingPrincipal": "Remaining Principal",
-    "loan.schedule.rolloverArrears": "Rollover Arrears"
+    "loan.schedule.rolloverArrears": "??????? ??????",
+    "profile.darkMode": "\u09A1\u09BE\u09B0\u09CD\u0995 \u09AE\u09CB\u09A1",
+    "profile.lightMode": "\u09B2\u09BE\u0987\u099F \u09AE\u09CB\u09A1",
+    "profile.useLightMode": "\u09B2\u09BE\u0987\u099F \u09AE\u09CB\u09A1 \u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0 \u0995\u09B0\u09C1\u09A8",
+    "profile.useDarkMode": "\u09A1\u09BE\u09B0\u09CD\u0995 \u09AE\u09CB\u09A1 \u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0 \u0995\u09B0\u09C1\u09A8",
+    "profile.notAdded": "\u09AF\u09CB\u0997 \u0995\u09B0\u09BE \u09B9\u09AF\u09BC\u09A8\u09BF",
+    "profile.phone": "\u09AB\u09CB\u09A8 \u0995\u09B2",
+    "profile.sms": "\u098F\u09B8\u098F\u09AE\u098F\u09B8",
+    "profile.whatsapp": "\u09B9\u09CB\u09AF\u09BC\u09BE\u099F\u09B8\u0985\u09CD\u09AF\u09BE\u09AA",
+    "profile.emailError": "\u09B8\u09A0\u09BF\u0995 \u0987\u09AE\u09C7\u09B2 \u09A6\u09BF\u09A8 \u0985\u09A5\u09AC\u09BE \u0996\u09BE\u09B2\u09BF \u09B0\u09BE\u0996\u09C1\u09A8\u0964",
+    "unit.acres": "\u098F\u0995\u09B0",
+    "help.state": "\u09AE\u09B9\u09BE\u09B0\u09BE\u09B7\u09CD\u099F\u09CD\u09B0",
+    "mandi.table.location": "\u098F\u09AA\u09BF\u098F\u09AE\u09B8\u09BF \u09AE\u09BE\u09A3\u09CD\u09A1\u09BF \u0993 \u0985\u09AC\u09B8\u09CD\u09A5\u09BE\u09A8",
+    "mandi.table.modalRate": "\u0986\u099C\u0995\u09C7\u09B0 \u09AE\u09A1\u09C7\u09B2 \u09A6\u09B0",
+    "mandi.table.arrival": "\u0986\u0997\u09A4 \u09AA\u09A3\u09CD\u09AF \u0993 \u099C\u09BE\u09A4",
+    "mandi.bestNet": "\u09B8\u09C7\u09B0\u09BE \u09A8\u09BF\u099F \u09A6\u09B0",
+    "mandi.away": "{distance} \u0995\u09BF\u09AE\u09BF \u09A6\u09C2\u09B0\u09C7 \xB7 {days}",
+    "mandi.govtMsp": "\u09B8\u09B0\u0995\u09BE\u09B0\u09BF \u098F\u09AE\u098F\u09B8\u09AA\u09BF",
+    "mandi.totalNet": "\u09AE\u09CB\u099F \u09A8\u09BF\u099F ({distance} \u0995\u09BF\u09AE\u09BF)",
+    "mandi.aboveMsp": "+\u20B9{amount} (\u098F\u09AE\u098F\u09B8\u09AA\u09BF\u09B0 \u0989\u09AA\u09B0\u09C7)",
+    "mandi.belowMsp": "-\u20B9{amount} (\u098F\u09AE\u098F\u09B8\u09AA\u09BF\u09B0 \u09A8\u09BF\u099A\u09C7)",
+    "loan.schedule.paidOnFirst": "\u09E7 \u09A4\u09BE\u09B0\u09BF\u0996\u09C7 \u09AA\u09B0\u09BF\u09B6\u09CB\u09A7?",
+    "loan.schedule.principal": "\u09AE\u09C2\u09B2\u09A7\u09A8",
+    "loan.schedule.interest": "\u09B8\u09C1\u09A6",
+    "loan.schedule.status": "\u0985\u09AC\u09B8\u09CD\u09A5\u09BE",
+    "loan.status.paid": "\u09AA\u09B0\u09BF\u09B6\u09CB\u09A7\u09BF\u09A4",
+    "loan.status.overdue": "\u09AC\u0995\u09C7\u09AF\u09BC\u09BE",
+    "loan.status.upcoming": "\u0986\u09B8\u09A8\u09CD\u09A8",
+    "loan.status.overdueRolled": "\u09AC\u0995\u09C7\u09AF\u09BC\u09BE (\u09AA\u09B0\u09C7\u09B0 \u09AE\u09BE\u09B8\u09C7 \u09AF\u09CB\u0997)",
+    "loan.day": "\u09A6\u09BF\u09A8",
+    "loan.days": "\u09A6\u09BF\u09A8",
+    "loan.loanFullyPaid": "\u098B\u09A3 \u09B8\u09AE\u09CD\u09AA\u09C2\u09B0\u09CD\u09A3 \u09AA\u09B0\u09BF\u09B6\u09CB\u09A7\u09BF\u09A4",
+    "loan.allPaid": "\u09B8\u09AC \u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u09AA\u09B0\u09BF\u09B6\u09CB\u09A7\u09BF\u09A4",
+    "loan.overdueBy": "{days} \u09A6\u09BF\u09A8 \u09AC\u0995\u09C7\u09AF\u09BC\u09BE",
+    "loan.daysRemaining": "{days} \u09A6\u09BF\u09A8 \u09AC\u09BE\u0995\u09BF",
+    "loan.monthUnit": "\u09AE\u09BE\u09B8",
+    "loan.months": "\u09AE\u09BE\u09B8",
+    "loan.installmentsCompleted": "{count} \u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u09B8\u09AE\u09CD\u09AA\u09A8\u09CD\u09A8",
+    "loan.installmentsRemaining": "{count} \u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u09AC\u09BE\u0995\u09BF",
+    "loan.paidLabel": "\u09AA\u09B0\u09BF\u09B6\u09CB\u09A7\u09BF\u09A4",
+    "loan.remainingLabel": "\u09AC\u09BE\u0995\u09BF",
+    "loan.unpaidRollovers": "{count}\u099F\u09BF \u0985\u09AA\u09B0\u09BF\u09B6\u09CB\u09A7\u09BF\u09A4 \u09AC\u0995\u09C7\u09AF\u09BC\u09BE{plural}",
+    "distress.pillCritical": "\u0997\u09C1\u09B0\u09C1\u09A4\u09B0: {score}/100",
+    "distress.pillWatch": "\u09AE\u09BE\u099D\u09BE\u09B0\u09BF: {score}/100",
+    "distress.pillSafe": "\u09A8\u09BF\u09B0\u09BE\u09AA\u09A6: {score}/100",
+    "distress.compound": "\u0986\u09AC\u09B9\u09BE\u0993\u09AF\u09BC\u09BE, \u09AB\u09B8\u09B2\u09C7\u09B0 \u09A6\u09BE\u09AE \u098F\u09AC\u0982 \u098B\u09A3\u09C7\u09B0 \u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u09AE\u09BF\u09B2\u09BF\u09AF\u09BC\u09C7 \u099A\u09BE\u09AA \u0996\u09C1\u09AC \u09AC\u09C7\u09B6\u09BF\u0964",
+    "distress.rainDrought": "\u09A4\u09C0\u09AC\u09CD\u09B0 \u0996\u09B0\u09BE\u09B0 \u099A\u09BE\u09AA: \u09A6\u09BE\u0981\u09A1\u09BC\u09BE\u09A8\u09CB \u09AB\u09B8\u09B2 \u09B6\u09C1\u0995\u09BF\u09AF\u09BC\u09C7 \u09AF\u09BE\u0993\u09AF\u09BC\u09BE\u09B0 \u099D\u09C1\u0981\u0995\u09BF \u09AC\u09C7\u09B6\u09BF\u0964",
+    "distress.rainFlood": "\u099C\u09B2\u09BE\u09AC\u09A6\u09CD\u09A7\u09A4\u09BE\u09B0 \u099D\u09C1\u0981\u0995\u09BF: \u0985\u09A4\u09BF\u09B0\u09BF\u0995\u09CD\u09A4 \u09AC\u09C3\u09B7\u09CD\u099F\u09BF\u09A4\u09C7 \u099C\u09AE\u09BF\u09A4\u09C7 \u09AA\u09BE\u09A8\u09BF \u099C\u09AE\u09A4\u09C7 \u09AA\u09BE\u09B0\u09C7\u0964",
+    "distress.rainNormal": "\u0986\u09B0\u09CD\u09A6\u09CD\u09B0\u09A4\u09BE \u09AF\u09A5\u09C7\u09B7\u09CD\u099F: \u09AC\u09C3\u09B7\u09CD\u099F\u09BF \u09AB\u09B8\u09B2\u09C7\u09B0 \u09B8\u09CD\u09AC\u09BE\u09AD\u09BE\u09AC\u09BF\u0995 \u09AA\u09CD\u09B0\u09AF\u09BC\u09CB\u099C\u09A8\u09C7\u09B0 \u09AE\u09A7\u09CD\u09AF\u09C7 \u0986\u099B\u09C7\u0964",
+    "distress.rainDroughtBadge": "\u0996\u09B0\u09BE\u09B0 \u0998\u09BE\u099F\u09A4\u09BF",
+    "distress.rainFloodBadge": "\u09AC\u09A8\u09CD\u09AF\u09BE\u09B0 \u09AC\u09BF\u09AA\u09A6",
+    "distress.normalBadge": "\u09B8\u09CD\u09AC\u09BE\u09AD\u09BE\u09AC\u09BF\u0995",
+    "distress.mspAbove": "\u09B8\u09B0\u0995\u09BE\u09B0\u09BF \u098F\u09AE\u098F\u09B8\u09AA\u09BF: \u20B9{msp}/\u0995\u09C1\u0987\u09A8\u09CD\u099F\u09BE\u09B2 (+\u20B9{amount} \u098F\u09AE\u098F\u09B8\u09AA\u09BF\u09B0 \u0989\u09AA\u09B0\u09C7)",
+    "distress.mspBelow": "\u09B8\u09B0\u0995\u09BE\u09B0\u09BF \u098F\u09AE\u098F\u09B8\u09AA\u09BF: \u20B9{msp}/\u0995\u09C1\u0987\u09A8\u09CD\u099F\u09BE\u09B2 (-\u20B9{amount} \u098F\u09AE\u098F\u09B8\u09AA\u09BF\u09B0 \u09A8\u09BF\u099A\u09C7)",
+    "distress.mspAtMargin": "\u098F\u09AE\u098F\u09B8\u09AA\u09BF\u09B0 \u0995\u09BE\u099B\u09BE\u0995\u09BE\u099B\u09BF",
+    "distress.mspProfitable": "\u09B2\u09BE\u09AD\u099C\u09A8\u0995",
+    "distress.mspBelowBadge": "\u098F\u09AE\u098F\u09B8\u09AA\u09BF\u09B0 \u09A8\u09BF\u099A\u09C7",
+    "distress.loanUrgent": "\u099C\u09B0\u09C1\u09B0\u09BF: \u098F\u0995 \u09B8\u09AA\u09CD\u09A4\u09BE\u09B9\u09C7\u09B0 \u09AE\u09A7\u09CD\u09AF\u09C7 \u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u09A6\u09BF\u09A4\u09C7 \u09B9\u09AC\u09C7\u0964 \u09A8\u0997\u09A6 \u09AA\u09CD\u09B0\u09AC\u09BE\u09B9\u09C7 \u09AC\u09C7\u09B6\u09BF \u099A\u09BE\u09AA \u09B0\u09AF\u09BC\u09C7\u099B\u09C7\u0964",
+    "distress.loanUpcoming": "\u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u0986\u09B8\u09A8\u09CD\u09A8: \u099A\u09B2\u09A4\u09BF \u09AE\u09BE\u09B8\u09BF\u0995 \u09B8\u09AE\u09AF\u09BC\u09C7\u09B0 \u09AE\u09A7\u09CD\u09AF\u09C7 \u0995\u09BF\u09B8\u09CD\u09A4\u09BF \u09A6\u09BF\u09A4\u09C7 \u09B9\u09AC\u09C7\u0964",
+    "distress.loanSafe": "\u09A8\u09BF\u09B0\u09BE\u09AA\u09A6 \u09B8\u09AE\u09AF\u09BC: \u09AB\u09B8\u09B2 \u09AC\u09BF\u0995\u09CD\u09B0\u09BF \u0993 \u099F\u09BE\u0995\u09BE\u09B0 \u09AC\u09CD\u09AF\u09AC\u09B8\u09CD\u09A5\u09BE \u0995\u09B0\u09BE\u09B0 \u09AF\u09A5\u09C7\u09B7\u09CD\u099F \u09B8\u09AE\u09AF\u09BC \u0986\u099B\u09C7\u0964",
+    "distress.badgeImminent": "\u099C\u09B0\u09C1\u09B0\u09BF \u09AC\u0995\u09C7\u09AF\u09BC\u09BE",
+    "distress.badgeUpcoming": "\u09B6\u09C0\u0998\u09CD\u09B0\u0987 \u09AC\u0995\u09C7\u09AF\u09BC\u09BE",
+    "distress.badgeSafe": "\u09A8\u09BF\u09B0\u09BE\u09AA\u09A6 \u09B8\u09AE\u09AF\u09BC",
+    "distress.levelCritical": "\u0997\u09C1\u09B0\u09C1\u09A4\u09B0 \u09B8\u0982\u0995\u099F \u09B8\u09A4\u09B0\u09CD\u0995\u09A4\u09BE (\u09B8\u09CD\u0995\u09CB\u09B0 > \u09EE\u09E6)",
+    "distress.levelWatch": "\u09AE\u09BE\u099D\u09BE\u09B0\u09BF \u09A8\u099C\u09B0\u09A6\u09BE\u09B0\u09BF (\u09B8\u09CD\u0995\u09CB\u09B0 \u09EB\u09E7\u2013\u09EE\u09E6)",
+    "distress.levelStable": "\u09B8\u09CD\u09AC\u09BE\u09AD\u09BE\u09AC\u09BF\u0995 \u0993 \u09B8\u09CD\u09A5\u09BF\u09A4\u09BF\u09B6\u09C0\u09B2 (\u09B8\u09CD\u0995\u09CB\u09B0 \u2264 \u09EB\u09E6)"
   };
   var ta = {
     "gate.choose": "\u0B89\u0B99\u0BCD\u0B95\u0BB3\u0BCD \u0BAE\u0BCA\u0BB4\u0BBF\u0BAF\u0BC8\u0BA4\u0BCD \u0BA4\u0BC7\u0BB0\u0BCD\u0BA8\u0BCD\u0BA4\u0BC6\u0B9F\u0BC1\u0B95\u0BCD\u0B95\u0BB5\u0BC1\u0BAE\u0BCD",
@@ -1849,18 +2108,18 @@
     "help.disasterSupport": "24/7 emergency line",
     "help.kccQuickCall": "Call Kisan Helpline (Toll Free)",
     "help.pmkisanPortal": "Check PM-KISAN Status",
-    "help.schemesIntro": "Central & State Government Relief Schemes",
-    "profile.emailLabel": "Email (optional)",
-    "profile.contactLabel": "Preferred contact method",
+    "help.schemesIntro": "?????? ??????? ????? ?????? ?????? ??????????",
+    "profile.emailLabel": "?????????? (????????????????????)",
+    "profile.contactLabel": "?????????? ??????? ????",
     "profile.securityNote": "Your data is stored on this device only.",
-    "profile.clearData": "Clear all data",
-    "profile.themeLabel": "Display theme",
+    "profile.clearData": "??????? ???????? ??????????",
+    "profile.themeLabel": "?????? ????",
     "pheno.title": "Growth Tracker",
     "pheno.seasonProgress": "{pct}% Season Progress",
     "pheno.dayOf": "Day {current} of {total}",
-    "pheno.kc": "Crop Coefficient (Kc)",
+    "pheno.kc": "Crop water need",
     "pheno.gdd": "Growing Degree Days",
-    "pheno.stageDuration": "Stage Duration",
+    "pheno.stageDuration": "Growth progress",
     "pheno.daysToHarvest": "Days to Harvest",
     "pheno.sowing": "Sowing",
     "pheno.vegetative": "Vegetative",
@@ -1869,17 +2128,19 @@
     "pheno.maturity": "Maturity",
     "pheno.harvest": "Harvest",
     "tele.title": "Live Weather",
+    "tele.helpButton": "\u0B87\u0BA8\u0BCD\u0BA4 \u0BA8\u0BBF\u0BB2\u0BC8\u0BAE\u0BC8\u0B95\u0BB3\u0BCD \u0BAA\u0BB1\u0BCD\u0BB1\u0BBF",
+    "tele.contextHelp": "\u0B87\u0BA8\u0BCD\u0BA4\u0BAA\u0BCD \u0BAA\u0B95\u0BC1\u0BA4\u0BBF \u0BAA\u0BAF\u0BBF\u0BB0\u0BCD \u0BB5\u0BB3\u0BB0\u0BCD\u0B9A\u0BCD\u0B9A\u0BBF, \u0BAE\u0BA3\u0BCD \u0B88\u0BB0\u0BAA\u0BCD\u0BAA\u0BA4\u0BAE\u0BCD \u0BAE\u0BB1\u0BCD\u0BB1\u0BC1\u0BAE\u0BCD \u0BA8\u0BC7\u0BB0\u0BB2\u0BC8 \u0BB5\u0BBE\u0BA9\u0BBF\u0BB2\u0BC8\u0BAF\u0BC8 \u0B92\u0BA9\u0BCD\u0BB1\u0BBE\u0B95\u0B95\u0BCD \u0B95\u0BBE\u0B9F\u0BCD\u0B9F\u0BC1\u0B95\u0BBF\u0BB1\u0BA4\u0BC1.",
     "tele.temp": "Temperature",
-    "tele.feelsLike": "Feels Like",
+    "tele.feelsLike": "Precipitation",
     "tele.soilMoisture": "Soil Moisture",
-    "tele.et0": "ET0 (Evapotranspiration)",
+    "tele.et0": "Water needed",
     "tele.humidity": "Humidity",
     "tele.wind": "Wind Speed",
     "tele.uv": "UV Index",
     "tele.pressure": "Pressure",
     "tele.cloud": "Cloud Cover",
     "tele.maxMin": "Max / Min",
-    "tele.thermalComfort": "Thermal Comfort",
+    "tele.thermalComfort": "Rain right now",
     "tele.vwc": "Volumetric Water",
     "tele.litersPerAcre": "{liters} L/Acre Demand",
     "tele.atmosMoisture": "Atmospheric Moisture",
@@ -1912,23 +2173,23 @@
     "tomorrow.irrigationDirective": "Irrigation Directive",
     "tomorrow.checklist": "Action Checklist",
     "tomorrow.litersPerAcre": "{liters} Liters / Acre",
-    "distress.title": "Distress Risk Planner",
-    "distress.subtitle": "3-Factor Algorithm: Rain + Price + Loan",
-    "distress.planningNote": "Adjust the sliders to explore risk scenarios for your farm.",
-    "distress.riskScore": "Risk Score: {score}/100",
+    "distress.title": "?????????? ????????? ?????? ??????? ???? ?????????? ?????????",
+    "distress.subtitle": "3-????? ??????????: ??? + ???? + ????",
+    "distress.planningNote": "?????? ?????????? ?????? ????????? ???? ?????????? ????????????.",
+    "distress.riskScore": "?????? ?????????: {score}/100",
     "distress.moveSlider": "Move slider to explore",
-    "distress.scaleLow": "Low Risk",
+    "distress.scaleLow": "??????? ??????",
     "distress.scaleWatch": "Moderate Watch",
     "distress.scaleHigh": "High Distress",
-    "distress.rainLabel": "3-Day Rain Forecast",
+    "distress.rainLabel": "3-???? ??? ?????????????",
     "distress.rainHint": "mm of rain in 3 days",
-    "distress.priceLabel": "Price vs MSP",
+    "distress.priceLabel": "MSP vs ????",
     "distress.priceHint": "% below MSP",
-    "distress.loanLabel": "Loan Due Date",
+    "distress.loanLabel": "???? ?????? ????",
     "distress.loanHint": "days until due",
-    "distress.critical": "Critical Distress",
+    "distress.critical": "???? ?????????",
     "distress.high": "High Risk",
-    "distress.watch": "Moderate Watch",
+    "distress.watch": "?????? ???????????",
     "distress.low": "Normal",
     "loan.scheduleTitle": "Monthly Installment Schedule",
     "loan.firstInstallment": "First installment date",
@@ -1948,19 +2209,86 @@
     "mandi.mspLabel": "MSP: \u20B9{price}/Qtl",
     "mandi.visitPortal": "Visit eNAM Portal",
     "mandi.helpline": "Mandi Helpline",
-    "loan.status.emi": "Monthly EMI",
+    "loan.status.emi": "????????? EMI",
     "loan.status.totalPayable": "Total Payable: \u20B9{amount}",
-    "loan.status.totalInterest": "Total Interest",
-    "loan.schedule.title": "Monthly Installment Schedule",
-    "loan.schedule.dueDate": "Due Date",
-    "loan.schedule.baseEmi": "Base EMI",
+    "loan.status.totalInterest": "????? ?????",
+    "loan.schedule.title": "????????? ???? ???????",
+    "loan.schedule.dueDate": "?????? ???? (????????? 1 ??? ????)",
+    "loan.schedule.baseEmi": "???????? EMI",
     "loan.schedule.arrears": "Rollover Arrears",
     "loan.schedule.totalDue": "Total Due",
-    "loan.schedule.balance": "Balance",
+    "loan.schedule.balance": "????",
     "loan.schedule.dueDateFull": "Due Date (1st of month)",
-    "loan.schedule.totalDueMonth": "Total Due this Month",
+    "loan.schedule.totalDueMonth": "???? ????? ??????? ??????? ???????",
     "loan.schedule.remainingPrincipal": "Remaining Principal",
-    "loan.schedule.rolloverArrears": "Rollover Arrears"
+    "loan.schedule.rolloverArrears": "???????? ?????????",
+    "profile.darkMode": "\u0B9F\u0BBE\u0BB0\u0BCD\u0B95\u0BCD \u0BAA\u0BAF\u0BA9\u0BCD\u0BAE\u0BC1\u0BB1\u0BC8",
+    "profile.lightMode": "\u0BB2\u0BC8\u0B9F\u0BCD \u0BAA\u0BAF\u0BA9\u0BCD\u0BAE\u0BC1\u0BB1\u0BC8",
+    "profile.useLightMode": "\u0BB2\u0BC8\u0B9F\u0BCD \u0BAA\u0BAF\u0BA9\u0BCD\u0BAE\u0BC1\u0BB1\u0BC8\u0BAF\u0BC8\u0BAA\u0BCD \u0BAA\u0BAF\u0BA9\u0BCD\u0BAA\u0B9F\u0BC1\u0BA4\u0BCD\u0BA4\u0BB5\u0BC1\u0BAE\u0BCD",
+    "profile.useDarkMode": "\u0B9F\u0BBE\u0BB0\u0BCD\u0B95\u0BCD \u0BAA\u0BAF\u0BA9\u0BCD\u0BAE\u0BC1\u0BB1\u0BC8\u0BAF\u0BC8\u0BAA\u0BCD \u0BAA\u0BAF\u0BA9\u0BCD\u0BAA\u0B9F\u0BC1\u0BA4\u0BCD\u0BA4\u0BB5\u0BC1\u0BAE\u0BCD",
+    "profile.notAdded": "\u0B9A\u0BC7\u0BB0\u0BCD\u0B95\u0BCD\u0B95\u0BAA\u0BCD\u0BAA\u0B9F\u0BB5\u0BBF\u0BB2\u0BCD\u0BB2\u0BC8",
+    "profile.phone": "\u0BA4\u0BCA\u0BB2\u0BC8\u0BAA\u0BC7\u0B9A\u0BBF \u0B85\u0BB4\u0BC8\u0BAA\u0BCD\u0BAA\u0BC1",
+    "profile.sms": "\u0B8E\u0BB8\u0BCD\u0B8E\u0BAE\u0BCD\u0B8E\u0BB8\u0BCD",
+    "profile.whatsapp": "\u0BB5\u0BBE\u0B9F\u0BCD\u0BB8\u0BCD\u0B85\u0BAA\u0BCD",
+    "profile.emailError": "\u0B9A\u0BB0\u0BBF\u0BAF\u0BBE\u0BA9 \u0BAE\u0BBF\u0BA9\u0BCD\u0BA9\u0B9E\u0BCD\u0B9A\u0BB2\u0BC8 \u0B89\u0BB3\u0BCD\u0BB3\u0BBF\u0B9F\u0BB5\u0BC1\u0BAE\u0BCD \u0B85\u0BB2\u0BCD\u0BB2\u0BA4\u0BC1 \u0B95\u0BBE\u0BB2\u0BBF\u0BAF\u0BBE\u0B95 \u0BB5\u0BBF\u0B9F\u0BB5\u0BC1\u0BAE\u0BCD.",
+    "stage.maturity": "\u0BAE\u0BC1\u0BA4\u0BBF\u0BB0\u0BCD\u0B9A\u0BCD\u0B9A\u0BBF",
+    "stage.harvest-ready": "\u0B85\u0BB1\u0BC1\u0BB5\u0B9F\u0BC8\u0B95\u0BCD\u0B95\u0BC1\u0BA4\u0BCD \u0BA4\u0BAF\u0BBE\u0BB0\u0BCD",
+    "unit.acres": "\u0B8F\u0B95\u0BCD\u0B95\u0BB0\u0BCD",
+    "help.state": "\u0BAE\u0B95\u0BBE\u0BB0\u0BBE\u0BB7\u0BCD\u0B9F\u0BBF\u0BB0\u0BBE",
+    "mandi.table.location": "\u0B8F\u0BAA\u0BBF\u0B8E\u0BAE\u0BCD\u0B9A\u0BBF \u0BAE\u0BA3\u0BCD\u0B9F\u0BBF \u0BAE\u0BB1\u0BCD\u0BB1\u0BC1\u0BAE\u0BCD \u0B87\u0B9F\u0BAE\u0BCD",
+    "mandi.table.modalRate": "\u0B87\u0BA9\u0BCD\u0BB1\u0BC8\u0BAF \u0BAE\u0BBE\u0B9F\u0BB2\u0BCD \u0BB5\u0BBF\u0BB2\u0BC8",
+    "mandi.table.arrival": "\u0BB5\u0BB0\u0BA4\u0BCD\u0BA4\u0BC1 \u0BAE\u0BB1\u0BCD\u0BB1\u0BC1\u0BAE\u0BCD \u0BB0\u0B95\u0BAE\u0BCD",
+    "mandi.bestNet": "\u0B9A\u0BBF\u0BB1\u0BA8\u0BCD\u0BA4 \u0BA8\u0BBF\u0B95\u0BB0 \u0BB5\u0BBF\u0BB2\u0BC8",
+    "mandi.away": "{distance} \u0B95\u0BBF.\u0BAE\u0BC0. \u0BA4\u0BCA\u0BB2\u0BC8\u0BB5\u0BBF\u0BB2\u0BCD \xB7 {days}",
+    "mandi.govtMsp": "\u0B85\u0BB0\u0B9A\u0BC1 MSP",
+    "mandi.totalNet": "\u0BAE\u0BCA\u0BA4\u0BCD\u0BA4 \u0BA8\u0BBF\u0B95\u0BB0\u0BAE\u0BCD ({distance} \u0B95\u0BBF.\u0BAE\u0BC0.)",
+    "mandi.aboveMsp": "+\u20B9{amount} (MSP-\u0B95\u0BCD\u0B95\u0BC1 \u0BAE\u0BC7\u0BB2\u0BCD)",
+    "mandi.belowMsp": "-\u20B9{amount} (MSP-\u0B95\u0BCD\u0B95\u0BC1 \u0B95\u0BC0\u0BB4\u0BCD)",
+    "loan.schedule.paidOnFirst": "1\u0B86\u0BAE\u0BCD \u0BA4\u0BC7\u0BA4\u0BBF \u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4\u0BBF\u0BAF\u0BA4\u0BBE?",
+    "loan.schedule.principal": "\u0B85\u0B9A\u0BB2\u0BCD",
+    "loan.schedule.interest": "\u0BB5\u0B9F\u0BCD\u0B9F\u0BBF",
+    "loan.schedule.status": "\u0BA8\u0BBF\u0BB2\u0BC8",
+    "loan.status.paid": "\u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4\u0BAA\u0BCD\u0BAA\u0B9F\u0BCD\u0B9F\u0BA4\u0BC1",
+    "loan.status.overdue": "\u0BA8\u0BBF\u0BB2\u0BC1\u0BB5\u0BC8",
+    "loan.status.upcoming": "\u0BB5\u0BB0\u0BB5\u0BBF\u0BB0\u0BC1\u0BAA\u0BCD\u0BAA\u0BA4\u0BC1",
+    "loan.status.overdueRolled": "\u0BA8\u0BBF\u0BB2\u0BC1\u0BB5\u0BC8 (\u0B85\u0B9F\u0BC1\u0BA4\u0BCD\u0BA4 \u0BAE\u0BBE\u0BA4\u0BA4\u0BCD\u0BA4\u0BBF\u0BB1\u0BCD\u0B95\u0BC1 \u0BAE\u0BBE\u0BB1\u0BCD\u0BB1\u0BAA\u0BCD\u0BAA\u0B9F\u0BCD\u0B9F\u0BA4\u0BC1)",
+    "loan.day": "\u0BA8\u0BBE\u0BB3\u0BCD",
+    "loan.days": "\u0BA8\u0BBE\u0B9F\u0BCD\u0B95\u0BB3\u0BCD",
+    "loan.loanFullyPaid": "\u0B95\u0B9F\u0BA9\u0BCD \u0BAE\u0BC1\u0BB4\u0BC1\u0BAE\u0BC8\u0BAF\u0BBE\u0B95 \u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4\u0BAA\u0BCD\u0BAA\u0B9F\u0BCD\u0B9F\u0BA4\u0BC1",
+    "loan.allPaid": "\u0B85\u0BA9\u0BC8\u0BA4\u0BCD\u0BA4\u0BC1 \u0BA4\u0BB5\u0BA3\u0BC8\u0B95\u0BB3\u0BC1\u0BAE\u0BCD \u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4\u0BAA\u0BCD\u0BAA\u0B9F\u0BCD\u0B9F\u0BA9",
+    "loan.overdueBy": "{days} \u0BA8\u0BBE\u0B9F\u0BCD\u0B95\u0BB3\u0BCD \u0BA8\u0BBF\u0BB2\u0BC1\u0BB5\u0BC8",
+    "loan.daysRemaining": "{days} \u0BA8\u0BBE\u0B9F\u0BCD\u0B95\u0BB3\u0BCD \u0BAE\u0BC0\u0BA4\u0BAE\u0BCD",
+    "loan.monthUnit": "\u0BAE\u0BBE\u0BA4\u0BAE\u0BCD",
+    "loan.months": "\u0BAE\u0BBE\u0BA4\u0B99\u0BCD\u0B95\u0BB3\u0BCD",
+    "loan.installmentsCompleted": "{count} \u0BA4\u0BB5\u0BA3\u0BC8\u0B95\u0BB3\u0BCD \u0BAE\u0BC1\u0B9F\u0BBF\u0BA8\u0BCD\u0BA4\u0BA9",
+    "loan.installmentsRemaining": "{count} \u0BA4\u0BB5\u0BA3\u0BC8\u0B95\u0BB3\u0BCD \u0BAE\u0BC0\u0BA4\u0BAE\u0BCD",
+    "loan.paidLabel": "\u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4\u0BBF\u0BAF\u0BA4\u0BC1",
+    "loan.remainingLabel": "\u0BAE\u0BC0\u0BA4\u0BAE\u0BCD",
+    "loan.unpaidRollovers": "{count} \u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4\u0BBE\u0BA4 \u0BA8\u0BBF\u0BB2\u0BC1\u0BB5\u0BC8{plural}",
+    "distress.pillCritical": "\u0BAE\u0BBF\u0B95\u0BB5\u0BC1\u0BAE\u0BCD \u0B86\u0BAA\u0BA4\u0BCD\u0BA4\u0BC1: {score}/100",
+    "distress.pillWatch": "\u0BAE\u0BBF\u0BA4\u0BAE\u0BBE\u0BA9\u0BA4\u0BC1: {score}/100",
+    "distress.pillSafe": "\u0BAA\u0BBE\u0BA4\u0BC1\u0B95\u0BBE\u0BAA\u0BCD\u0BAA\u0BBE\u0BA9\u0BA4\u0BC1: {score}/100",
+    "distress.compound": "\u0BB5\u0BBE\u0BA9\u0BBF\u0BB2\u0BC8, \u0BAA\u0BAF\u0BBF\u0BB0\u0BCD \u0BB5\u0BBF\u0BB2\u0BC8 \u0BAE\u0BB1\u0BCD\u0BB1\u0BC1\u0BAE\u0BCD \u0B95\u0B9F\u0BA9\u0BCD \u0BA4\u0BB5\u0BA3\u0BC8\u0B95\u0BB3\u0BBE\u0BB2\u0BCD \u0B92\u0BB0\u0BC1\u0B99\u0BCD\u0B95\u0BBF\u0BA3\u0BC8\u0BA8\u0BCD\u0BA4 \u0B85\u0BB4\u0BC1\u0BA4\u0BCD\u0BA4\u0BAE\u0BCD \u0B85\u0BA4\u0BBF\u0B95\u0BAE\u0BBE\u0B95 \u0B89\u0BB3\u0BCD\u0BB3\u0BA4\u0BC1.",
+    "distress.rainDrought": "\u0B95\u0B9F\u0BC1\u0BAE\u0BC8\u0BAF\u0BBE\u0BA9 \u0BB5\u0BB1\u0B9F\u0BCD\u0B9A\u0BBF \u0B85\u0BB4\u0BC1\u0BA4\u0BCD\u0BA4\u0BAE\u0BCD: \u0BAA\u0BAF\u0BBF\u0BB0\u0BCD \u0BB5\u0BBE\u0B9F\u0BC1\u0BAE\u0BCD \u0B86\u0BAA\u0BA4\u0BCD\u0BA4\u0BC1 \u0B85\u0BA4\u0BBF\u0B95\u0BAE\u0BCD.",
+    "distress.rainFlood": "\u0BA8\u0BC0\u0BB0\u0BCD\u0BA4\u0BCD\u0BA4\u0BC7\u0B95\u0BCD\u0B95 \u0B86\u0BAA\u0BA4\u0BCD\u0BA4\u0BC1: \u0B85\u0BA4\u0BBF\u0B95 \u0BAE\u0BB4\u0BC8\u0BAF\u0BBE\u0BB2\u0BCD \u0BB5\u0BAF\u0BB2\u0BBF\u0BB2\u0BCD \u0BA8\u0BC0\u0BB0\u0BCD \u0BA4\u0BC7\u0B99\u0BCD\u0B95\u0BB2\u0BBE\u0BAE\u0BCD.",
+    "distress.rainNormal": "\u0B88\u0BB0\u0BAA\u0BCD\u0BAA\u0BA4\u0BAE\u0BCD \u0BAA\u0BCB\u0BA4\u0BC1\u0BAE\u0BBE\u0BA9\u0BA4\u0BC1: \u0BAE\u0BB4\u0BC8 \u0BAA\u0BAF\u0BBF\u0BB0\u0BBF\u0BA9\u0BCD \u0B87\u0BAF\u0BB2\u0BCD\u0BAA\u0BBE\u0BA9 \u0BA4\u0BC7\u0BB5\u0BC8\u0B95\u0BCD\u0B95\u0BC1\u0BB3\u0BCD \u0B89\u0BB3\u0BCD\u0BB3\u0BA4\u0BC1.",
+    "distress.rainDroughtBadge": "\u0BB5\u0BB1\u0B9F\u0BCD\u0B9A\u0BBF \u0B95\u0BC1\u0BB1\u0BC8\u0BB5\u0BC1",
+    "distress.rainFloodBadge": "\u0BB5\u0BC6\u0BB3\u0BCD\u0BB3 \u0B86\u0BAA\u0BA4\u0BCD\u0BA4\u0BC1",
+    "distress.normalBadge": "\u0B87\u0BAF\u0BB2\u0BCD\u0BAA\u0BC1",
+    "distress.mspAbove": "\u0B85\u0BB0\u0B9A\u0BC1 MSP: \u20B9{msp}/\u0B95\u0BC1\u0BB5\u0BBF\u0BA3\u0BCD\u0B9F\u0BBE\u0BB2\u0BCD (+\u20B9{amount} MSP-\u0B95\u0BCD\u0B95\u0BC1 \u0BAE\u0BC7\u0BB2\u0BCD)",
+    "distress.mspBelow": "\u0B85\u0BB0\u0B9A\u0BC1 MSP: \u20B9{msp}/\u0B95\u0BC1\u0BB5\u0BBF\u0BA3\u0BCD\u0B9F\u0BBE\u0BB2\u0BCD (-\u20B9{amount} MSP-\u0B95\u0BCD\u0B95\u0BC1 \u0B95\u0BC0\u0BB4\u0BCD)",
+    "distress.mspAtMargin": "MSP \u0B85\u0BB0\u0BC1\u0B95\u0BBF\u0BB2\u0BCD",
+    "distress.mspProfitable": "\u0BB2\u0BBE\u0BAA\u0B95\u0BB0\u0BAE\u0BBE\u0BA9\u0BA4\u0BC1",
+    "distress.mspBelowBadge": "MSP-\u0B95\u0BCD\u0B95\u0BC1 \u0B95\u0BC0\u0BB4\u0BCD",
+    "distress.loanUrgent": "\u0B85\u0BB5\u0B9A\u0BB0\u0BAE\u0BCD: \u0B92\u0BB0\u0BC1 \u0BB5\u0BBE\u0BB0\u0BA4\u0BCD\u0BA4\u0BBF\u0BB1\u0BCD\u0B95\u0BC1\u0BB3\u0BCD \u0BA4\u0BB5\u0BA3\u0BC8 \u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4 \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD. \u0BAA\u0BA3\u0BAA\u0BCD\u0BAA\u0BC1\u0BB4\u0B95\u0BCD\u0B95 \u0B85\u0BB4\u0BC1\u0BA4\u0BCD\u0BA4\u0BAE\u0BCD \u0B85\u0BA4\u0BBF\u0B95\u0BAE\u0BCD.",
+    "distress.loanUpcoming": "\u0BA4\u0BB5\u0BA3\u0BC8 \u0BB5\u0BB0\u0BB5\u0BBF\u0BB0\u0BC1\u0B95\u0BCD\u0B95\u0BBF\u0BB1\u0BA4\u0BC1: \u0B87\u0BA8\u0BCD\u0BA4 \u0BAE\u0BBE\u0BA4 \u0B95\u0BBE\u0BB2\u0BA4\u0BCD\u0BA4\u0BBF\u0BB1\u0BCD\u0B95\u0BC1\u0BB3\u0BCD \u0B9A\u0BC6\u0BB2\u0BC1\u0BA4\u0BCD\u0BA4 \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD.",
+    "distress.loanSafe": "\u0BAA\u0BBE\u0BA4\u0BC1\u0B95\u0BBE\u0BAA\u0BCD\u0BAA\u0BBE\u0BA9 \u0B87\u0B9F\u0BC8\u0BB5\u0BC6\u0BB3\u0BBF: \u0B85\u0BB1\u0BC1\u0BB5\u0B9F\u0BC8 \u0BB5\u0BBF\u0BB1\u0BCD\u0BAA\u0BA9\u0BC8\u0B95\u0BCD\u0B95\u0BC1\u0BAE\u0BCD \u0BAA\u0BA3 \u0B8F\u0BB1\u0BCD\u0BAA\u0BBE\u0B9F\u0BCD\u0B9F\u0BBF\u0BB1\u0BCD\u0B95\u0BC1\u0BAE\u0BCD \u0BAA\u0BCB\u0BA4\u0BC1\u0BAE\u0BBE\u0BA9 \u0BA8\u0BC7\u0BB0\u0BAE\u0BCD \u0B89\u0BB3\u0BCD\u0BB3\u0BA4\u0BC1.",
+    "distress.badgeImminent": "\u0B89\u0B9F\u0BA9\u0B9F\u0BBF \u0BA4\u0BB5\u0BA3\u0BC8",
+    "distress.badgeUpcoming": "\u0BB5\u0BBF\u0BB0\u0BC8\u0BB5\u0BBF\u0BB2\u0BCD \u0BA4\u0BB5\u0BA3\u0BC8",
+    "distress.badgeSafe": "\u0BAA\u0BBE\u0BA4\u0BC1\u0B95\u0BBE\u0BAA\u0BCD\u0BAA\u0BBE\u0BA9 \u0B87\u0B9F\u0BC8\u0BB5\u0BC6\u0BB3\u0BBF",
+    "distress.levelCritical": "\u0B95\u0B9F\u0BC1\u0BAE\u0BC8\u0BAF\u0BBE\u0BA9 \u0BA8\u0BC6\u0BB0\u0BC1\u0B95\u0BCD\u0B95\u0B9F\u0BBF \u0B8E\u0B9A\u0BCD\u0B9A\u0BB0\u0BBF\u0B95\u0BCD\u0B95\u0BC8 (\u0BAE\u0BA4\u0BBF\u0BAA\u0BCD\u0BAA\u0BC6\u0BA3\u0BCD > 80)",
+    "distress.levelWatch": "\u0BAE\u0BBF\u0BA4\u0BAE\u0BBE\u0BA9 \u0B95\u0BA3\u0BCD\u0B95\u0BBE\u0BA3\u0BBF\u0BAA\u0BCD\u0BAA\u0BC1 (\u0BAE\u0BA4\u0BBF\u0BAA\u0BCD\u0BAA\u0BC6\u0BA3\u0BCD 51\u201380)",
+    "distress.levelStable": "\u0B87\u0BAF\u0BB2\u0BCD\u0BAA\u0BC1 \u0BAE\u0BB1\u0BCD\u0BB1\u0BC1\u0BAE\u0BCD \u0BA8\u0BBF\u0BB2\u0BC8\u0BAF\u0BBE\u0BA9\u0BA4\u0BC1 (\u0BAE\u0BA4\u0BBF\u0BAA\u0BCD\u0BAA\u0BC6\u0BA3\u0BCD \u2264 50)"
   };
   var te = {
     "gate.choose": "\u0C2E\u0C40 \u0C2D\u0C3E\u0C37\u0C28\u0C41 \u0C0E\u0C02\u0C1A\u0C41\u0C15\u0C4B\u0C02\u0C21\u0C3F",
@@ -2237,18 +2565,18 @@
     "help.disasterSupport": "24/7 emergency line",
     "help.kccQuickCall": "Call Kisan Helpline (Toll Free)",
     "help.pmkisanPortal": "Check PM-KISAN Status",
-    "help.schemesIntro": "Central & State Government Relief Schemes",
-    "profile.emailLabel": "Email (optional)",
-    "profile.contactLabel": "Preferred contact method",
+    "help.schemesIntro": "?????? ????? ??????? ???????? ???? ??????",
+    "profile.emailLabel": "??????? (???????)",
+    "profile.contactLabel": "????????? ?????????? ??????",
     "profile.securityNote": "Your data is stored on this device only.",
-    "profile.clearData": "Clear all data",
-    "profile.themeLabel": "Display theme",
+    "profile.clearData": "?????? ?????? ??????? ??????",
+    "profile.themeLabel": "???????? ????",
     "pheno.title": "Growth Tracker",
     "pheno.seasonProgress": "{pct}% Season Progress",
     "pheno.dayOf": "Day {current} of {total}",
-    "pheno.kc": "Crop Coefficient (Kc)",
+    "pheno.kc": "Crop water need",
     "pheno.gdd": "Growing Degree Days",
-    "pheno.stageDuration": "Stage Duration",
+    "pheno.stageDuration": "Growth progress",
     "pheno.daysToHarvest": "Days to Harvest",
     "pheno.sowing": "Sowing",
     "pheno.vegetative": "Vegetative",
@@ -2257,17 +2585,19 @@
     "pheno.maturity": "Maturity",
     "pheno.harvest": "Harvest",
     "tele.title": "Live Weather",
+    "tele.helpButton": "\u0C08 \u0C2A\u0C30\u0C3F\u0C38\u0C4D\u0C25\u0C3F\u0C24\u0C41\u0C32 \u0C17\u0C41\u0C30\u0C3F\u0C02\u0C1A\u0C3F",
+    "tele.contextHelp": "\u0C08 \u0C35\u0C3F\u0C2D\u0C3E\u0C17\u0C02 \u0C2A\u0C02\u0C1F \u0C2A\u0C46\u0C30\u0C41\u0C17\u0C41\u0C26\u0C32, \u0C28\u0C47\u0C32 \u0C24\u0C47\u0C2E \u0C2E\u0C30\u0C3F\u0C2F\u0C41 \u0C2A\u0C4D\u0C30\u0C24\u0C4D\u0C2F\u0C15\u0C4D\u0C37 \u0C35\u0C3E\u0C24\u0C3E\u0C35\u0C30\u0C23\u0C3E\u0C28\u0C4D\u0C28\u0C3F \u0C15\u0C32\u0C3F\u0C2A\u0C3F \u0C1A\u0C42\u0C2A\u0C3F\u0C38\u0C4D\u0C24\u0C41\u0C02\u0C26\u0C3F.",
     "tele.temp": "Temperature",
-    "tele.feelsLike": "Feels Like",
+    "tele.feelsLike": "Precipitation",
     "tele.soilMoisture": "Soil Moisture",
-    "tele.et0": "ET0 (Evapotranspiration)",
+    "tele.et0": "Water needed",
     "tele.humidity": "Humidity",
     "tele.wind": "Wind Speed",
     "tele.uv": "UV Index",
     "tele.pressure": "Pressure",
     "tele.cloud": "Cloud Cover",
     "tele.maxMin": "Max / Min",
-    "tele.thermalComfort": "Thermal Comfort",
+    "tele.thermalComfort": "Rain right now",
     "tele.vwc": "Volumetric Water",
     "tele.litersPerAcre": "{liters} L/Acre Demand",
     "tele.atmosMoisture": "Atmospheric Moisture",
@@ -2300,23 +2630,23 @@
     "tomorrow.irrigationDirective": "Irrigation Directive",
     "tomorrow.checklist": "Action Checklist",
     "tomorrow.litersPerAcre": "{liters} Liters / Acre",
-    "distress.title": "Distress Risk Planner",
-    "distress.subtitle": "3-Factor Algorithm: Rain + Price + Loan",
-    "distress.planningNote": "Adjust the sliders to explore risk scenarios for your farm.",
-    "distress.riskScore": "Risk Score: {score}/100",
+    "distress.title": "??????? ??????? ??????? ????? ???????? ???????? ???????",
+    "distress.subtitle": "3-?????? ?????????: ????? + ?? + ????",
+    "distress.planningNote": "?? ???? ???? ?????? ????????? ??????????????? ??????????? ????????? ??????.",
+    "distress.riskScore": "?????? ??????: {score}/100",
     "distress.moveSlider": "Move slider to explore",
-    "distress.scaleLow": "Low Risk",
+    "distress.scaleLow": "?????? ???????",
     "distress.scaleWatch": "Moderate Watch",
     "distress.scaleHigh": "High Distress",
-    "distress.rainLabel": "3-Day Rain Forecast",
+    "distress.rainLabel": "3-????? ???? ????",
     "distress.rainHint": "mm of rain in 3 days",
-    "distress.priceLabel": "Price vs MSP",
+    "distress.priceLabel": "MSP vs ??",
     "distress.priceHint": "% below MSP",
-    "distress.loanLabel": "Loan Due Date",
+    "distress.loanLabel": "??? ????? ????",
     "distress.loanHint": "days until due",
-    "distress.critical": "Critical Distress",
+    "distress.critical": "???? ????????",
     "distress.high": "High Risk",
-    "distress.watch": "Moderate Watch",
+    "distress.watch": "?????? ????",
     "distress.low": "Normal",
     "loan.scheduleTitle": "Monthly Installment Schedule",
     "loan.firstInstallment": "First installment date",
@@ -2336,19 +2666,86 @@
     "mandi.mspLabel": "MSP: \u20B9{price}/Qtl",
     "mandi.visitPortal": "Visit eNAM Portal",
     "mandi.helpline": "Mandi Helpline",
-    "loan.status.emi": "Monthly EMI",
+    "loan.status.emi": "??????? EMI",
     "loan.status.totalPayable": "Total Payable: \u20B9{amount}",
-    "loan.status.totalInterest": "Total Interest",
-    "loan.schedule.title": "Monthly Installment Schedule",
-    "loan.schedule.dueDate": "Due Date",
-    "loan.schedule.baseEmi": "Base EMI",
+    "loan.status.totalInterest": "?????? ?????",
+    "loan.schedule.title": "??????? ??????? ????????",
+    "loan.schedule.dueDate": "????? ???? (??? 1? ????)",
+    "loan.schedule.baseEmi": "???? EMI",
     "loan.schedule.arrears": "Rollover Arrears",
     "loan.schedule.totalDue": "Total Due",
-    "loan.schedule.balance": "Balance",
+    "loan.schedule.balance": "????",
     "loan.schedule.dueDateFull": "Due Date (1st of month)",
-    "loan.schedule.totalDueMonth": "Total Due this Month",
+    "loan.schedule.totalDueMonth": "? ????? ?????????????? ??????",
     "loan.schedule.remainingPrincipal": "Remaining Principal",
-    "loan.schedule.rolloverArrears": "Rollover Arrears"
+    "loan.schedule.rolloverArrears": "????????? ???????",
+    "profile.darkMode": "\u0C21\u0C3E\u0C30\u0C4D\u0C15\u0C4D \u0C2E\u0C4B\u0C21\u0C4D",
+    "profile.lightMode": "\u0C32\u0C48\u0C1F\u0C4D \u0C2E\u0C4B\u0C21\u0C4D",
+    "profile.useLightMode": "\u0C32\u0C48\u0C1F\u0C4D \u0C2E\u0C4B\u0C21\u0C4D \u0C09\u0C2A\u0C2F\u0C4B\u0C17\u0C3F\u0C02\u0C1A\u0C02\u0C21\u0C3F",
+    "profile.useDarkMode": "\u0C21\u0C3E\u0C30\u0C4D\u0C15\u0C4D \u0C2E\u0C4B\u0C21\u0C4D \u0C09\u0C2A\u0C2F\u0C4B\u0C17\u0C3F\u0C02\u0C1A\u0C02\u0C21\u0C3F",
+    "profile.notAdded": "\u0C1C\u0C4B\u0C21\u0C3F\u0C02\u0C1A\u0C32\u0C47\u0C26\u0C41",
+    "profile.phone": "\u0C2B\u0C4B\u0C28\u0C4D \u0C15\u0C3E\u0C32\u0C4D",
+    "profile.sms": "\u0C0E\u0C38\u0C4D\u0C0E\u0C02\u0C0E\u0C38\u0C4D",
+    "profile.whatsapp": "\u0C35\u0C3E\u0C1F\u0C4D\u0C38\u0C3E\u0C2A\u0C4D",
+    "profile.emailError": "\u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C41\u0C2C\u0C3E\u0C1F\u0C41 \u0C05\u0C2F\u0C4D\u0C2F\u0C47 \u0C08\u0C2E\u0C46\u0C2F\u0C3F\u0C32\u0C4D \u0C07\u0C35\u0C4D\u0C35\u0C02\u0C21\u0C3F \u0C32\u0C47\u0C26\u0C3E \u0C16\u0C3E\u0C33\u0C40\u0C17\u0C3E \u0C09\u0C02\u0C1A\u0C02\u0C21\u0C3F.",
+    "stage.maturity": "\u0C2A\u0C15\u0C4D\u0C35 \u0C26\u0C36",
+    "stage.harvest-ready": "\u0C15\u0C4B\u0C24\u0C15\u0C41 \u0C38\u0C3F\u0C26\u0C4D\u0C27\u0C02",
+    "unit.acres": "\u0C0E\u0C15\u0C30\u0C3E\u0C32\u0C41",
+    "help.state": "\u0C2E\u0C39\u0C3E\u0C30\u0C3E\u0C37\u0C4D\u0C1F\u0C4D\u0C30",
+    "mandi.table.location": "\u0C0F\u0C2A\u0C40\u0C0E\u0C02\u0C38\u0C40 \u0C2E\u0C3E\u0C30\u0C4D\u0C15\u0C46\u0C1F\u0C4D \u0C2E\u0C30\u0C3F\u0C2F\u0C41 \u0C2A\u0C4D\u0C30\u0C26\u0C47\u0C36\u0C02",
+    "mandi.table.modalRate": "\u0C28\u0C47\u0C1F\u0C3F \u0C2E\u0C4B\u0C21\u0C32\u0C4D \u0C27\u0C30",
+    "mandi.table.arrival": "\u0C30\u0C3E\u0C15 \u0C2E\u0C30\u0C3F\u0C2F\u0C41 \u0C30\u0C15\u0C02",
+    "mandi.bestNet": "\u0C09\u0C24\u0C4D\u0C24\u0C2E \u0C28\u0C3F\u0C15\u0C30 \u0C27\u0C30",
+    "mandi.away": "{distance} \u0C15\u0C3F.\u0C2E\u0C40. \u0C26\u0C42\u0C30\u0C02 \xB7 {days}",
+    "mandi.govtMsp": "\u0C2A\u0C4D\u0C30\u0C2D\u0C41\u0C24\u0C4D\u0C35 MSP",
+    "mandi.totalNet": "\u0C2E\u0C4A\u0C24\u0C4D\u0C24\u0C02 \u0C28\u0C3F\u0C15\u0C30\u0C02 ({distance} \u0C15\u0C3F.\u0C2E\u0C40.)",
+    "mandi.aboveMsp": "+\u20B9{amount} (MSP \u0C15\u0C02\u0C1F\u0C47 \u0C0E\u0C15\u0C4D\u0C15\u0C41\u0C35)",
+    "mandi.belowMsp": "-\u20B9{amount} (MSP \u0C15\u0C02\u0C1F\u0C47 \u0C24\u0C15\u0C4D\u0C15\u0C41\u0C35)",
+    "loan.schedule.paidOnFirst": "1\u0C35 \u0C24\u0C47\u0C26\u0C40\u0C28 \u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3E\u0C30\u0C3E?",
+    "loan.schedule.principal": "\u0C05\u0C38\u0C32\u0C41",
+    "loan.schedule.interest": "\u0C35\u0C21\u0C4D\u0C21\u0C40",
+    "loan.schedule.status": "\u0C38\u0C4D\u0C25\u0C3F\u0C24\u0C3F",
+    "loan.status.paid": "\u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3E\u0C30\u0C41",
+    "loan.status.overdue": "\u0C2C\u0C15\u0C3E\u0C2F\u0C3F",
+    "loan.status.upcoming": "\u0C30\u0C3E\u0C2C\u0C4B\u0C2F\u0C47\u0C26\u0C3F",
+    "loan.status.overdueRolled": "\u0C2C\u0C15\u0C3E\u0C2F\u0C3F (\u0C24\u0C26\u0C41\u0C2A\u0C30\u0C3F \u0C28\u0C46\u0C32\u0C15\u0C41 \u0C2E\u0C3E\u0C30\u0C4D\u0C1A\u0C2C\u0C21\u0C3F\u0C02\u0C26\u0C3F)",
+    "loan.day": "\u0C30\u0C4B\u0C1C\u0C41",
+    "loan.days": "\u0C30\u0C4B\u0C1C\u0C41\u0C32\u0C41",
+    "loan.loanFullyPaid": "\u0C30\u0C41\u0C23\u0C02 \u0C2A\u0C42\u0C30\u0C4D\u0C24\u0C3F\u0C17\u0C3E \u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3E\u0C30\u0C41",
+    "loan.allPaid": "\u0C05\u0C28\u0C4D\u0C28\u0C3F \u0C35\u0C3E\u0C2F\u0C3F\u0C26\u0C3E\u0C32\u0C41 \u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3E\u0C30\u0C41",
+    "loan.overdueBy": "{days} \u0C30\u0C4B\u0C1C\u0C41\u0C32\u0C41 \u0C2C\u0C15\u0C3E\u0C2F\u0C3F",
+    "loan.daysRemaining": "{days} \u0C30\u0C4B\u0C1C\u0C41\u0C32\u0C41 \u0C2E\u0C3F\u0C17\u0C3F\u0C32\u0C3F \u0C09\u0C28\u0C4D\u0C28\u0C3E\u0C2F\u0C3F",
+    "loan.monthUnit": "\u0C28\u0C46\u0C32",
+    "loan.months": "\u0C28\u0C46\u0C32\u0C32\u0C41",
+    "loan.installmentsCompleted": "{count} \u0C35\u0C3E\u0C2F\u0C3F\u0C26\u0C3E\u0C32\u0C41 \u0C2A\u0C42\u0C30\u0C4D\u0C24\u0C2F\u0C4D\u0C2F\u0C3E\u0C2F\u0C3F",
+    "loan.installmentsRemaining": "{count} \u0C35\u0C3E\u0C2F\u0C3F\u0C26\u0C3E\u0C32\u0C41 \u0C2E\u0C3F\u0C17\u0C3F\u0C32\u0C3F \u0C09\u0C28\u0C4D\u0C28\u0C3E\u0C2F\u0C3F",
+    "loan.paidLabel": "\u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3F\u0C28\u0C26\u0C3F",
+    "loan.remainingLabel": "\u0C2E\u0C3F\u0C17\u0C3F\u0C32\u0C3F\u0C28\u0C26\u0C3F",
+    "loan.unpaidRollovers": "{count} \u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C28\u0C3F \u0C2C\u0C15\u0C3E\u0C2F\u0C3F{plural}",
+    "distress.pillCritical": "\u0C24\u0C40\u0C35\u0C4D\u0C30\u0C02: {score}/100",
+    "distress.pillWatch": "\u0C2E\u0C4B\u0C38\u0C4D\u0C24\u0C30\u0C41: {score}/100",
+    "distress.pillSafe": "\u0C38\u0C41\u0C30\u0C15\u0C4D\u0C37\u0C3F\u0C24\u0C02: {score}/100",
+    "distress.compound": "\u0C35\u0C3E\u0C24\u0C3E\u0C35\u0C30\u0C23\u0C02, \u0C2A\u0C02\u0C1F \u0C27\u0C30\u0C32\u0C41 \u0C2E\u0C30\u0C3F\u0C2F\u0C41 \u0C30\u0C41\u0C23 \u0C35\u0C3E\u0C2F\u0C3F\u0C26\u0C3E\u0C32 \u0C35\u0C32\u0C4D\u0C32 \u0C15\u0C32\u0C3F\u0C2A\u0C3F \u0C12\u0C24\u0C4D\u0C24\u0C3F\u0C21\u0C3F \u0C0E\u0C15\u0C4D\u0C15\u0C41\u0C35\u0C17\u0C3E \u0C09\u0C02\u0C26\u0C3F.",
+    "distress.rainDrought": "\u0C24\u0C40\u0C35\u0C4D\u0C30\u0C2E\u0C48\u0C28 \u0C15\u0C30\u0C41\u0C35\u0C41 \u0C12\u0C24\u0C4D\u0C24\u0C3F\u0C21\u0C3F: \u0C28\u0C3F\u0C32\u0C3F\u0C1A\u0C3F\u0C28 \u0C2A\u0C02\u0C1F \u0C35\u0C3E\u0C21\u0C3F\u0C2A\u0C4B\u0C2F\u0C47 \u0C2A\u0C4D\u0C30\u0C2E\u0C3E\u0C26\u0C02 \u0C0E\u0C15\u0C4D\u0C15\u0C41\u0C35.",
+    "distress.rainFlood": "\u0C28\u0C40\u0C30\u0C41 \u0C28\u0C3F\u0C32\u0C3F\u0C1A\u0C47 \u0C2A\u0C4D\u0C30\u0C2E\u0C3E\u0C26\u0C02: \u0C05\u0C27\u0C3F\u0C15 \u0C35\u0C30\u0C4D\u0C37\u0C02\u0C24\u0C4B \u0C2A\u0C4A\u0C32\u0C02\u0C32\u0C4B \u0C28\u0C40\u0C30\u0C41 \u0C1A\u0C47\u0C30\u0C35\u0C1A\u0C4D\u0C1A\u0C41.",
+    "distress.rainNormal": "\u0C24\u0C47\u0C2E \u0C38\u0C30\u0C3F\u0C2A\u0C4B\u0C24\u0C41\u0C02\u0C26\u0C3F: \u0C35\u0C30\u0C4D\u0C37\u0C2A\u0C3E\u0C24\u0C02 \u0C2A\u0C02\u0C1F \u0C38\u0C3E\u0C27\u0C3E\u0C30\u0C23 \u0C05\u0C35\u0C38\u0C30\u0C3E\u0C32\u0C4D\u0C32\u0C4B \u0C09\u0C02\u0C26\u0C3F.",
+    "distress.rainDroughtBadge": "\u0C15\u0C30\u0C41\u0C35\u0C41 \u0C32\u0C4B\u0C1F\u0C41",
+    "distress.rainFloodBadge": "\u0C35\u0C30\u0C26 \u0C2A\u0C4D\u0C30\u0C2E\u0C3E\u0C26\u0C02",
+    "distress.normalBadge": "\u0C38\u0C3E\u0C27\u0C3E\u0C30\u0C23\u0C02",
+    "distress.mspAbove": "\u0C2A\u0C4D\u0C30\u0C2D\u0C41\u0C24\u0C4D\u0C35 MSP: \u20B9{msp}/\u0C15\u0C4D\u0C35\u0C3F\u0C02\u0C1F\u0C3E\u0C32\u0C4D (+\u20B9{amount} MSP \u0C15\u0C02\u0C1F\u0C47 \u0C0E\u0C15\u0C4D\u0C15\u0C41\u0C35)",
+    "distress.mspBelow": "\u0C2A\u0C4D\u0C30\u0C2D\u0C41\u0C24\u0C4D\u0C35 MSP: \u20B9{msp}/\u0C15\u0C4D\u0C35\u0C3F\u0C02\u0C1F\u0C3E\u0C32\u0C4D (-\u20B9{amount} MSP \u0C15\u0C02\u0C1F\u0C47 \u0C24\u0C15\u0C4D\u0C15\u0C41\u0C35)",
+    "distress.mspAtMargin": "MSP \u0C38\u0C2E\u0C40\u0C2A\u0C02\u0C32\u0C4B",
+    "distress.mspProfitable": "\u0C32\u0C3E\u0C2D\u0C26\u0C3E\u0C2F\u0C15\u0C02",
+    "distress.mspBelowBadge": "MSP \u0C15\u0C02\u0C1F\u0C47 \u0C24\u0C15\u0C4D\u0C15\u0C41\u0C35",
+    "distress.loanUrgent": "\u0C05\u0C24\u0C4D\u0C2F\u0C35\u0C38\u0C30\u0C02: \u0C12\u0C15 \u0C35\u0C3E\u0C30\u0C02\u0C32\u0C4B \u0C35\u0C3E\u0C2F\u0C3F\u0C26\u0C3E \u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3E\u0C32\u0C3F. \u0C28\u0C17\u0C26\u0C41 \u0C2A\u0C4D\u0C30\u0C35\u0C3E\u0C39\u0C02\u0C2A\u0C48 \u0C12\u0C24\u0C4D\u0C24\u0C3F\u0C21\u0C3F \u0C0E\u0C15\u0C4D\u0C15\u0C41\u0C35.",
+    "distress.loanUpcoming": "\u0C35\u0C3E\u0C2F\u0C3F\u0C26\u0C3E \u0C38\u0C2E\u0C40\u0C2A\u0C02\u0C32\u0C4B \u0C09\u0C02\u0C26\u0C3F: \u0C08 \u0C28\u0C46\u0C32 \u0C35\u0C4D\u0C2F\u0C35\u0C27\u0C3F\u0C32\u0C4B \u0C1A\u0C46\u0C32\u0C4D\u0C32\u0C3F\u0C02\u0C1A\u0C3E\u0C32\u0C3F.",
+    "distress.loanSafe": "\u0C38\u0C41\u0C30\u0C15\u0C4D\u0C37\u0C3F\u0C24 \u0C38\u0C2E\u0C2F\u0C02: \u0C2A\u0C02\u0C1F \u0C35\u0C3F\u0C15\u0C4D\u0C30\u0C2F\u0C02 \u0C2E\u0C30\u0C3F\u0C2F\u0C41 \u0C21\u0C2C\u0C4D\u0C2C\u0C41 \u0C0F\u0C30\u0C4D\u0C2A\u0C3E\u0C1F\u0C41\u0C15\u0C41 \u0C24\u0C17\u0C3F\u0C28 \u0C38\u0C2E\u0C2F\u0C02 \u0C09\u0C02\u0C26\u0C3F.",
+    "distress.badgeImminent": "\u0C24\u0C15\u0C4D\u0C37\u0C23 \u0C2C\u0C15\u0C3E\u0C2F\u0C3F",
+    "distress.badgeUpcoming": "\u0C24\u0C4D\u0C35\u0C30\u0C32\u0C4B \u0C2C\u0C15\u0C3E\u0C2F\u0C3F",
+    "distress.badgeSafe": "\u0C38\u0C41\u0C30\u0C15\u0C4D\u0C37\u0C3F\u0C24 \u0C38\u0C2E\u0C2F\u0C02",
+    "distress.levelCritical": "\u0C24\u0C40\u0C35\u0C4D\u0C30\u0C2E\u0C48\u0C28 \u0C38\u0C02\u0C15\u0C4D\u0C37\u0C4B\u0C2D \u0C39\u0C46\u0C1A\u0C4D\u0C1A\u0C30\u0C3F\u0C15 (\u0C38\u0C4D\u0C15\u0C4B\u0C30\u0C4D > 80)",
+    "distress.levelWatch": "\u0C2E\u0C4B\u0C38\u0C4D\u0C24\u0C30\u0C41 \u0C2A\u0C30\u0C4D\u0C2F\u0C35\u0C47\u0C15\u0C4D\u0C37\u0C23 (\u0C38\u0C4D\u0C15\u0C4B\u0C30\u0C4D 51\u201380)",
+    "distress.levelStable": "\u0C38\u0C3E\u0C27\u0C3E\u0C30\u0C23\u0C02 \u0C2E\u0C30\u0C3F\u0C2F\u0C41 \u0C38\u0C4D\u0C25\u0C3F\u0C30\u0C02\u0C17\u0C3E \u0C09\u0C02\u0C26\u0C3F (\u0C38\u0C4D\u0C15\u0C4B\u0C30\u0C4D \u2264 50)"
   };
   var PACKS = { en, hi, mr, bn, ta, te };
   var current = "en";
@@ -3423,18 +3820,19 @@
       id: "pm-kisan",
       category: "Income support",
       title: "PM-Kisan Samman Nidhi",
-      description: "Income support information and beneficiary status for eligible landholding farmers.",
+      description: "Direct income support of \u20B96,000 per year transferred in 3 installments of \u20B92,000 directly to your bank account.",
       url: "https://pmkisan.gov.in/",
       helplines: [
         { label: "155261", href: "tel:155261" },
-        { label: "011-24300606", href: "tel:01124300606" }
+        { label: "011-24300606", href: "tel:01124300606" },
+        { label: "1800-11-5526", href: "tel:1800115526" }
       ]
     },
     {
       id: "pmfby",
       category: "Crop insurance",
       title: "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
-      description: "Crop insurance information, claim guidance, and policy status through the official portal.",
+      description: "Official crop insurance portal. Get coverage against crop loss from drought, flood, or pests. File a claim or track status.",
       url: "https://pmfby.gov.in/",
       helplines: [
         { label: "14447", href: "tel:14447" },
@@ -3444,34 +3842,43 @@
     {
       id: "machinery",
       category: "Equipment subsidy",
-      title: "Farm Equipment & Machinery Subsidies",
-      description: "Government assistance information for eligible farm machinery and equipment purchases.",
-      url: "https://agrimachinery.nic.in/index/index",
-      helplines: []
+      title: "Sub-Mission on Agricultural Mechanization (SMAM)",
+      description: "Government portal for farm machinery subsidies and mechanization schemes. Apply online for subsidies on tractors, tillers, and sprayers.",
+      url: "https://agrimachinery.nic.in/",
+      helplines: [
+        { label: "1800-180-1551", href: "tel:18001801551" }
+      ]
     },
     {
       id: "kcc",
       category: "Credit & loans",
-      title: "Kisan Credit Card (KCC)",
-      description: "Learn about crop-credit access, interest support, and the application route through official channels.",
-      url: "https://agricoop.nic.in",
-      helplines: [{ label: "1800-11-2211", href: "tel:1800112211" }]
+      title: "Kisan Credit Card (KCC) / Kisan Rin Portal",
+      description: "Get crop loans at just 4% effective annual interest with 3% prompt repayment subvention via the official Kisan Rin Portal.",
+      url: "https://fasalrin.gov.in/",
+      helplines: [
+        { label: "1800-11-2211", href: "tel:1800112211" },
+        { label: "1800-180-1551", href: "tel:18001801551" }
+      ]
     },
     {
       id: "pmksy",
       category: "Irrigation",
       title: "Pradhan Mantri Krishi Sinchayee Yojana (PMKSY)",
-      description: "Official irrigation and water-use assistance information for eligible farmers.",
-      url: "https://pmksy.gov.in",
-      helplines: []
+      description: "Up to 55% subsidy for small and marginal farmers to install drip or sprinkler irrigation systems and save water on every crop.",
+      url: "https://pmksy.gov.in/",
+      helplines: [
+        { label: "1800-180-1551", href: "tel:18001801551" }
+      ]
     },
     {
       id: "enam",
       category: "Mandi trading",
       title: "National Agriculture Market (e-NAM)",
-      description: "Electronic trading information for connecting participating agricultural markets across India.",
-      url: "https://enam.gov.in",
-      helplines: [{ label: "1800-270-0224", href: "tel:18002700224" }]
+      description: "Electronic trading portal connecting 1,300+ APMC mandis across India for transparent, competitive crop prices without middlemen.",
+      url: "https://enam.gov.in/",
+      helplines: [
+        { label: "1800-270-0224", href: "tel:18002700224" }
+      ]
     }
   ];
 
@@ -5631,63 +6038,188 @@
     return xCircle(s);
   }
 
-  // assets/js/loan.js
+  // assets/js/loan.js?v=20260901-1
   function calculateEMI(principal, annualRate, months) {
-    if (months <= 0 || principal <= 0)
+    const p = Math.max(0, Number(principal) || 0);
+    const r = Math.max(0, Number(annualRate) || 0);
+    const m = Math.max(0, parseInt(months, 10) || 0);
+    if (m <= 0 || p <= 0)
       return 0;
-    if (annualRate <= 0)
-      return principal / months;
-    const r = annualRate / 12 / 100;
-    const emi = principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+    if (r <= 0)
+      return p / m;
+    const monthlyRate = r / 12 / 100;
+    const emi = p * monthlyRate * Math.pow(1 + monthlyRate, m) / (Math.pow(1 + monthlyRate, m) - 1);
     return emi;
   }
+  function calculateDistressScore(rainForecastMm = 0, mandiPrice = 2425, mspPrice = 2425, daysUntilDue = 15, stateName = "") {
+    const rain = Number(rainForecastMm) || 0;
+    const mPrice = Number(mandiPrice) || 0;
+    const msp = Math.max(1, Number(mspPrice) || 1);
+    const days = Number(daysUntilDue) || 0;
+    let sRain = 10;
+    if (rain <= 2) {
+      sRain = Math.min(100, Math.round(85 + (2 - rain) * 7.5));
+    } else if (rain >= 60) {
+      sRain = Math.min(100, Math.round(75 + (rain - 60) * 0.8));
+    } else if (rain < 10) {
+      sRain = Math.max(10, Math.round(35 - rain * 2));
+    }
+    let sPrice = 10;
+    if (mPrice < msp) {
+      const deficitPct = (msp - mPrice) / msp * 100;
+      sPrice = Math.min(100, Math.round(50 + deficitPct * 2.2));
+    } else if (mPrice <= msp * 1.04) {
+      sPrice = 25;
+    } else {
+      sPrice = 10;
+    }
+    let sLoan = 10;
+    if (days <= 7) {
+      sLoan = 98;
+    } else if (days <= 15) {
+      sLoan = 85;
+    } else if (days <= 30) {
+      sLoan = 65;
+    } else if (days <= 60) {
+      sLoan = 38;
+    } else {
+      sLoan = 10;
+    }
+    const compositeScore = Math.max(0, Math.min(100, Math.round(
+      0.35 * sRain + 0.35 * sPrice + 0.3 * sLoan
+    )));
+    const level = compositeScore > 80 ? "critical" : compositeScore >= 51 ? "watch" : "low";
+    const rootCauses = [];
+    if (sRain >= 70) {
+      if (rain <= 2) {
+        rootCauses.push({
+          id: "drought",
+          icon: "\u2022",
+          title: "Severe Rainfall Deficit (Drought Stress)",
+          desc: `3-day rainfall forecast is critically low at ${rain.toFixed(1)} mm, causing acute crop moisture stress and potential yield loss.`
+        });
+      } else {
+        rootCauses.push({
+          id: "excess_rain",
+          icon: "\u2022",
+          title: "Excessive Rainfall & Inundation Hazard",
+          desc: `Forecast of ${rain.toFixed(1)} mm rainfall over 3 days poses severe waterlogging and root aeration danger.`
+        });
+      }
+    }
+    if (sPrice >= 50) {
+      const deficitPct = Math.round((msp - mPrice) / msp * 100);
+      rootCauses.push({
+        id: "price_crash",
+        icon: "\u2022",
+        title: "Mandi Realization Below MSP",
+        desc: `Effective market rate of \u20B9${Math.round(mPrice).toLocaleString("en-IN")}/Qtl is ${deficitPct}% below Government MSP (\u20B9${Math.round(msp).toLocaleString("en-IN")}/Qtl), impacting repayment capacity.`
+      });
+    }
+    if (sLoan >= 65) {
+      rootCauses.push({
+        id: "loan_due",
+        icon: "\u2022",
+        title: "Imminent Loan Repayment Due Date",
+        desc: `Only ${days} days remaining until the next KCC / bank installment due date with tight liquidity buffer.`
+      });
+    }
+    return {
+      score: compositeScore,
+      level,
+      sRain,
+      sPrice,
+      sLoan,
+      rootCauses,
+      breakdown: [
+        { factorKey: "rain", score: sRain, weight: 0.35 },
+        { factorKey: "price", score: sPrice, weight: 0.35 },
+        { factorKey: "loan", score: sLoan, weight: 0.3 }
+      ]
+    };
+  }
   function generateSchedule(principal, annualRate, months, startDate = /* @__PURE__ */ new Date(), installmentsPaid = 0) {
-    const emi = calculateEMI(principal, annualRate, months);
-    let balance = principal;
+    const p = Math.max(0, Number(principal) || 0);
+    const r = Math.max(0, Number(annualRate) || 0);
+    const m = Math.max(1, parseInt(months, 10) || 12);
+    const emi = calculateEMI(p, r, m);
+    let balance = p;
     const schedule = [];
-    const r = annualRate / 12 / 100;
-    let currentDate = new Date(startDate);
-    const paidCount = Math.max(0, Math.min(months, Number(installmentsPaid) || 0));
+    const monthlyRate = r / 12 / 100;
+    let baseDate = new Date(startDate);
+    if (isNaN(baseDate.getTime())) {
+      baseDate = /* @__PURE__ */ new Date();
+      baseDate.setDate(1);
+      baseDate.setMonth(baseDate.getMonth() + 1);
+    }
+    const paidCount = Math.max(0, Math.min(m, Number(installmentsPaid) || 0));
     let unpaidArrears = 0;
+    let unpaidRolloversCount = 0;
     const today = /* @__PURE__ */ new Date();
     today.setHours(23, 59, 59, 999);
-    for (let i = 1; i <= months; i++) {
-      if (i > 1)
-        currentDate.setMonth(currentDate.getMonth() + 1);
-      const interest = balance * r;
+    let nextUnpaidDate = null;
+    let nextDueDaysRemaining = null;
+    for (let i = 1; i <= m; i++) {
+      const instDate = new Date(baseDate);
+      instDate.setMonth(baseDate.getMonth() + (i - 1));
+      const interest = balance * monthlyRate;
       let principalPart = emi - interest;
-      if (i === months) {
+      if (i === m) {
         principalPart = balance;
       }
       balance -= principalPart;
       if (balance < 0)
         balance = 0;
       const isPaid = i <= paidCount;
-      const isDue = currentDate <= today;
+      const isDue = instDate <= today;
       const rolloverArrears = isPaid ? 0 : unpaidArrears;
       const totalDue = isPaid ? 0 : emi + rolloverArrears;
       let status = isPaid ? "Paid" : isDue ? "Overdue" : "Upcoming";
-      if (!isPaid && rolloverArrears > 0)
+      if (!isPaid && rolloverArrears > 0) {
         status = "Overdue (rolled)";
-      if (!isPaid && isDue)
+        unpaidRolloversCount++;
+      } else if (!isPaid && isDue) {
+        unpaidRolloversCount++;
+      }
+      if (!isPaid && isDue) {
         unpaidArrears += emi;
+      }
+      if (!isPaid && !nextUnpaidDate) {
+        nextUnpaidDate = instDate;
+        const diffMs = instDate.getTime() - today.getTime();
+        nextDueDaysRemaining = Math.ceil(diffMs / (1e3 * 60 * 60 * 24));
+      }
       schedule.push({
         month: i,
-        date: currentDate.toISOString().slice(0, 10),
+        date: instDate.toISOString().slice(0, 10),
         emi,
         principal: principalPart,
         interest,
         balance,
         isPaid,
+        isDue,
         rolloverArrears,
         totalDue,
         status
       });
     }
+    const totalPayment = emi * m;
+    const totalInterest = Math.max(0, totalPayment - p);
+    const amountPaid = emi * paidCount;
+    const amountLeft = Math.max(0, totalPayment - amountPaid);
+    const progressPct = m > 0 ? Math.round(paidCount / m * 100) : 0;
     return {
       emi,
-      totalPayment: emi * months,
-      totalInterest: emi * months - principal,
+      totalPayment,
+      totalInterest,
+      amountPaid,
+      amountLeft,
+      progressPct,
+      paidCount,
+      totalMonths: m,
+      unpaidRolloversCount,
+      nextDueDate: nextUnpaidDate ? nextUnpaidDate.toISOString().slice(0, 10) : null,
+      nextDueDaysRemaining: nextDueDaysRemaining !== null ? nextDueDaysRemaining : 0,
       schedule
     };
   }
@@ -5771,6 +6303,12 @@
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta)
       meta.content = theme === "dark" ? "#142016" : "#31572c";
+    const globalButton = $("globalThemeToggleBtn");
+    if (globalButton) {
+      const label = theme === "dark" ? t("profile.useLightMode") : t("profile.useDarkMode");
+      globalButton.setAttribute("aria-label", label);
+      globalButton.setAttribute("title", label);
+    }
     const value = $("profileThemeVal");
     const button = $("themeToggleBtn");
     if (value)
@@ -5857,6 +6395,14 @@
     document.documentElement.lang = getLang();
     const lang = getLanguageByCode(getLang());
     selectedLabel.textContent = lang ? lang.nativeName : "English";
+    document.querySelectorAll("[data-i18n]").forEach((node) => {
+      if (node.children.length > 0)
+        return;
+      const key = node.dataset.i18n;
+      const value = t(key);
+      if (value !== key)
+        node.textContent = value;
+    });
     $("taglineText").textContent = t("brand.tagline");
     $("languageTitle").textContent = t("gate.choose");
     $("languagePrompt").textContent = t("gate.prompt");
@@ -6796,10 +7342,6 @@
           <span class="phenology-meta-val">${pheno.kc.toFixed(2)}</span>
         </div>
         <div class="phenology-meta-item">
-          <span class="phenology-meta-label">${escapeHtml(t("pheno.gdd"))}</span>
-          <span class="phenology-meta-val">${pheno.gddAccrued} \xB0C-days</span>
-        </div>
-        <div class="phenology-meta-item">
           <span class="phenology-meta-label">${escapeHtml(t("pheno.stageDuration"))}</span>
           <span class="phenology-meta-val">${pheno.daysInStage} / ${pheno.stageDuration}</span>
         </div>
@@ -6818,7 +7360,7 @@
       return;
     const current2 = weather.current || {};
     const temp = typeof current2.temperature_2m === "number" ? current2.temperature_2m : typeof current2.temperature === "number" ? current2.temperature : 28;
-    const feelsLike = typeof current2.apparent_temperature === "number" ? current2.apparent_temperature : typeof current2.apparentTemperature === "number" ? current2.apparentTemperature : temp;
+    const precipitation = typeof current2.precipitation === "number" ? current2.precipitation : typeof current2.precip_mm === "number" ? current2.precip_mm : 0;
     const rh = typeof current2.relative_humidity_2m === "number" ? current2.relative_humidity_2m : typeof current2.humidity === "number" ? current2.humidity : 60;
     const windSpd = typeof current2.wind_speed_10m === "number" ? current2.wind_speed_10m : typeof current2.windSpeed === "number" ? current2.windSpeed : 8;
     const windDir = typeof current2.wind_direction_10m === "number" ? current2.wind_direction_10m : typeof current2.windDirection === "number" ? current2.windDirection : 0;
@@ -6842,9 +7384,15 @@
     const uvLevel = uv < 3 ? t("tele.hydration.dry") : uv < 6 ? t("tele.hydration.moderate") : uv < 8 ? t("tele.hydration.good") : t("tele.hydration.saturated");
     mount.innerHTML = `
     <div class="telemetry-header">
-      <span class="telemetry-eyebrow">
-        ${gauge(16)} ${escapeHtml(t("tele.title"))}
-      </span>
+      <div class="telemetry-title-wrap">
+        <span class="telemetry-eyebrow">
+          ${gauge(16)} ${escapeHtml(t("tele.title"))}
+        </span>
+        <span class="context-help">
+          <button class="context-help__button" id="fieldConditionsHelp" type="button" aria-expanded="false" aria-controls="fieldConditionsHelpTip" aria-label="${escapeHtml(t("tele.helpButton"))}" title="${escapeHtml(t("tele.helpButton"))}">?</button>
+          <span class="context-help__tip" id="fieldConditionsHelpTip" role="tooltip" hidden>${escapeHtml(t("tele.contextHelp"))}</span>
+        </span>
+      </div>
     </div>
     <div class="telemetry-grid">
       <!-- 1. Temperature -->
@@ -6857,13 +7405,13 @@
         <div class="telemetry-card__sub">${escapeHtml(t("tele.maxMin", { max: weather.tempMaxC ?? 32, min: weather.daily?.tempMin ?? 22 }))}</div>
       </div>
 
-      <!-- 2. Apparent Temperature -->
+      <!-- 2. Live Precipitation -->
       <div class="telemetry-card">
         <div class="telemetry-card__head">
           <span class="telemetry-card__label">${escapeHtml(t("tele.feelsLike"))}</span>
-          <span class="telemetry-card__icon">${thermometer(18)}</span>
+          <span class="telemetry-card__icon">${cloud(18)}</span>
         </div>
-        <div class="telemetry-card__val">${feelsLike.toFixed(1)} &deg;C</div>
+        <div class="telemetry-card__val">${precipitation.toFixed(1)} mm</div>
         <div class="telemetry-card__sub">${escapeHtml(t("tele.thermalComfort"))}</div>
       </div>
 
@@ -7079,10 +7627,8 @@
       advisories = [{ severity: "info", titleKey: "adv.allClear.title", bodyKey: "adv.allClear.body", whyKey: "adv.allClear.why", params: {} }];
     }
     homeAdvisories = advisories;
-    const masked = session?.masked ?? `\u2022\u2022\u2022 ${(session?.phone ?? "").slice(-3)}`;
-    const name = session?.role === "officer" ? session.name ?? session.id : session?.role === "farmer" ? session.name ?? masked : "Guest";
-    const isMasked = name.includes("\u2022");
-    $("homeAvatar").textContent = isMasked ? name.match(/\d{3}$/)?.[0] ?? "\u2022\u2022\u2022" : (name || "?").trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+    const name = session?.role === "officer" ? session.name ?? session.id : session?.role === "farmer" ? session.name ?? draft.name ?? meCache?.profile?.display_name ?? "Farmer" : "Guest";
+    $("homeAvatar").textContent = (name || "?").trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
     $("homeTitle").textContent = t("home.hello", { name: name || "" });
     $("homeFarmLine").textContent = [eff.village, eff.districtName, eff.stateName].filter(Boolean).join(" \xB7 ");
     const guest = session?.role === "guest";
@@ -7307,13 +7853,13 @@
       <table class="mandi-table">
         <thead>
           <tr>
-            <th>APMC Mandi Yard & Location</th>
-            <th>Today's Modal Rate</th>
+            <th>${escapeHtml(t("mandi.table.location"))}</th>
+            <th>${escapeHtml(t("mandi.table.modalRate"))}</th>
             <th>${escapeHtml(t("mandi.table.ratePerKg"))}</th>
             <th>${escapeHtml(t("mandi.table.dailyRange"))}</th>
             <th>${escapeHtml(t("mandi.table.trend"))}</th>
             <th>${escapeHtml(t("mandi.table.mspStatus"))}</th>
-            <th>Arrival & Variety</th>
+            <th>${escapeHtml(t("mandi.table.arrival"))}</th>
             <th>${escapeHtml(t("mandi.table.takeHome"))}</th>
           </tr>
         </thead>
@@ -7326,13 +7872,13 @@
       const diffMsp = r.price - r.msp;
       const mspColor = diffMsp >= 0 ? "hsl(120 40% 30%)" : "hsl(0 60% 40%)";
       const mspBg = diffMsp >= 0 ? "hsl(120 40% 95%)" : "hsl(0 60% 95%)";
-      const mspText = diffMsp >= 0 ? `+\u20B9${diffMsp} (Above MSP)` : `-\u20B9${Math.abs(diffMsp)} (Below MSP)`;
+      const mspText = t(diffMsp >= 0 ? "mandi.aboveMsp" : "mandi.belowMsp", { amount: Math.abs(diffMsp).toLocaleString("en-IN") });
       return `
               <tr class="${isBest ? "best-net-row" : ""}">
                 <td>
                   <div style="font-weight:700; color:hsl(var(--foreground)); font-size:13px;">${escapeHtml(r.name)}</div>
                   <div style="font-size:11px; color:hsl(var(--muted-foreground)); margin-top:2px;">
-                    ${isBest ? `<span style="color:hsl(var(--primary)); font-weight:600;">${check(12)} Best Net (${r.distanceKm} km)</span>` : `${r.distanceKm} km away \xB7 ${r.operatingDays}`}
+                    ${isBest ? `<span style="color:hsl(var(--primary)); font-weight:600;">${check(12)} ${escapeHtml(t("mandi.bestNet"))} (${r.distanceKm} km)</span>` : escapeHtml(t("mandi.away", { distance: r.distanceKm, days: r.operatingDays }))}
                   </div>
                 </td>
                 <td style="font-weight:800; font-size:14px;">\u20B9${r.price.toLocaleString("en-IN")}/Qtl</td>
@@ -7355,7 +7901,7 @@
                 </td>
                 <td>
                   <div style="font-weight:800; font-size:14px; color:hsl(var(--primary));">\u20B9${r.net.toLocaleString("en-IN")}</div>
-                  <div style="font-size:10px; color:hsl(var(--muted-foreground));">Total Net (${r.distanceKm}km)</div>
+                  <div style="font-size:10px; color:hsl(var(--muted-foreground));">${escapeHtml(t("mandi.totalNet", { distance: r.distanceKm }))}</div>
                 </td>
               </tr>
             `;
@@ -7459,211 +8005,372 @@
     $("visitReasonCount").textContent = `${count}/50`;
     $("visitReasonCount").classList.toggle("field-meta--valid", count >= 50);
   }
-  function renderDistressMonitor() {
-    const mount = $("distressMonitorMount");
-    if (!mount)
+  var distressSimRain = 0;
+  var distressSimPriceDrop = 0;
+  var distressSimLoanDays = 15;
+  var tenureUnit = "years";
+  function renderDistressPlanner() {
+    const card = $("distressPlannerCard");
+    if (!card)
       return;
-    mount.innerHTML = `
-    <div class="distress-card">
-      <div class="distress-header">
-        <div class="distress-title-wrap">
-          <span class="distress-icon">${activity(17)}</span>
-          <div>
-            <h3>${escapeHtml(t("distress.title"))}</h3>
-            <p>${escapeHtml(t("distress.subtitle"))}</p>
-          </div>
-        </div>
-        <span class="distress-private">${escapeHtml(t("distress.planningNote"))}</span>
-      </div>
-      <div class="distress-score-row">
-        <div><span class="distress-score-label">${escapeHtml(t("distress.riskScore"))}</span><strong id="distressScoreValue">\u2014/100</strong></div>
-        <span class="distress-score-band" id="distressScoreBand">${escapeHtml(t("distress.moveSlider"))}</span>
-      </div>
-      <div class="distress-score-progress" role="progressbar" aria-label="Planning risk score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <span id="distressScoreProgress"></span>
-      </div>
-      <div class="distress-score-scale"><span>${escapeHtml(t("distress.scaleLow"))}</span><span>${escapeHtml(t("distress.scaleWatch"))}</span><span>${escapeHtml(t("distress.scaleHigh"))}</span></div>
-      <div class="distress-sliders">
-        <label class="distress-slider-field" for="distressRainInput">
-          <span><b>${escapeHtml(t("distress.rainLabel"))}</b><output id="distressRainValue">76 mm</output></span>
-          <input id="distressRainInput" type="range" min="0" max="100" value="76" step="1">
-          <small>${escapeHtml(t("distress.rainHint"))}</small>
-        </label>
-        <label class="distress-slider-field" for="distressPriceInput">
-          <span><b>${escapeHtml(t("distress.priceLabel"))}</b><output id="distressPriceValue">50%</output></span>
-          <input id="distressPriceInput" type="range" min="0" max="50" value="50" step="1">
-          <small>${escapeHtml(t("distress.priceHint"))}</small>
-        </label>
-        <label class="distress-slider-field" for="distressLoanInput">
-          <span><b>${escapeHtml(t("distress.loanLabel"))}</b><output id="distressLoanValue">3 days</output></span>
-          <input id="distressLoanInput" type="range" min="0" max="120" value="3" step="1">
-          <small>${escapeHtml(t("distress.loanHint"))}</small>
-        </label>
-      </div>
-      <p class="distress-note">${escapeHtml(t("distress.subtitle"))}</p>
-    </div>
-  `;
-    const inputs = {
-      rain: $("distressRainInput"),
-      price: $("distressPriceInput"),
-      loan: $("distressLoanInput")
-    };
-    const outputs = {
-      rain: $("distressRainValue"),
-      price: $("distressPriceValue"),
-      loan: $("distressLoanValue")
-    };
-    const scoreNode = $("distressScoreValue");
-    const bandNode = $("distressScoreBand");
-    const progressNode = $("distressScoreProgress");
-    const progressTrack = mount.querySelector(".distress-score-progress");
-    const update = () => {
-      const rain = Number(inputs.rain.value);
-      const price = Number(inputs.price.value);
-      const days = Number(inputs.loan.value);
-      const score = Math.max(0, Math.min(100, Math.round(
-        rain * 0.4 + price * 0.8 + Math.max(0, 30 - days) * 0.45
-      )));
-      const band = score >= 80 ? t("distress.critical") : score >= 60 ? t("distress.high") : score >= 35 ? t("distress.watch") : t("distress.low");
-      outputs.rain.textContent = `${rain} mm`;
-      outputs.price.textContent = `${price}%`;
-      outputs.loan.textContent = `${days} ${days === 1 ? "day" : "days"}`;
-      scoreNode.textContent = `${score}/100`;
-      bandNode.textContent = band;
-      bandNode.dataset.band = score >= 80 ? "critical" : score >= 60 ? "high" : score >= 35 ? "watch" : "low";
-      progressNode.style.width = `${score}%`;
-      progressTrack.setAttribute("aria-valuenow", String(score));
-    };
-    Object.values(inputs).forEach((input) => input.addEventListener("input", update));
-    update();
-  }
-  function renderLoanSchedule(result) {
-    const statusMount = $("loanStatusCards");
-    if (statusMount) {
-      statusMount.innerHTML = `
-      <div class="loan-status-card"><span>${escapeHtml(t("loan.status.emi"))}</span><strong>\u20B9${Math.round(result.emi).toLocaleString("en-IN")}</strong></div>
-      <div class="loan-status-card"><span>${escapeHtml(t("loan.status.totalPayable"))}</span><strong>\u20B9${Math.round(result.totalPayment).toLocaleString("en-IN")}</strong></div>
-      <div class="loan-status-card"><span>${escapeHtml(t("loan.status.totalInterest"))}</span><strong>\u20B9${Math.round(result.totalInterest).toLocaleString("en-IN")}</strong></div>
-    `;
+    const rainSlider = $("sliderRainSimMm");
+    const priceSlider = $("sliderPriceDropPct");
+    const loanSlider = $("sliderLoanDueDays");
+    const rainVal = rainSlider ? Number(rainSlider.value) : distressSimRain;
+    const priceDropPct = priceSlider ? Number(priceSlider.value) : distressSimPriceDrop;
+    const loanDaysVal = loanSlider ? Number(loanSlider.value) : distressSimLoanDays;
+    const draft = getDraftProfile() ?? {};
+    const crop = draft.crop || "cotton";
+    const mspBaseline = {
+      cotton: 7121,
+      onion: 1650,
+      soybean: 4892,
+      chilli: 7500,
+      tomato: 1800,
+      wheat: 2425,
+      rice: 2320,
+      groundnut: 6783
+    }[crop] || 2425;
+    const baseMandiPrice = Math.round(mspBaseline * 1.08);
+    const effectivePrice = Math.max(0, Math.round(baseMandiPrice * (1 - priceDropPct / 100)));
+    const diffMsp = effectivePrice - mspBaseline;
+    const distress = calculateDistressScore(rainVal, effectivePrice, mspBaseline, loanDaysVal);
+    const score = distress.score;
+    const level = distress.level;
+    const pill = $("distressScorePill");
+    if (pill) {
+      if (level === "critical") {
+        pill.className = "text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs bg-rose-100 text-rose-900 border-rose-300";
+        pill.textContent = t("distress.pillCritical", { score });
+      } else if (level === "watch") {
+        pill.className = "text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs bg-amber-100 text-amber-900 border-amber-300";
+        pill.textContent = t("distress.pillWatch", { score });
+      } else {
+        pill.className = "text-xs font-extrabold px-3 py-1.5 rounded-xl border shadow-2xs bg-emerald-100 text-emerald-900 border-emerald-300";
+        pill.textContent = t("distress.pillSafe", { score });
+      }
     }
-    const tableMount = $("loanScheduleMount");
-    if (tableMount && result.schedule) {
-      tableMount.innerHTML = `
-      <div class="section-head"><span class="eyebrow">${escapeHtml(t("loan.schedule.title"))}</span><span class="section-rule"></span></div>
-      <div class="mandi-table-wrapper loan-schedule-table-wrapper">
-        <table class="mandi-table loan-schedule-table">
-          <thead>
-            <tr>
-              <th>Paid on 1st?</th>
-              <th>${escapeHtml(t("loan.schedule.dueDateFull"))}</th>
-              <th>${escapeHtml(t("loan.schedule.baseEmi"))}</th>
-              <th>${escapeHtml(t("loan.schedule.rolloverArrears"))}</th>
-              <th>${escapeHtml(t("loan.schedule.totalDueMonth"))}</th>
-              <th>Principal</th>
-              <th>Interest</th>
-              <th>Status</th>
-              <th>${escapeHtml(t("loan.schedule.remainingPrincipal"))}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${result.schedule.map((s) => {
-        const isPaid = Boolean(s.isPaid);
-        const status = s.status || (isPaid ? "Paid" : "Upcoming");
-        const rowState = isPaid ? "paid" : status.startsWith("Overdue") ? "overdue" : "upcoming";
-        const arrears = Number(s.rolloverArrears) || 0;
-        const totalDue = Number(s.totalDue) || (isPaid ? 0 : Number(s.emi) || 0);
-        return `
-                <tr class="loan-row--${rowState}">
-                  <td data-label="Paid on 1st?" class="loan-paid-cell">
-                    <input type="checkbox" data-loan-paid-month="${s.month}" ${isPaid ? "checked" : ""} aria-label="Mark month ${s.month} as paid">
-                  </td>
-                  <td data-label="Due Date" class="loan-date-cell">${new Date(s.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
-                  <td data-label="Base EMI">\u20B9${Math.round(s.emi).toLocaleString("en-IN")}</td>
-                  <td data-label="Rollover Arrears">\u20B9${Math.round(arrears).toLocaleString("en-IN")}</td>
-                  <td data-label="Total Due this Month">\u20B9${Math.round(totalDue).toLocaleString("en-IN")}</td>
-                  <td data-label="Principal">\u20B9${Math.round(s.principal).toLocaleString("en-IN")}</td>
-                  <td data-label="Interest">\u20B9${Math.round(s.interest).toLocaleString("en-IN")}</td>
-                  <td data-label="Status"><span class="loan-status-pill loan-status-pill--${rowState}">${status}</span></td>
-                  <td data-label="Remaining Principal">\u20B9${Math.round(s.balance).toLocaleString("en-IN")}</td>
-                </tr>
-              `;
-      }).join("")}
-          </tbody>
-        </table>
-      </div>
-    `;
-      tableMount.querySelectorAll("[data-loan-paid-month]").forEach((box) => {
-        box.addEventListener("change", (event) => {
-          const data = getLoanData() ?? {};
-          const paidMonths = Number(event.target.dataset.loanPaidMonth);
-          saveLoanData({ ...data, installmentsPaid: event.target.checked ? paidMonths : Math.max(0, paidMonths - 1) });
-          renderLoan();
-        });
+    const warningBanner = $("distressWarningBanner");
+    const spikeReasonsList = $("spikeReasonsList");
+    if (warningBanner) {
+      if (score > 80) {
+        warningBanner.classList.remove("hidden");
+        if (spikeReasonsList) {
+          spikeReasonsList.innerHTML = distress.rootCauses.length > 0 ? distress.rootCauses.map((rc) => `
+              <div class="flex items-start gap-2 text-rose-950">
+                <span class="text-sm mt-0.5">${rc.icon}</span>
+                <div>
+                  <strong class="font-bold">${escapeHtml(rc.title)}:</strong>
+                  <span class="text-rose-900/90 ml-1">${escapeHtml(rc.desc)}</span>
+                </div>
+              </div>
+            `).join("") : `<div class="text-rose-900">${escapeHtml(t("distress.compound"))}</div>`;
+        }
+      } else {
+        warningBanner.classList.add("hidden");
+      }
+    }
+    const f1Val = $("factor1RainVal");
+    const f1Summary = $("factor1RainSummary");
+    const f1Badge = $("factor1RiskBadge");
+    const f1SliderDisplay = $("sliderRainValDisplay");
+    if (f1Val)
+      f1Val.textContent = `${rainVal.toFixed(1)} mm`;
+    if (f1SliderDisplay)
+      f1SliderDisplay.textContent = `${rainVal} mm`;
+    if (f1Summary) {
+      f1Summary.textContent = rainVal <= 2 ? t("distress.rainDrought") : rainVal >= 60 ? t("distress.rainFlood") : t("distress.rainNormal");
+    }
+    if (f1Badge) {
+      if (rainVal <= 2) {
+        f1Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200";
+        f1Badge.textContent = t("distress.rainDroughtBadge");
+      } else if (rainVal >= 60) {
+        f1Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200";
+        f1Badge.textContent = t("distress.rainFloodBadge");
+      } else {
+        f1Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200";
+        f1Badge.textContent = t("distress.normalBadge");
+      }
+    }
+    const f2Val = $("factor2PriceVal");
+    const f2MspComp = $("factor2MspComparison");
+    const f2Badge = $("factor2RiskBadge");
+    const f2SliderDisplay = $("sliderPriceDropDisplay");
+    if (f2Val)
+      f2Val.textContent = `\u20B9${effectivePrice.toLocaleString("en-IN")} / Qtl`;
+    if (f2SliderDisplay)
+      f2SliderDisplay.textContent = `${priceDropPct}%`;
+    if (f2MspComp) {
+      f2MspComp.textContent = t(diffMsp >= 0 ? "distress.mspAbove" : "distress.mspBelow", {
+        msp: mspBaseline.toLocaleString("en-IN"),
+        amount: Math.abs(diffMsp).toLocaleString("en-IN")
       });
+    }
+    if (f2Badge) {
+      if (diffMsp < 0) {
+        f2Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200";
+        f2Badge.textContent = t("distress.mspBelowBadge");
+      } else if (diffMsp <= mspBaseline * 0.04) {
+        f2Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200";
+        f2Badge.textContent = t("distress.mspAtMargin");
+      } else {
+        f2Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200";
+        f2Badge.textContent = t("distress.mspProfitable");
+      }
+    }
+    const f3Val = $("factor3LoanDaysVal");
+    const f3Summary = $("factor3LoanSummary");
+    const f3Badge = $("factor3RiskBadge");
+    const f3SliderDisplay = $("sliderLoanDaysDisplay");
+    if (f3Val)
+      f3Val.textContent = `${loanDaysVal} ${loanDaysVal === 1 ? t("loan.day") : t("loan.days")} ${t("loan.remainingLabel").toLowerCase()}`;
+    if (f3SliderDisplay)
+      f3SliderDisplay.textContent = `${loanDaysVal} ${t("loan.days")}`;
+    if (f3Summary) {
+      f3Summary.textContent = loanDaysVal <= 7 ? t("distress.loanUrgent") : loanDaysVal <= 30 ? t("distress.loanUpcoming") : t("distress.loanSafe");
+    }
+    if (f3Badge) {
+      if (loanDaysVal <= 7) {
+        f3Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200";
+        f3Badge.textContent = t("distress.badgeImminent");
+      } else if (loanDaysVal <= 30) {
+        f3Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200";
+        f3Badge.textContent = t("distress.badgeUpcoming");
+      } else {
+        f3Badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200";
+        f3Badge.textContent = t("distress.badgeSafe");
+      }
+    }
+    const scoreNum = $("distressScoreNumDisplay");
+    const levelText = $("distressScoreLevelText");
+    const meterBar = $("distressMeterBar");
+    if (scoreNum)
+      scoreNum.textContent = `${score} / 100`;
+    if (meterBar) {
+      meterBar.style.width = `${score}%`;
+      meterBar.style.backgroundColor = "hsl(var(--primary))";
+    }
+    if (levelText) {
+      if (score > 80) {
+        levelText.className = "text-xs font-bold text-rose-700 bg-rose-100/90 px-2.5 py-0.5 rounded-md";
+        levelText.textContent = t("distress.levelCritical");
+      } else if (score >= 51) {
+        levelText.className = "text-xs font-bold text-amber-800 bg-amber-100/90 px-2.5 py-0.5 rounded-md";
+        levelText.textContent = t("distress.levelWatch");
+      } else {
+        levelText.className = "text-xs font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-md";
+        levelText.textContent = t("distress.levelStable");
+      }
     }
   }
   function renderLoan() {
-    const data = getLoanData();
-    if (data) {
-      $("loanAmountInput").value = data.amount || "";
-      const unit = $("loanTenureUnit");
-      unit.value = data.tenureUnit || "months";
-      $("loanTenureInput").value = unit.value === "years" ? Math.max(1, Math.round((data.tenureMonths || 0) / 12)) : data.tenureMonths || "";
-      $("loanRateInput").value = data.rate || "";
-      $("loanFirstInstallmentInput").value = data.firstInstallmentDate || nextMonthDate();
-      syncPaidControls(data.installmentsPaid || 0, data.tenureMonths || 0);
-      if (data.amount > 0 && data.tenureMonths > 0 && data.rate >= 0 && data.rate <= 50) {
-        const result = generateSchedule(data.amount, data.rate, data.tenureMonths, data.firstInstallmentDate || nextMonthDate(), data.installmentsPaid || 0);
-        renderDistressMonitor();
-        renderLoanSchedule(result);
-        $("loanResultBox").hidden = false;
-      } else {
-        $("loanResultBox").hidden = true;
-      }
-    } else {
-      $("loanAmountInput").value = "50000";
-      $("loanTenureInput").value = "12";
-      $("loanTenureUnit").value = "months";
-      $("loanRateInput").value = "7.0";
-      $("loanFirstInstallmentInput").value = nextMonthDate();
-      syncPaidControls(0, 12);
-      $("loanResultBox").hidden = true;
+    const data = getLoanData() ?? {};
+    const principal = Number(data.amount) || 1e5;
+    const tenureMonths = Number(data.tenureMonths) || 24;
+    tenureUnit = data.tenureUnit || (tenureMonths % 12 === 0 ? "years" : "months");
+    const rate = Number(data.rate) !== void 0 && !isNaN(Number(data.rate)) ? Number(data.rate) : 4;
+    const firstDate = data.firstInstallmentDate || nextMonthDate();
+    const installmentsPaid = Math.max(0, Math.min(tenureMonths, Number(data.installmentsPaid) || 0));
+    const pInput = $("loanAmountInput");
+    if (pInput)
+      pInput.value = String(principal);
+    const pFormatted = $("loanAmountFormatted");
+    if (pFormatted)
+      pFormatted.textContent = `\u20B9${principal.toLocaleString("en-IN")}`;
+    const tInput = $("loanTenureInput");
+    if (tInput) {
+      tInput.value = tenureUnit === "years" ? String(Math.max(1, Math.round(tenureMonths / 12))) : String(tenureMonths);
     }
+    const uSelect = $("loanTenureUnit");
+    if (uSelect)
+      uSelect.value = tenureUnit;
+    const btnYears = $("btnTenureYears");
+    const btnMonths = $("btnTenureMonths");
+    if (btnYears && btnMonths) {
+      if (tenureUnit === "years") {
+        btnYears.className = "px-2 py-0.5 rounded-md font-bold bg-white text-emerald-800 shadow-2xs";
+        btnMonths.className = "px-2 py-0.5 rounded-md text-slate-600";
+      } else {
+        btnYears.className = "px-2 py-0.5 rounded-md text-slate-600";
+        btnMonths.className = "px-2 py-0.5 rounded-md font-bold bg-white text-emerald-800 shadow-2xs";
+      }
+    }
+    const rInput = $("loanRateInput");
+    if (rInput)
+      rInput.value = String(rate);
+    const dInput = $("loanFirstInstallmentInput");
+    if (dInput)
+      dInput.value = firstDate;
+    const dFormatted = $("firstInstallmentDateFormatted");
+    if (dFormatted && firstDate) {
+      try {
+        dFormatted.textContent = new Date(firstDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+      } catch {
+        dFormatted.textContent = firstDate;
+      }
+    }
+    const paidInput = $("loanPaidInput");
+    const paidSlider = $("loanPaidRange");
+    const paidLabel = $("paidMonthsCountLabel");
+    const paidSummary = $("loanPaidSummary");
+    if (paidInput) {
+      paidInput.max = String(tenureMonths);
+      paidInput.value = String(installmentsPaid);
+    }
+    if (paidSlider) {
+      paidSlider.max = String(tenureMonths);
+      paidSlider.value = String(installmentsPaid);
+    }
+    if (paidLabel) {
+      paidLabel.textContent = `${installmentsPaid} / ${tenureMonths} ${t("loan.paidLabel")}`;
+    }
+    if (paidSummary) {
+      paidSummary.textContent = t("loan.paidSummary", { paid: installmentsPaid, total: tenureMonths });
+    }
+    const result = generateSchedule(principal, rate, tenureMonths, firstDate, installmentsPaid);
+    const emiEl = $("outMonthlyEmi");
+    if (emiEl)
+      emiEl.innerHTML = `\u20B9${Math.round(result.emi).toLocaleString("en-IN")} <span class="text-sm font-normal text-slate-300">/ ${t("loan.monthUnit")}</span>`;
+    const sumTenure = $("summaryTenureText");
+    if (sumTenure)
+      sumTenure.textContent = `${tenureMonths} ${t("loan.months")}`;
+    const sumRate = $("summaryRateText");
+    if (sumRate)
+      sumRate.textContent = `${rate}% p.a.`;
+    const outInt = $("outTotalInterest");
+    if (outInt)
+      outInt.textContent = `\u20B9${Math.round(result.totalInterest).toLocaleString("en-IN")}`;
+    const outPay = $("outTotalPayable");
+    if (outPay)
+      outPay.textContent = `\u20B9${Math.round(result.totalPayment).toLocaleString("en-IN")}`;
+    const outPaid = $("outAmountPaid");
+    if (outPaid)
+      outPaid.textContent = `\u20B9${Math.round(result.amountPaid).toLocaleString("en-IN")}`;
+    const outPaidText = $("outInstallmentsPaidText");
+    if (outPaidText)
+      outPaidText.textContent = t("loan.installmentsCompleted", { count: result.paidCount });
+    const outLeft = $("outAmountLeft");
+    if (outLeft)
+      outLeft.textContent = `\u20B9${Math.round(result.amountLeft).toLocaleString("en-IN")}`;
+    const outLeftText = $("outInstallmentsRemainingText");
+    if (outLeftText)
+      outLeftText.textContent = t("loan.installmentsRemaining", { count: tenureMonths - result.paidCount });
+    const nextDueEl = $("outNextDueDate");
+    const nextCountEl = $("outNextDueCountdown");
+    if (nextDueEl) {
+      nextDueEl.textContent = result.nextDueDate ? new Date(result.nextDueDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : t("loan.loanFullyPaid");
+    }
+    if (nextCountEl) {
+      if (result.paidCount === tenureMonths) {
+        nextCountEl.className = "bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs";
+        nextCountEl.textContent = t("loan.allPaid");
+      } else if (result.nextDueDaysRemaining < 0) {
+        nextCountEl.className = "bg-rose-100 text-rose-900 border border-rose-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs";
+        nextCountEl.textContent = t("loan.overdueBy", { days: Math.abs(result.nextDueDaysRemaining) });
+      } else {
+        nextCountEl.className = "bg-white text-sky-900 border border-sky-300 text-xs font-black px-3 py-1.5 rounded-xl shadow-2xs";
+        nextCountEl.textContent = t("loan.daysRemaining", { days: result.nextDueDaysRemaining });
+      }
+    }
+    const progPct = $("loanProgressPctText");
+    if (progPct)
+      progPct.textContent = `${result.progressPct}% ${t("loan.paidLabel")}`;
+    const barPaid = $("loanPaidProgressBar");
+    if (barPaid)
+      barPaid.style.width = `${result.progressPct}%`;
+    const barLeft = $("loanLeftProgressBar");
+    if (barLeft)
+      barLeft.style.width = `${100 - result.progressPct}%`;
+    const pPaidText = $("progPaidText");
+    if (pPaidText)
+      pPaidText.textContent = `\u20B9${Math.round(result.amountPaid).toLocaleString("en-IN")}`;
+    const pLeftText = $("progLeftText");
+    if (pLeftText)
+      pLeftText.textContent = `\u20B9${Math.round(result.amountLeft).toLocaleString("en-IN")}`;
+    const rollBadge = $("rolloverSummaryBadge");
+    if (rollBadge) {
+      rollBadge.textContent = t("loan.unpaidRollovers", {
+        count: result.unpaidRolloversCount,
+        plural: result.unpaidRolloversCount === 1 ? "" : "s"
+      });
+      rollBadge.className = result.unpaidRolloversCount > 0 ? "text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300" : "text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200";
+    }
+    const tbody = $("loanScheduleTableBody");
+    if (tbody && result.schedule) {
+      tbody.innerHTML = result.schedule.map((s) => {
+        const isPaid = Boolean(s.isPaid);
+        const rowState = isPaid ? "paid" : s.status.startsWith("Overdue") ? "overdue" : "upcoming";
+        const arrears = Number(s.rolloverArrears) || 0;
+        const totalDue = Number(s.totalDue) || (isPaid ? 0 : Number(s.emi) || 0);
+        const dueDateFormatted = new Date(s.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+        return `
+        <tr class="loan-row--${rowState} border-b border-slate-100 hover:bg-slate-50/80 transition">
+          <td data-label="${escapeHtml(t("loan.schedule.paidOnFirst"))}" class="p-3 text-center loan-paid-cell">
+            <input type="checkbox" data-loan-paid-month="${s.month}" ${isPaid ? "checked" : ""} aria-label="Mark installment for month ${s.month} as paid" class="w-4 h-4 cursor-pointer accent-emerald-600">
+          </td>
+          <td data-label="${escapeHtml(t("loan.schedule.dueDate"))}" class="p-3 font-semibold text-slate-900 loan-date-cell">${dueDateFormatted}</td>
+          <td data-label="${escapeHtml(t("loan.schedule.baseEmi"))}" class="p-3 text-slate-700">\u20B9${Math.round(s.emi).toLocaleString("en-IN")}</td>
+          <td data-label="${escapeHtml(t("loan.schedule.rolloverArrears"))}" class="p-3 ${arrears > 0 ? "text-rose-700 font-bold" : "text-slate-500"}">\u20B9${Math.round(arrears).toLocaleString("en-IN")}</td>
+          <td data-label="${escapeHtml(t("loan.schedule.totalDueMonth"))}" class="p-3 font-bold text-slate-900">\u20B9${Math.round(totalDue).toLocaleString("en-IN")}</td>
+          <td data-label="${escapeHtml(t("loan.schedule.status"))}" class="p-3">
+            <span class="loan-status-pill loan-status-pill--${rowState} px-2 py-0.5 rounded-md text-[11px] font-bold ${isPaid ? "bg-emerald-100 text-emerald-800" : s.status.startsWith("Overdue") ? "bg-rose-100 text-rose-800" : "bg-slate-100 text-slate-700"}">
+              ${escapeHtml(t(`loan.status.${isPaid ? "paid" : s.status.startsWith("Overdue") ? s.status.includes("rolled") ? "overdueRolled" : "overdue" : "upcoming"}`))}
+            </span>
+          </td>
+          <td data-label="${escapeHtml(t("loan.schedule.remainingPrincipal"))}" class="p-3 text-slate-700 font-medium">\u20B9${Math.round(s.balance).toLocaleString("en-IN")}</td>
+        </tr>
+      `;
+      }).join("");
+      tbody.querySelectorAll("[data-loan-paid-month]").forEach((box) => {
+        box.addEventListener("change", (e) => {
+          const monthNum = Number(e.target.dataset.loanPaidMonth);
+          const newPaid = e.target.checked ? monthNum : Math.max(0, monthNum - 1);
+          saveAndSyncLoan({ installmentsPaid: newPaid });
+        });
+      });
+    }
+    if (result.nextDueDaysRemaining !== null && result.nextDueDaysRemaining >= 3) {
+      const loanDaysSlider = $("sliderLoanDueDays");
+      if (loanDaysSlider && document.activeElement !== loanDaysSlider) {
+        loanDaysSlider.value = String(Math.min(120, Math.max(3, result.nextDueDaysRemaining)));
+      }
+    }
+    renderDistressPlanner();
+  }
+  function saveAndSyncLoan(patch = {}) {
+    const current2 = getLoanData() ?? {};
+    const currentUnit = patch.tenureUnit || $("loanTenureUnit")?.value || tenureUnit || (current2.tenureUnit || "years");
+    tenureUnit = currentUnit;
+    const rawPrincipal = $("loanAmountInput")?.value;
+    const principal = patch.amount !== void 0 ? Number(patch.amount) || 1e5 : Number(rawPrincipal) || current2.amount || 1e5;
+    const rawTenure = $("loanTenureInput")?.value;
+    const tenureVal = Number(rawTenure) || 2;
+    const tenureMonths = patch.tenureMonths !== void 0 ? Number(patch.tenureMonths) || 24 : tenureUnit === "years" ? tenureVal * 12 : tenureVal;
+    const rawRate = $("loanRateInput")?.value;
+    const rate = patch.rate !== void 0 ? Number(patch.rate) : rawRate !== void 0 && rawRate !== "" && !isNaN(Number(rawRate)) ? Number(rawRate) : current2.rate !== void 0 ? current2.rate : 4;
+    const rawDate = $("loanFirstInstallmentInput")?.value;
+    const firstInstallmentDate = patch.firstInstallmentDate !== void 0 ? patch.firstInstallmentDate : rawDate || current2.firstInstallmentDate || nextMonthDate();
+    const rawPaid = $("loanPaidInput")?.value;
+    const paidVal = patch.installmentsPaid !== void 0 ? patch.installmentsPaid : Number(rawPaid) !== void 0 && !isNaN(Number(rawPaid)) ? Number(rawPaid) : current2.installmentsPaid || 0;
+    const installmentsPaid = Math.max(0, Math.min(tenureMonths, paidVal));
+    const updated = {
+      amount: principal,
+      tenureMonths,
+      tenureUnit,
+      rate,
+      firstInstallmentDate,
+      installmentsPaid,
+      ...patch
+    };
+    saveLoanData(updated);
+    renderLoan();
   }
   function nextMonthDate() {
     const date = /* @__PURE__ */ new Date();
     date.setDate(1);
     date.setMonth(date.getMonth() + 1);
     return date.toISOString().slice(0, 10);
-  }
-  function syncPaidControls(value, months) {
-    const entered = Number($("loanTenureInput").value) || 12;
-    const inferredMonths = $("loanTenureUnit").value === "years" ? entered * 12 : entered;
-    const max = Math.max(1, months || inferredMonths);
-    const paid = Math.max(0, Math.min(max, Number(value) || 0));
-    $("loanPaidInput").max = String(max);
-    $("loanPaidRange").max = String(max);
-    $("loanPaidInput").value = String(paid);
-    $("loanPaidRange").value = String(paid);
-    $("loanPaidSummary").textContent = `${paid} of ${max}`;
-  }
-  function onLoanSubmit(e) {
-    e.preventDefault();
-    const amt = parseFloat($("loanAmountInput").value);
-    const enteredTenure = parseInt($("loanTenureInput").value, 10);
-    const unit = $("loanTenureUnit").value;
-    const ten = unit === "years" ? enteredTenure * 12 : enteredTenure;
-    const rate = parseFloat($("loanRateInput").value);
-    const firstInstallmentDate = $("loanFirstInstallmentInput").value || nextMonthDate();
-    const installmentsPaid = Math.max(0, Math.min(ten, parseInt($("loanPaidInput").value, 10) || 0));
-    if (amt > 0 && ten > 0 && rate >= 0 && rate <= 50) {
-      $("loanFormError").hidden = true;
-      saveLoanData({ amount: amt, tenureMonths: ten, tenureUnit: unit, rate, firstInstallmentDate, installmentsPaid });
-      renderLoan();
-    } else {
-      $("loanFormError").textContent = "Enter a loan amount, a valid tenure, and an interest rate from 0% to 50%.";
-      $("loanFormError").hidden = false;
-    }
   }
   function renderProfile() {
     const session = getSession();
@@ -7697,11 +8404,15 @@
     $("profileNameDisplay").textContent = name;
     $("profilePhoneDisplay").textContent = `${t("profile.phoneLabel")}: ${masked}`;
     $("profileEmailVal").textContent = draft.email || t("profile.notAdded");
-    $("profileContactVal").textContent = { call: t("profile.phone"), sms: "SMS", whatsapp: "WhatsApp" }[draft.contactPreference] || t("profile.phone");
+    $("profileContactVal").textContent = {
+      call: t("profile.phone"),
+      sms: t("profile.sms"),
+      whatsapp: t("profile.whatsapp")
+    }[draft.contactPreference] || t("profile.phone");
     const isMasked = name.includes("\u2022");
     $("profileAvatar").textContent = isMasked ? name.match(/\d{3}$/)?.[0] ?? "\u2022\u2022\u2022" : (name || "?").trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
     $("profileLocVal").textContent = `${eff.village} \xB7 ${eff.districtName} \xB7 ${eff.stateName}`;
-    $("profileLandVal").textContent = `${eff.areaAcres} acres \xB7 ${t("soil." + eff.soilType)} \xB7 ${t("irrig." + eff.irrigation)}`;
+    $("profileLandVal").textContent = `${eff.areaAcres} ${t("unit.acres")} \xB7 ${t("soil." + eff.soilType)} \xB7 ${t("irrig." + eff.irrigation)}`;
     $("profileCropVal").textContent = `${t("crop." + eff.crop)} (${eff.variety}) \xB7 ${t("stage." + eff.growthStage)}`;
     $("profileLangVal").textContent = getLanguageByCode(getLang())?.nativeName ?? "English";
   }
@@ -7973,23 +8684,83 @@
     $("advisoryDetailListen").addEventListener("click", onAdvisoryDetailListen);
     $("ackBtn").addEventListener("click", onAcknowledge);
     $("advisoryDetailBack").addEventListener("click", () => go("home"));
-    $("loanForm").addEventListener("submit", onLoanSubmit);
+    $("sliderRainSimMm")?.addEventListener("input", () => renderDistressPlanner());
+    $("sliderPriceDropPct")?.addEventListener("input", () => renderDistressPlanner());
+    $("sliderLoanDueDays")?.addEventListener("input", () => renderDistressPlanner());
+    $("loanAmountInput")?.addEventListener("input", () => saveAndSyncLoan());
+    $("loanTenureInput")?.addEventListener("input", () => saveAndSyncLoan());
+    $("loanRateInput")?.addEventListener("input", () => saveAndSyncLoan());
+    $("loanFirstInstallmentInput")?.addEventListener("change", () => saveAndSyncLoan());
+    $("loanPaidInput")?.addEventListener("input", (event) => {
+      const val = Number(event.target.value) || 0;
+      if ($("loanPaidRange"))
+        $("loanPaidRange").value = String(val);
+      saveAndSyncLoan({ installmentsPaid: val });
+    });
+    $("loanPaidRange")?.addEventListener("input", (event) => {
+      const val = Number(event.target.value) || 0;
+      if ($("loanPaidInput"))
+        $("loanPaidInput").value = String(val);
+      saveAndSyncLoan({ installmentsPaid: val });
+    });
+    $("loanTenureUnit")?.addEventListener("change", (event) => {
+      tenureUnit = event.target.value;
+      saveAndSyncLoan({ tenureUnit });
+    });
+    $("btnTenureYears")?.addEventListener("click", () => {
+      if (tenureUnit !== "years") {
+        tenureUnit = "years";
+        const curr = Number($("loanTenureInput")?.value) || 24;
+        const input = $("loanTenureInput");
+        if (input)
+          input.value = String(Math.max(1, Math.round(curr / 12)));
+        if ($("loanTenureUnit"))
+          $("loanTenureUnit").value = "years";
+        saveAndSyncLoan({ tenureUnit: "years" });
+      }
+    });
+    $("btnTenureMonths")?.addEventListener("click", () => {
+      if (tenureUnit !== "months") {
+        tenureUnit = "months";
+        const curr = Number($("loanTenureInput")?.value) || 2;
+        const input = $("loanTenureInput");
+        if (input)
+          input.value = String(curr * 12);
+        if ($("loanTenureUnit"))
+          $("loanTenureUnit").value = "months";
+        saveAndSyncLoan({ tenureUnit: "months" });
+      }
+    });
     document.querySelectorAll("[data-loan-amount]").forEach((button) => {
       button.addEventListener("click", () => {
-        $("loanAmountInput").value = button.dataset.loanAmount;
+        const amt = Number(button.dataset.loanAmount);
+        const input = $("loanAmountInput");
+        if (input)
+          input.value = String(amt);
+        saveAndSyncLoan({ amount: amt });
       });
     });
     document.querySelectorAll("[data-loan-tenure]").forEach((button) => {
       button.addEventListener("click", () => {
         const months = Number(button.dataset.loanTenure);
-        $("loanTenureUnit").value = "years";
-        $("loanTenureInput").value = String(months / 12);
-        syncPaidControls($("loanPaidInput").value, months);
+        const input = $("loanTenureInput");
+        if (input) {
+          if (tenureUnit === "years") {
+            input.value = String(months / 12);
+          } else {
+            input.value = String(months);
+          }
+        }
+        saveAndSyncLoan({ tenureMonths: months });
       });
     });
     document.querySelectorAll("[data-loan-rate]").forEach((button) => {
       button.addEventListener("click", () => {
-        $("loanRateInput").value = button.dataset.loanRate;
+        const rate = Number(button.dataset.loanRate);
+        const input = $("loanRateInput");
+        if (input)
+          input.value = String(rate);
+        saveAndSyncLoan({ rate });
       });
     });
     document.querySelectorAll("[data-loan-date]").forEach((button) => {
@@ -8003,16 +8774,20 @@
           date.setMonth(9, 1);
         if (button.dataset.loanDate === "january")
           date.setMonth(0, 1);
-        $("loanFirstInstallmentInput").value = date.toISOString().slice(0, 10);
+        const iso = date.toISOString().slice(0, 10);
+        const input = $("loanFirstInstallmentInput");
+        if (input)
+          input.value = iso;
+        saveAndSyncLoan({ firstInstallmentDate: iso });
       });
     });
-    $("loanPaidInput").addEventListener("input", (event) => syncPaidControls(event.target.value));
-    $("loanPaidRange").addEventListener("input", (event) => syncPaidControls(event.target.value));
-    $("loanTenureUnit").addEventListener("change", () => {
-      const input = $("loanTenureInput");
-      const months = Number(input.value) || 0;
-      input.value = $("loanTenureUnit").value === "years" ? Math.max(1, Math.round(months / 12)) : months * 12 || "";
-      syncPaidControls($("loanPaidInput").value);
+    $("btnMarkAllPaid")?.addEventListener("click", () => {
+      const data = getLoanData() ?? {};
+      const tenureMonths = data.tenureMonths || 24;
+      saveAndSyncLoan({ installmentsPaid: tenureMonths });
+    });
+    $("btnResetChecklist")?.addEventListener("click", () => {
+      saveAndSyncLoan({ installmentsPaid: 0 });
     });
     $("mandiQtyInput").addEventListener("input", onMandiQtyChange);
     officerVisitToggleBtn.addEventListener("click", onToggleVisitForm);
@@ -8025,6 +8800,27 @@
     $("btnEditLang").addEventListener("click", () => openPickerBtn.click());
     $("profileSignoutBtn").addEventListener("click", onSignout);
     $("themeToggleBtn").addEventListener("click", toggleTheme);
+    $("globalThemeToggleBtn").addEventListener("click", toggleTheme);
+    $("agronomyTelemetryMount").addEventListener("click", (event) => {
+      const button = event.target.closest("#fieldConditionsHelp");
+      if (!button)
+        return;
+      const tip = $("fieldConditionsHelpTip");
+      const isOpen = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!isOpen));
+      if (tip)
+        tip.hidden = isOpen;
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape")
+        return;
+      const button = $("fieldConditionsHelp");
+      const tip = $("fieldConditionsHelpTip");
+      if (button && tip) {
+        button.setAttribute("aria-expanded", "false");
+        tip.hidden = true;
+      }
+    });
     $("btnEditProfileContact").addEventListener("click", () => {
       $("profileFormSection").hidden = false;
       $("profileOverviewSection").hidden = true;
