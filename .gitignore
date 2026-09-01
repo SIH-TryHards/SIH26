@@ -34,3 +34,5 @@ scratch_*.txt
 scratch_*.log
 *.tmp
 *.bak
+*.env
+!.env.example
