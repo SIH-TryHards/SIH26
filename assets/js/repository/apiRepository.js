@@ -168,4 +168,54 @@ export const apiRepository = {
       return { list: [], counts: { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0, TOTAL: 0 } };
     });
   },
+
+  /* ---- Distress Alerts (Backend APIs) ---- */
+  scoreDistress(payload, token) {
+    return request('/distress/score', { body: payload, token });
+  },
+
+  getOfficerAlerts(token) {
+    return request('/officer/alerts', { method: 'GET', token });
+  },
+
+  getOfficerAlertDetail(alertId, token) {
+    return request('/officer/alerts/' + alertId, { method: 'GET', token });
+  },
+
+
+  officerAlertAction(alertId, actionType, notes, resolve, token) {
+    return request('/officer/alerts/' + alertId + '/action', {
+      body: { action_type: actionType, notes, resolve },
+      token
+    });
+  },
+
+  /* ---- Gnani TTS Integration ---- */
+  async getTTS(payload) {
+    let res;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try {
+      res = await fetch(`${API_BASE_URL}/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch {
+      throw { code: 'NETWORK', message: 'Service unreachable.' };
+    } finally {
+      clearTimeout(timeout);
+    }
+    
+    if (!res.ok) {
+       throw { code: 'NETWORK', message: 'TTS request failed.' };
+    }
+    const contentType = res.headers.get('Content-Type') || '';
+    if (contentType.startsWith('audio/')) {
+        return await res.blob();
+    }
+    throw { code: 'FORMAT', message: 'Expected audio response.' };
+  }
 };
+

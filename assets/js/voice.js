@@ -34,18 +34,20 @@ function voiceFor(bcp47) {
  * Speak a queue of strings as one utterance chain.
  * @returns {{ok:boolean, reason?:'unsupported'|'empty'|'fallback-voice'}}
  */
-export function speak(parts, bcp47, { onStart, onEnd } = {}) {
+
+let currentAudio = null;
+
+function speakFallback(text, bcp47, onStart, onEnd) {
   if (!synth) return { ok: false, reason: 'unsupported' };
   synth.cancel();
-
-  const text = (Array.isArray(parts) ? parts : [parts]).filter(Boolean).join('. ');
+  
   if (!text.trim()) return { ok: false, reason: 'empty' };
 
   const utter = new SpeechSynthesisUtterance(text);
   const voice = voiceFor(bcp47);
   if (voice) utter.voice = voice;
   utter.lang = bcp47;
-  utter.rate = 0.92; /* slightly slow — instructional content */
+  utter.rate = 0.92;
   utter.pitch = 1;
 
   utter.addEventListener('start', () => onStart?.());
@@ -56,10 +58,56 @@ export function speak(parts, bcp47, { onStart, onEnd } = {}) {
   return { ok: true, reason: voice ? 'voice' : 'fallback-voice' };
 }
 
+export async function speak(parts, bcp47, { onStart, onEnd } = {}) {
+  const text = (Array.isArray(parts) ? parts : [parts]).filter(Boolean).join('. ');
+  if (!text.trim()) return { ok: false, reason: 'empty' };
+
+  try {
+    const { repository } = await import('./repository/index.js');
+    const blob = await repository.getTTS({ text, language: bcp47, speed: 1.0 });
+    
+    if (blob) {
+       return await new Promise((resolve) => {
+         const url = URL.createObjectURL(blob);
+         const audio = new Audio(url);
+         currentAudio = audio;
+         
+         audio.onplay = () => onStart?.();
+         audio.onended = () => {
+             URL.revokeObjectURL(url);
+             currentAudio = null;
+             onEnd?.();
+             resolve({ ok: true, reason: 'gnani' });
+         };
+         audio.onerror = () => {
+             URL.revokeObjectURL(url);
+             currentAudio = null;
+             resolve(speakFallback(text, bcp47, onStart, onEnd));
+         };
+         audio.play().catch(() => {
+             URL.revokeObjectURL(url);
+             currentAudio = null;
+             resolve(speakFallback(text, bcp47, onStart, onEnd));
+         });
+       });
+    }
+  } catch (err) {
+    // silently fallback
+  }
+
+  return speakFallback(text, bcp47, onStart, onEnd);
+}
+
 export function stop() {
+  if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+  }
   synth?.cancel();
 }
 
 export function isSpeaking() {
-  return Boolean(synth?.speaking);
+  return Boolean(currentAudio && !currentAudio.paused) || Boolean(synth?.speaking);
 }
+

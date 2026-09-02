@@ -228,4 +228,23 @@ export const demoRepository = {
 
     return { list, counts };
   },
+
+  scoreDistress(payload, token) {
+    return Promise.resolve({ alert_id: 999, risk_score: 80, risk_level: 'high', reasons: ['Mock reasons'] });
+  },
+  getOfficerAlerts(token) {
+    return Promise.resolve({ alerts: [], counts: { critical: 0, high: 0, medium: 0, low: 0 } });
+  },
+  getOfficerAlertDetail(alertId, token) {
+    return Promise.resolve({ id: alertId, risk_score: 80, risk_level: 'high', status: 'open', reasons: [], farmer: {name: 'Demo'}, interventions: [] });
+  },
+
+  officerAlertAction(alertId, actionType, notes, resolve, token) {
+    return Promise.resolve({ ok: true });
+  },
+
+  async getTTS(payload) {
+    return Promise.reject({ code: 'OFFLINE', message: 'TTS requires network.' });
+  }
 };
+

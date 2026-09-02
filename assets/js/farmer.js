@@ -1719,7 +1719,7 @@ function paintAdvisoryDetailListen(speaking) {
     : `${icons.speaker(16)}<span>${escapeHtml(t('home.listen'))}</span>`;
 }
 
-function onListen() {
+async function onListen() {
   if (voice.isSpeaking()) {
     voice.stop();
     paintListenButton(false);
@@ -1732,7 +1732,7 @@ function onListen() {
     return [t(a.titleKey, p), t(a.bodyKey, p)];
   });
 
-  const result = voice.speak(parts, locale, {
+  const result = await voice.speak(parts, locale, {
     onStart: () => paintListenButton(true),
     onEnd: () => paintListenButton(false),
   });
@@ -1745,12 +1745,23 @@ function onListen() {
   }
 }
 
-function onAdvisoryDetailListen() {
+async function onAdvisoryDetailListen() {
   if (voice.isSpeaking()) {
     voice.stop();
     paintAdvisoryDetailListen(false);
     return;
   }
+
+  const a = homeAdvisories[selectedAdvisoryIndex];
+  if (!a) return;
+  const p = renderParams(a.params);
+  const locale = getLanguageByCode(getLang())?.locale ?? 'en-IN';
+  const result = await voice.speak([t(a.titleKey, p), t(a.bodyKey, p), t(a.whyKey, p)], locale, {
+    onStart: () => paintAdvisoryDetailListen(true),
+    onEnd: () => paintAdvisoryDetailListen(false),
+  });
+  $('advisoryVoiceNote').textContent = result.ok ? '' : t('home.voiceUnavailable');
+}
 
   const a = homeAdvisories[selectedAdvisoryIndex];
   if (!a) return;

@@ -25,7 +25,8 @@ from pathlib import Path
 from typing import Literal
 
 import jwt
-from fastapi import FastAPI, Header, HTTPException, Query
+from fastapi import FastAPI, Header, HTTPException, Query, Response
+import base64
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -33,6 +34,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SCHEMA_VERSION = 3
 
 APP_ENV = os.environ.get("APP_ENV", "development").strip().lower()
+
+GNANI_TTS_API_KEY = os.environ.get("GNANI_TTS_API_KEY", "")
+GNANI_TTS_ENABLED = os.environ.get("GNANI_TTS_ENABLED", "false").lower() == "true"
+GNANI_TTS_MODEL = os.environ.get("GNANI_TTS_MODEL", "timbre-v2.5")
+GNANI_TTS_API_URL = os.environ.get("GNANI_TTS_API_URL", "https://tts.gnani.ai/v2/tts")
+
+GNANI_LANG_MAP = {
+    "en": "en-IN",
+    "hi": "hi-IN",
+    "mr": "mr-IN",
+    "bn": "bn-IN",
+    "ta": "ta-IN",
+    "te": "te-IN"
+}
+
+GNANI_VOICE_MAP = {
+    "en-IN": "Nalini",
+    "hi-IN": "Nalini",
+    "mr-IN": "Nalini",
+    "bn-IN": "Nalini",
+    "ta-IN": "Nalini",
+    "te-IN": "Nalini"
+}
+
+TTS_CACHE = {}
 IS_PRODUCTION = APP_ENV in {"production", "prod"}
 
 
@@ -417,6 +443,13 @@ class InterventionIn(StrictModel):
         if self.resolve and self.action_type != "resolved":
             raise ValueError("resolve is only valid with action_type='resolved'")
         return self
+
+
+class TTSRequestIn(BaseModel):
+    text: str
+    language: str
+    voice: str | None = None
+    speed: float = 1.0
 
 # ---------------------------------------------------------------- routes
 
@@ -982,3 +1015,59 @@ def officer_alert_action(alert_id: int, body: InterventionIn, authorization: str
             c.execute("UPDATE distress_alerts SET status = ?, updated_at = ? WHERE id = ?", (body.action_type, now, alert_id))
 
     return {"data": {"ok": True}}
+
+@app.post("/api/v1/tts")
+def generate_tts(body: TTSRequestIn, authorization: str | None = Header(default=None)):
+    if not GNANI_TTS_ENABLED or not GNANI_TTS_API_KEY:
+        raise HTTPException(503, {"error": {"code": "TTS_DISABLED", "message": "TTS service is disabled."}})
+    
+    # Normalize language
+    base_lang = body.language.split("-")[0].lower()
+    gnani_lang = GNANI_LANG_MAP.get(base_lang, "hi-IN")
+    gnani_voice = body.voice or GNANI_VOICE_MAP.get(gnani_lang, "Nalini")
+    
+    # Normalize text (remove HTML, condense whitespace)
+    text = re.sub(r'<[^>]+>', '', body.text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    if len(text) > 2000:
+        text = text[:2000] # Safe truncate
+        
+    cache_key = f"{gnani_lang}:{gnani_voice}:{body.speed}:{hash(text)}"
+    if cache_key in TTS_CACHE:
+        return Response(content=TTS_CACHE[cache_key], media_type="audio/mpeg")
+        
+    req = urllib.request.Request(GNANI_TTS_API_URL, method="POST")
+    req.add_header("X-API-Key-ID", GNANI_TTS_API_KEY)
+    req.add_header("Content-Type", "application/json")
+    
+    payload = json.dumps({
+        "text": text,
+        "language": gnani_lang,
+        "voice": gnani_voice,
+        "speed": body.speed
+    }).encode("utf-8")
+    
+    try:
+        with urllib.request.urlopen(req, data=payload, timeout=8) as res:
+            audio_data = res.read()
+            content_type = res.headers.get("Content-Type", "")
+            
+            if "application/json" in content_type:
+                data = json.loads(audio_data.decode("utf-8"))
+                audio_str = data.get("audio", data.get("audioContent", ""))
+                if audio_str:
+                    audio_data = base64.b64decode(audio_str)
+                    
+            if len(TTS_CACHE) > 100:
+                TTS_CACHE.pop(next(iter(TTS_CACHE)))
+            TTS_CACHE[cache_key] = audio_data
+            
+            return Response(content=audio_data, media_type="audio/mpeg")
+            
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            raise HTTPException(429, {"error": {"code": "RATE_LIMITED", "message": "Too many requests"}})
+        raise HTTPException(502, {"error": {"code": "TTS_PROVIDER_ERROR", "message": f"Provider error {e.code}"}})
+    except Exception as e:
+        raise HTTPException(503, {"error": {"code": "TTS_UNAVAILABLE", "message": "Network timeout or failure."}})
