@@ -153,17 +153,12 @@ function toggleTheme() {
 
 /* ---------- S1 language gate ---------- */
 
-function speak(language) {
-  if (!('speechSynthesis' in window)) {
-    voiceNote.textContent = t('gate.unavailable');
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const speech = new SpeechSynthesisUtterance(language.nativeName);
-  speech.lang = language.locale;
-  speech.rate = 0.85;
-  window.speechSynthesis.speak(speech);
-  voiceNote.textContent = t('gate.preview', { language: language.nativeName });
+async function speak(language) {
+  voice.stop();
+  const result = await voice.speak(language.nativeName, language.locale);
+  voiceNote.textContent = result.ok
+    ? t('gate.preview', { language: language.nativeName })
+    : t('gate.unavailable');
 }
 
 function renderLanguageTiles() {
