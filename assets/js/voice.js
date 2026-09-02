@@ -63,7 +63,8 @@ export async function speak(parts, bcp47, { onStart, onEnd } = {}) {
   if (!text.trim()) return { ok: false, reason: 'empty' };
 
   try {
-    const { repository } = await import('./repository/index.js');
+    const { getRepository } = await import('./repository/index.js');
+    const repository = await getRepository();
     const blob = await repository.getTTS({ text, language: bcp47, speed: 1.0 });
     
     if (blob) {

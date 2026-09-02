@@ -20,12 +20,15 @@ import sqlite3
 import urllib.request
 import urllib.parse
 import logging
+import time
+import threading
+from collections import OrderedDict, deque
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 
 import jwt
-from fastapi import FastAPI, Header, HTTPException, Query, Response
+from fastapi import FastAPI, Header, HTTPException, Query, Request, Response
 import base64
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -38,7 +41,12 @@ APP_ENV = os.environ.get("APP_ENV", "development").strip().lower()
 GNANI_TTS_API_KEY = os.environ.get("GNANI_TTS_API_KEY", "")
 GNANI_TTS_ENABLED = os.environ.get("GNANI_TTS_ENABLED", "false").lower() == "true"
 GNANI_TTS_MODEL = os.environ.get("GNANI_TTS_MODEL", "timbre-v2.5")
-GNANI_TTS_API_URL = os.environ.get("GNANI_TTS_API_URL", "https://tts.gnani.ai/v2/tts")
+GNANI_TTS_API_URL = os.environ.get(
+    "GNANI_TTS_API_URL",
+    "https://api.vachana.ai/api/v1/tts/inference",
+)
+if GNANI_TTS_MODEL != "timbre-v2.5":
+    raise RuntimeError("GNANI_TTS_MODEL must remain 'timbre-v2.5'")
 
 GNANI_LANG_MAP = {
     "en": "en-IN",
@@ -50,15 +58,28 @@ GNANI_LANG_MAP = {
 }
 
 GNANI_VOICE_MAP = {
-    "en-IN": "Nalini",
+    "en-IN": "Kaveri",
     "hi-IN": "Nalini",
-    "mr-IN": "Nalini",
-    "bn-IN": "Nalini",
-    "ta-IN": "Nalini",
-    "te-IN": "Nalini"
+    "mr-IN": "Zahira",
+    "bn-IN": "Kirra",
+    "ta-IN": "Asmita",
+    "te-IN": "Suhana",
 }
 
-TTS_CACHE = {}
+GNANI_TTS_AUDIO_CONFIG = {
+    "container": "mp3",
+    "num_channels": 1,
+    "sample_rate": 48000,
+    "sample_width": 2,
+    "bitrate": "128k",
+}
+TTS_MAX_TEXT_CHARS = 2000
+TTS_CACHE_MAX_ENTRIES = 32
+TTS_RATE_LIMIT_REQUESTS = 10
+TTS_RATE_LIMIT_WINDOW_SECONDS = 60
+TTS_CACHE = OrderedDict()
+TTS_RATE_BUCKETS = OrderedDict()
+TTS_STATE_LOCK = threading.Lock()
 IS_PRODUCTION = APP_ENV in {"production", "prod"}
 
 
@@ -445,11 +466,35 @@ class InterventionIn(StrictModel):
         return self
 
 
-class TTSRequestIn(BaseModel):
-    text: str
-    language: str
-    voice: str | None = None
-    speed: float = 1.0
+class TTSRequestIn(StrictModel):
+    text: str = Field(min_length=1, max_length=TTS_MAX_TEXT_CHARS)
+    language: str = Field(min_length=2, max_length=10)
+    voice: str | None = Field(default=None, min_length=1, max_length=40)
+    speed: float = Field(default=1.0, ge=0.85, le=1.15, allow_inf_nan=False)
+
+    @field_validator("text")
+    @classmethod
+    def text_must_contain_content(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("text must contain at least one non-whitespace character")
+        return value
+
+    @field_validator("language")
+    @classmethod
+    def normalize_project_locale(cls, value: str) -> str:
+        normalized = value.strip().replace("_", "-").lower()
+        base = normalized.split("-", 1)[0]
+        locale = GNANI_LANG_MAP.get(base)
+        if locale is None or normalized not in {base, locale.lower()}:
+            raise ValueError("language must be one of the supported project locales")
+        return locale
+
+    @model_validator(mode="after")
+    def voice_must_match_project_locale(self):
+        expected = GNANI_VOICE_MAP[self.language]
+        if self.voice is not None and self.voice != expected:
+            raise ValueError(f"voice must be '{expected}' for language {self.language}")
+        return self
 
 # ---------------------------------------------------------------- routes
 
@@ -1016,58 +1061,110 @@ def officer_alert_action(alert_id: int, body: InterventionIn, authorization: str
 
     return {"data": {"ok": True}}
 
-@app.post("/api/v1/tts")
-def generate_tts(body: TTSRequestIn, authorization: str | None = Header(default=None)):
+def _tts_client_key(request: Request) -> str:
+    """Use the direct peer address; do not trust a caller-provided IP header."""
+    return request.client.host if request.client else "unknown"
+
+
+def _check_tts_rate_limit(client_key: str) -> None:
+    now = time.monotonic()
+    with TTS_STATE_LOCK:
+        bucket = TTS_RATE_BUCKETS.setdefault(client_key, deque())
+        while bucket and now - bucket[0] >= TTS_RATE_LIMIT_WINDOW_SECONDS:
+            bucket.popleft()
+        if len(bucket) >= TTS_RATE_LIMIT_REQUESTS:
+            raise HTTPException(
+                429,
+                {"error": {"code": "TTS_RATE_LIMITED", "message": "Too many TTS requests. Try again later."}},
+                headers={"Retry-After": str(TTS_RATE_LIMIT_WINDOW_SECONDS)},
+            )
+        bucket.append(now)
+        TTS_RATE_BUCKETS.move_to_end(client_key)
+        while len(TTS_RATE_BUCKETS) > 1024:
+            TTS_RATE_BUCKETS.popitem(last=False)
+
+
+def _provider_audio(response) -> bytes:
+    """Read documented binary audio, decoding only an explicitly JSON response."""
+    audio_data = response.read()
+    content_type = (response.headers.get("Content-Type", "") or "").split(";", 1)[0].lower()
+    if content_type == "application/json" or content_type.endswith("+json"):
+        data = json.loads(audio_data.decode("utf-8"))
+        audio_string = data.get("audioContent", data.get("audio")) if isinstance(data, dict) else None
+        if not isinstance(audio_string, str) or not audio_string:
+            raise ValueError("provider JSON did not contain audio content")
+        audio_data = base64.b64decode(audio_string, validate=True)
+    if not audio_data:
+        raise ValueError("provider returned empty audio")
+    return audio_data
+
+
+def synthesize_tts(body: TTSRequestIn) -> Response:
+    """Synthesize speech for the route and unit tests without exposing provider details."""
     if not GNANI_TTS_ENABLED or not GNANI_TTS_API_KEY:
         raise HTTPException(503, {"error": {"code": "TTS_DISABLED", "message": "TTS service is disabled."}})
-    
-    # Normalize language
-    base_lang = body.language.split("-")[0].lower()
-    gnani_lang = GNANI_LANG_MAP.get(base_lang, "hi-IN")
-    gnani_voice = body.voice or GNANI_VOICE_MAP.get(gnani_lang, "Nalini")
-    
-    # Normalize text (remove HTML, condense whitespace)
-    text = re.sub(r'<[^>]+>', '', body.text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    
-    if len(text) > 2000:
-        text = text[:2000] # Safe truncate
-        
-    cache_key = f"{gnani_lang}:{gnani_voice}:{body.speed}:{hash(text)}"
-    if cache_key in TTS_CACHE:
-        return Response(content=TTS_CACHE[cache_key], media_type="audio/mpeg")
-        
-    req = urllib.request.Request(GNANI_TTS_API_URL, method="POST")
-    req.add_header("X-API-Key-ID", GNANI_TTS_API_KEY)
-    req.add_header("Content-Type", "application/json")
-    
-    payload = json.dumps({
+
+    text = re.sub(r"<[^>]+>", "", body.text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        raise HTTPException(422, {"error": {"code": "INVALID_TTS_TEXT", "message": "text must contain readable content."}})
+    if len(text) > TTS_MAX_TEXT_CHARS:
+        raise HTTPException(422, {"error": {"code": "TEXT_TOO_LONG", "message": "text is too long for TTS."}})
+
+    gnani_lang = body.language
+    gnani_voice = GNANI_VOICE_MAP[gnani_lang]
+    cache_key = (gnani_lang, gnani_voice, body.speed, hashlib.sha256(text.encode("utf-8")).hexdigest())
+    with TTS_STATE_LOCK:
+        cached_audio = TTS_CACHE.get(cache_key)
+        if cached_audio is not None:
+            TTS_CACHE.move_to_end(cache_key)
+            return Response(content=cached_audio, media_type="audio/mpeg")
+
+    payload = {
         "text": text,
-        "language": gnani_lang,
         "voice": gnani_voice,
-        "speed": body.speed
-    }).encode("utf-8")
-    
+        "model": GNANI_TTS_MODEL,
+        "language": gnani_lang,
+        "speed": body.speed,
+        "audio_config": dict(GNANI_TTS_AUDIO_CONFIG),
+    }
+    req = urllib.request.Request(
+        GNANI_TTS_API_URL,
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "X-API-Key-ID": GNANI_TTS_API_KEY,
+            "Content-Type": "application/json",
+            "User-Agent": "KisanSaathi/1.0",
+        },
+        method="POST",
+    )
+
     try:
-        with urllib.request.urlopen(req, data=payload, timeout=8) as res:
-            audio_data = res.read()
-            content_type = res.headers.get("Content-Type", "")
-            
-            if "application/json" in content_type:
-                data = json.loads(audio_data.decode("utf-8"))
-                audio_str = data.get("audio", data.get("audioContent", ""))
-                if audio_str:
-                    audio_data = base64.b64decode(audio_str)
-                    
-            if len(TTS_CACHE) > 100:
-                TTS_CACHE.pop(next(iter(TTS_CACHE)))
-            TTS_CACHE[cache_key] = audio_data
-            
-            return Response(content=audio_data, media_type="audio/mpeg")
-            
-    except urllib.error.HTTPError as e:
-        if e.code == 429:
-            raise HTTPException(429, {"error": {"code": "RATE_LIMITED", "message": "Too many requests"}})
-        raise HTTPException(502, {"error": {"code": "TTS_PROVIDER_ERROR", "message": f"Provider error {e.code}"}})
-    except Exception as e:
+        with urllib.request.urlopen(req, timeout=8) as provider_response:
+            audio_data = _provider_audio(provider_response)
+    except urllib.error.HTTPError as exc:
+        logger.warning("Gnani TTS provider returned HTTP %s", exc.code)
+        if exc.code == 429:
+            raise HTTPException(429, {"error": {"code": "TTS_PROVIDER_RATE_LIMITED", "message": "TTS provider rate limit reached."}})
+        if exc.code == 503:
+            raise HTTPException(503, {"error": {"code": "TTS_PROVIDER_UNAVAILABLE", "message": "TTS provider is temporarily unavailable."}})
+        raise HTTPException(502, {"error": {"code": "TTS_PROVIDER_ERROR", "message": "TTS provider request failed."}})
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        logger.warning("Gnani TTS provider unavailable: %s", type(exc).__name__)
         raise HTTPException(503, {"error": {"code": "TTS_UNAVAILABLE", "message": "Network timeout or failure."}})
+    except (ValueError, UnicodeDecodeError) as exc:
+        logger.warning("Gnani TTS provider returned an invalid response: %s", type(exc).__name__)
+        raise HTTPException(502, {"error": {"code": "TTS_PROVIDER_ERROR", "message": "TTS provider returned invalid audio."}})
+
+    with TTS_STATE_LOCK:
+        TTS_CACHE[cache_key] = audio_data
+        TTS_CACHE.move_to_end(cache_key)
+        while len(TTS_CACHE) > TTS_CACHE_MAX_ENTRIES:
+            TTS_CACHE.popitem(last=False)
+    return Response(content=audio_data, media_type="audio/mpeg")
+
+
+@app.post("/api/v1/tts")
+def generate_tts(body: TTSRequestIn, request: Request):
+    _check_tts_rate_limit(_tts_client_key(request))
+    return synthesize_tts(body)

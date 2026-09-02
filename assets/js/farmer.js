@@ -26,9 +26,10 @@ import {
   buildAdvisories
 } from './advisory.js';
 import { classifySoilHydration } from './services/weather.js';
+import { getPrices } from './services/simPrices.js';
 import { SARVAM_LOCALES } from './config.js';
 import { sarvamEnabled, translateNames } from './services/sarvam.js';
-import * as voice from './voice.js';
+import * as voice from './voice.js?v=20260902-1';
 import * as icons from './icons.js';
 import { calculateEMI, calculateDistressScore, generateSchedule, generateLoanSchedule } from './loan.js?v=20260901-1';
 
@@ -523,6 +524,7 @@ function onStateChange(code) {
   refreshCascades();
   hideError(locationError);
   translateGeo();
+  renderDistressPlanner();
 }
 
 function onDistrictChange() {
@@ -536,6 +538,7 @@ function onDistrictChange() {
   refreshCascades();
   hideError(locationError);
   translateGeo();
+  renderDistressPlanner();
 }
 
 function onVillageChange(value) {
@@ -695,6 +698,7 @@ function onCropChange() {
   refreshCrop();
   hideError(cropError);
   paintStage();
+  renderDistressPlanner();
 }
 
 function onVarietyChange(value) {
@@ -1763,17 +1767,6 @@ async function onAdvisoryDetailListen() {
   $('advisoryVoiceNote').textContent = result.ok ? '' : t('home.voiceUnavailable');
 }
 
-  const a = homeAdvisories[selectedAdvisoryIndex];
-  if (!a) return;
-  const p = renderParams(a.params);
-  const locale = getLanguageByCode(getLang())?.locale ?? 'en-IN';
-  const result = voice.speak([t(a.titleKey, p), t(a.bodyKey, p), t(a.whyKey, p)], locale, {
-    onStart: () => paintAdvisoryDetailListen(true),
-    onEnd: () => paintAdvisoryDetailListen(false),
-  });
-  $('advisoryVoiceNote').textContent = result.ok ? '' : t('home.voiceUnavailable');
-}
-
 function onAcknowledge() {
   acked = true;
   $('ackBtn').innerHTML = `${icons.check(18)}<span>${escapeHtml(t('home.acked'))}</span>`;
@@ -2112,12 +2105,20 @@ function renderDistressPlanner() {
     groundnut: 6783
   }[crop] || 2425;
 
-  const baseMandiPrice = Math.round(mspBaseline * 1.08);
+  /* Use the existing deterministic mandi provider so the planner reacts to
+     the selected crop and location. The simulation remains stable offline,
+     while connected mandi screens can still use their live repository path. */
+  const marketRegion = [
+    draft.stateCode || draft.stateName || 'default-state',
+    draft.districtCode || draft.districtName || 'default-district',
+  ].join(':');
+  const marketSnapshot = getPrices(marketRegion, crop);
+  const baseMandiPrice = Number(marketSnapshot.current) || Math.round(mspBaseline * 1.08);
   const effectivePrice = Math.max(0, Math.round(baseMandiPrice * (1 - priceDropPct / 100)));
   const diffMsp = effectivePrice - mspBaseline;
 
   // Pure functional calculation
-  const distress = calculateDistressScore(rainVal, effectivePrice, mspBaseline, loanDaysVal);
+  const distress = calculateDistressScore(rainVal, effectivePrice, mspBaseline, loanDaysVal, draft.stateName || '');
   const score = distress.score;
   const level = distress.level;
 
@@ -2967,14 +2968,27 @@ function cropComplete(draft) {
 /* ---------- boot ---------- */
 
 function wire() {
+  /* Keep the app shell responsive even if an optional screen binding fails.
+     These controls are intentionally wired first because route registration
+     happens after this function during boot. */
+  const startSetup = _el('startSetup');
+  startSetup?.addEventListener('click', () => router.go('location'));
+
+  const globalThemeToggleBtn = _el('globalThemeToggleBtn');
+  globalThemeToggleBtn?.addEventListener('click', toggleTheme);
+
+  const headerOfficerBtn = _el('headerOfficerBtn');
+  headerOfficerBtn?.addEventListener('click', () => {
+    router.go('auth');
+    setAuthTab('officer');
+  });
+
   openPickerBtn.addEventListener('click', () => {
     voiceNote.textContent = '';
     gateAdvances = false;
     languageGate.hidden = false;
     languageGrid.querySelector('.language-tile__choice')?.focus();
   });
-
-  $('startSetup').addEventListener('click', () => router.go('location'));
 
   $('stateMount').append(stateSelect.el);
   $('districtMount').append(districtSelect.el);
@@ -3145,7 +3159,6 @@ function wire() {
   $('btnEditLang').addEventListener('click', () => openPickerBtn.click());
   $('profileSignoutBtn').addEventListener('click', onSignout);
   $('themeToggleBtn').addEventListener('click', toggleTheme);
-  $('globalThemeToggleBtn').addEventListener('click', toggleTheme);
   $('agronomyTelemetryMount').addEventListener('click', (event) => {
     const button = event.target.closest('#fieldConditionsHelp');
     if (!button) return;
@@ -3181,14 +3194,6 @@ function wire() {
     window.location.reload();
   });
 
-
-  const headerOfficerBtn = document.getElementById('headerOfficerBtn');
-  if (headerOfficerBtn) {
-    headerOfficerBtn.addEventListener('click', () => {
-      router.go('auth');
-      setAuthTab('officer');
-    });
-  }
 
   /* O1–O6 Officer Dashboard wiring */
   $('officerSignoutBtn').addEventListener('click', onSignout);
@@ -3239,10 +3244,18 @@ function boot() {
   }
 
   renderLanguageTiles();
-  wire();
-  applyCopy();
-  refreshLand();
-  refreshCrop();
+  try {
+    wire();
+  } catch (error) {
+    console.error('[boot] optional event wiring failed:', error);
+  }
+  try {
+    applyCopy();
+    refreshLand();
+    refreshCrop();
+  } catch (error) {
+    console.error('[boot] optional screen setup failed:', error);
+  }
 
   router.register('welcome', () => {
     $('startSetup').hidden = !validSaved;
