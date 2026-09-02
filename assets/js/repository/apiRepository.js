@@ -64,12 +64,33 @@ export const apiRepository = {
     }
   },
 
+  /* ---- MSG91 provider setup ---- */
+  loadMsg91(widgetId) {
+    if (window.sendOtp) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      window.configuration = { widgetId: widgetId || "3669626f6350343234343635" };
+      const script = document.createElement('script');
+      script.src = 'https://control.msg91.com/app/assets/otp-provider/otp-provider.js';
+      script.onload = () => {
+         if (typeof window.initSendOTP === 'function') {
+            window.initSendOTP(window.configuration);
+         }
+         resolve();
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  },
+
   /* ---- farmer OTP flow ---- */
   requestOtp(phone) {
     return request('/auth/otp/request', { body: { phone } });
   },
 
-  verifyOtp(phone, otp) {
+  verifyOtp(phone, otp, msg91_token) {
+    if (msg91_token) {
+        return request('/auth/otp/verify', { body: { phone, otp: null, msg91_token } });
+    }
     return request('/auth/otp/verify', { body: { phone, otp } });
   },
 

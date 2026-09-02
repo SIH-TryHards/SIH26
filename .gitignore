@@ -35,4 +35,4 @@ scratch_*.log
 *.tmp
 *.bak
 *.env
-!.env.example
+*.env.example

@@ -102,8 +102,9 @@ def _minutes(name: str, default: str, minimum: int, maximum: int) -> int:
 
 
 OTP_MODE = _setting("OTP_MODE", "stub", required_in_production=True)
-if OTP_MODE != "stub":
-    raise RuntimeError("OTP_MODE must remain 'stub'; provider delivery is not implemented")
+MSG91_AUTHKEY = os.environ.get("MSG91_AUTHKEY", "")
+if OTP_MODE == "msg91" and not MSG91_AUTHKEY:
+    raise RuntimeError("MSG91_AUTHKEY is required when OTP_MODE is msg91")
 
 JWT_SECRET = _setting(
     "JWT_SECRET",
@@ -412,7 +413,8 @@ class PhoneIn(StrictModel):
 
 
 class OtpIn(PhoneIn):
-    otp: str = Field(pattern=r"^\d{6}$")
+    otp: str | None = Field(default=None, pattern=r"^\d{6}$")
+    msg91_token: str | None = None
 
 
 class OfficerIn(StrictModel):
@@ -562,6 +564,9 @@ def otp_request(body: PhoneIn):
     phone = normalize_phone(body.phone)
     now = utcnow()
 
+    if OTP_MODE == "msg91":
+        return {"data": {"mode": "msg91", "widget_id": "3669626f6350343234343635"}}
+
     with db() as c:
         row = c.execute(
             "SELECT * FROM otp_challenge WHERE phone = ?", (phone,)
@@ -604,28 +609,39 @@ def otp_verify(body: OtpIn):
     now = utcnow()
 
     with db() as c:
-        row = c.execute(
-            "SELECT * FROM otp_challenge WHERE phone = ?", (phone,)
-        ).fetchone()
-        if not row:
-            raise HTTPException(400, {"error": {"code": "OTP_EXPIRED",
-                                                "message": "Request a new code."}})
-        if now > datetime.fromisoformat(row["expires_at"]):
+        if OTP_MODE == "msg91":
+            if not body.msg91_token:
+                raise HTTPException(400, {"error": {"code": "INVALID_OTP", "message": "Missing access token."}})
+            req = urllib.request.Request("https://control.msg91.com/api/v5/widget/verifyAccessToken", method="POST")
+            req.add_header("Content-Type", "application/json")
+            payload = json.dumps({"authkey": MSG91_AUTHKEY, "access-token": body.msg91_token}).encode("utf-8")
+            try:
+                with urllib.request.urlopen(req, data=payload, timeout=8) as res:
+                    data = json.loads(res.read().decode("utf-8"))
+            except urllib.error.HTTPError as e:
+                raise HTTPException(400, {"error": {"code": "INVALID_OTP", "message": "Failed to verify access token."}})
+            except Exception as e:
+                raise HTTPException(503, {"error": {"code": "PROVIDER_ERROR", "message": "MSG91 verification unavailable."}})
+            
+            if data.get("type") != "success":
+                raise HTTPException(400, {"error": {"code": "INVALID_OTP", "message": "Invalid access token."}})
+        else:
+            if not body.otp:
+                raise HTTPException(422, {"error": {"code": "VALIDATION", "message": "OTP is required."}})
+            row = c.execute("SELECT * FROM otp_challenge WHERE phone = ?", (phone,)).fetchone()
+            if not row:
+                raise HTTPException(400, {"error": {"code": "OTP_EXPIRED", "message": "Request a new code."}})
+            if now > datetime.fromisoformat(row["expires_at"]):
+                c.execute("DELETE FROM otp_challenge WHERE phone = ?", (phone,))
+                raise HTTPException(400, {"error": {"code": "OTP_EXPIRED", "message": "Code expired, request a new one."}})
+            if row["attempts"] >= OTP_MAX_ATTEMPTS:
+                raise HTTPException(429, {"error": {"code": "TOO_MANY_ATTEMPTS", "message": "Too many wrong attempts."}})
+            
+            candidate = hash_password(body.otp, row["salt"])
+            if not hmac.compare_digest(candidate, row["code_hash"]):
+                c.execute("UPDATE otp_challenge SET attempts = attempts + 1 WHERE phone = ?", (phone,))
+                raise HTTPException(400, {"error": {"code": "INVALID_OTP", "message": "That code did not match."}})
             c.execute("DELETE FROM otp_challenge WHERE phone = ?", (phone,))
-            raise HTTPException(400, {"error": {"code": "OTP_EXPIRED",
-                                                "message": "Code expired, request a new one."}})
-        if row["attempts"] >= OTP_MAX_ATTEMPTS:
-            raise HTTPException(429, {"error": {"code": "TOO_MANY_ATTEMPTS",
-                                                "message": "Too many wrong attempts."}})
-
-        candidate = hash_password(body.otp, row["salt"])
-        if not hmac.compare_digest(candidate, row["code_hash"]):
-            c.execute("UPDATE otp_challenge SET attempts = attempts + 1 WHERE phone = ?",
-                      (phone,))
-            raise HTTPException(400, {"error": {"code": "INVALID_OTP",
-                                                "message": "That code did not match."}})
-
-        c.execute("DELETE FROM otp_challenge WHERE phone = ?", (phone,))
 
         e164 = f"+91{phone}"
         account = c.execute(

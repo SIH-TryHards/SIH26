@@ -83,6 +83,8 @@ const signoutBtn = $('signoutBtn');
 
 let otpSent = false;
 let resendTimer = null;
+let msg91Mode = false;
+let msg91ReqId = null;
 
 /* S7 home */
 let homeAdvisories = [];
@@ -1002,6 +1004,17 @@ async function onFarmerSubmit(event) {
     sendOtpBtn.disabled = true;
     try {
       const res = await auth.requestOtp(phone);
+      msg91Mode = res?.mode === 'msg91';
+      if (msg91Mode) {
+        await auth.loadMsg91(res.widget_id);
+        await new Promise((resolve, reject) => {
+          window.sendOtp(`91${phone}`, (data) => {
+            if (data?.message) msg91ReqId = data.message;
+            resolve();
+          }, (err) => reject(new Error(err?.message || err?.error || 'Failed to send OTP')));
+        });
+      }
+      
       otpSent = true;
       otpField.hidden = false;
       otpInput.focus();
@@ -1012,7 +1025,7 @@ async function onFarmerSubmit(event) {
         demoOtpNote.hidden = false;
       }
     } catch (e) {
-      showErrorText(farmerError, authErrorKey(e.code));
+      showErrorText(farmerError, e.message || authErrorKey(e.code));
     } finally {
       sendOtpBtn.disabled = false;
     }
@@ -1027,7 +1040,18 @@ async function onFarmerSubmit(event) {
 
   sendOtpBtn.disabled = true;
   try {
-    const res = await auth.verifyOtp(phone, otp);
+    let msg91_token = null;
+    if (msg91Mode) {
+      msg91_token = await new Promise((resolve, reject) => {
+        window.verifyOtp(otp, (data) => {
+          resolve(data?.message || data);
+        }, (err) => {
+          reject(new Error(err?.message || err?.error || 'Invalid OTP'));
+        }, msg91ReqId);
+      });
+      if (typeof msg91_token === 'object') msg91_token = msg91_token.message;
+    }
+    const res = await auth.verifyOtp(phone, otp, msg91_token);
     storage.saveSession({
       token: res.token, role: 'farmer', phone,
       masked: res.farmer.masked, name: null,
@@ -1045,6 +1069,8 @@ async function onFarmerSubmit(event) {
     showErrorText(farmerError, authErrorKey(e.code));
     if (e.code === 'OTP_EXPIRED' || e.code === 'TOO_MANY_ATTEMPTS') {
       otpSent = false;
+      msg91Mode = false;
+      msg91ReqId = null;
       otpField.hidden = true;
       demoOtpNote.hidden = true;
       sendOtpBtn.textContent = t('s6.sendCode');
@@ -1061,6 +1087,17 @@ async function onResend() {
   const auth = await getAuth();
   resendBtn.disabled = true;
   try {
+    if (msg91Mode) {
+      await new Promise((resolve, reject) => {
+        window.retryOtp('11', (data) => {
+          if (data?.message) msg91ReqId = data.message;
+          resolve();
+        }, (err) => reject(new Error(err?.message || err?.error || 'Failed to resend')), msg91ReqId);
+      });
+      startResendCountdown();
+      return;
+    }
+    
     const res = await auth.requestOtp(phone);
     if (res?.dev_code) {
       demoOtpNote.textContent = t('s6.demoOtp', { code: res.dev_code });
@@ -1068,7 +1105,7 @@ async function onResend() {
     }
     startResendCountdown();
   } catch (e) {
-    showErrorText(farmerError, authErrorKey(e.code));
+    showErrorText(farmerError, e.message || authErrorKey(e.code));
     resendBtn.disabled = false;
   }
 }
