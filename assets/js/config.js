@@ -21,19 +21,19 @@ export function setSarvamKey(key) {
 
 /* Sarvam Translate API target codes for our six UI languages. */
 export const SARVAM_LOCALES = {
-  en: 'en-IN',
-  hi: 'hi-IN',
-  mr: 'mr-IN',
-  bn: 'bn-IN',
-  ta: 'ta-IN',
-  te: 'te-IN',
+  en: 'en-IN',//angreji
+  hi: 'hi-IN',//hindi
+  mr: 'mr-IN',//marathi
+  bn: 'bn-IN',//bangali
+  ta: 'ta-IN',//tamil
+  te: 'te-IN',//telugu
 };
 
 /* ---- connected mode (deployment-aware) ----
-   Browser on localhost → local API; otherwise → deployed Render service.
-   Replace YOUR-RENDER-SERVICE with the actual Render URL after deploying. */
+   Browser on localhost → local API;
+   otherwise → deployed Railway service. */
 export const API_BASE_URL =
   window.location.hostname === 'localhost' ||
   window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8001/api/v1'
-    : 'https://api-not-deployed-yet.localhost/api/v1';
+    : 'https://sih26-production.up.railway.app/api/v1';
